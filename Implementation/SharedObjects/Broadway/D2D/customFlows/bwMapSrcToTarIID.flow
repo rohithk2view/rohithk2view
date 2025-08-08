@@ -1,0 +1,33 @@
+tags: customFlows,D2D
+stages:
+  Input - Src IID:
+    actors:
+      SRC IID:
+        parent: Const
+        in:
+          value:
+            const: null
+            external: srcIID
+        out:
+          value:
+            schema: string
+      Lu Name:
+        parent: Const
+        in:
+          value:
+            const: null
+            external: luName
+  Transformation: {
+    }
+  Output - tar IID:
+    actors:
+      TAR IID:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: SRC IID/value
+        out:
+          value:
+            external: tarIID
+            schema: integer

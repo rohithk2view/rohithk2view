@@ -1,0 +1,220 @@
+{
+    "tags": [
+        "d2d",
+        "d2d\flows",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Input",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Interface Name",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "editor": {
+                                            "id": "com.k2view.interface",
+                                            "interfaceType": [
+                                                "database",
+                                                "CassandraLoader"
+                                            ],
+                                            "interfaces": [
+                                                "fabric"
+                                            ]
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Environment",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Output",
+                    "dependsOnList": [
+                        "Input"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Not Local Fabric",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "NotEquals",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "fabric"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Get Schema By Interface",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "getSchemaFromInterface"
+                                    },
+                                    {
+                                        "name": "interfaceName",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "env",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "schema",
+                                        "schema": {}
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Local Fabric",
+                    "dependsOnList": [
+                        "Input"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "Fabric",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "fabric"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Interface Name",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Get Schema By Interface",
+                "name": "interfaceName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Interface Name",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Not Local Fabric",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Environment",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Get Schema By Interface",
+                "name": "env"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "interface"
+            },
+            "rightPort": {
+                "actor": "Interface Name",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "env"
+            },
+            "rightPort": {
+                "actor": "Environment",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Schema By Interface",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Fabric",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "schema"
+            }
+        }
+    ]
+}

@@ -1,0 +1,310 @@
+{
+    "description": "Export D2D Result of Single Instance to an Excel",
+    "tags": [
+        "d2d",
+        "pipeline"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "No Process",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Inputs",
+                    "dependsOnList": [
+                        "No Process"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "IID Provided",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "NotNull",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Fetch Execution ID",
+                            "remark": "Unique Key from Last Run",
+                            "actorType": {
+                                "parentType": "Suite",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "suite_FetchInstance"
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit",
+                                            "addEmptyEntry": true
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "OFF",
+                                        "name": "syncMode",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "",
+                                                "ON",
+                                                "OFF",
+                                                "FORCE",
+                                                "DELTA"
+                                            ]
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "false",
+                                        "name": "print_report",
+                                        "schema": {},
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "false",
+                                                "true"
+                                            ]
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "",
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "execution_id",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Continue",
+                    "dependsOnList": [
+                        "No Process"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Decision",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Activate",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "Elvis",
+                                "inputs": [],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Report Create",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Create Report",
+                            "remark": "Export Summary data to an Excel ",
+                            "actorType": {
+                                "parentType": "Suite",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "suite_CreateReport"
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "strict",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "IID Provided",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Create Report",
+                "name": "strict"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Fetch Execution ID",
+                "name": "execution_id"
+            },
+            "rightPort": {
+                "actor": "Activate",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Activate",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Create Report",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "entity"
+            },
+            "rightPort": {
+                "actor": "IID Provided",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "entity"
+            },
+            "rightPort": {
+                "actor": "Fetch Execution ID",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Fetch Execution ID",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "executionId"
+            },
+            "rightPort": {
+                "actor": "Activate",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Create Report",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "entity"
+            },
+            "rightPort": {
+                "actor": "Create Report",
+                "name": "iid"
+            }
+        }
+    ]
+}

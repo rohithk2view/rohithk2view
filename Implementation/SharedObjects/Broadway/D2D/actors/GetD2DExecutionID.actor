@@ -1,0 +1,35 @@
+{
+    "type": "GetD2DExecutionID",
+    "parentType": "InnerFlow",
+    "actorClass": null,
+    "inputs": [
+        {
+            "name": "luName",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "d2d lu name"
+        },
+        {
+            "name": "flowName",
+            "schema": {
+                "type": "string"
+            },
+            "const": "bwGetD2DExecutionID",
+            "mandatory": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "result",
+            "schema": {
+                "type": "string"
+            }
+        }
+    ],
+    "tags": [
+        "d2d"
+    ],
+    "doc": "Get Task ID if D2D_EXEC_ID is not null, Else Gets a Session Id",
+    "badge": "Rd"
+}

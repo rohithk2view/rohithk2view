@@ -1,0 +1,307 @@
+stages:
+  Input:
+    actors:
+      PopulationArgs:
+        parent: PopulationArgs
+        readonly: true
+        in:
+          iid:
+            external: iid
+            schema: any
+        out:
+          parent_rows:
+            schema: '#ref'
+  Source:
+    actors:
+      Instance Not Found:
+        parent: DbFetchField
+        in:
+          interface:
+            const: fabric
+          sql:
+            const: "Select match_result\r\nFrom D2D_FIELD_SUMMARY\r\nWhere match_result\
+              \ In ('Instance Not Found In Source',\r\n  'Instance Not Found In Target')"
+        out:
+          result:
+            schema: string
+      Table Summary Rows:
+        parent: DbCommand
+        in:
+          interface:
+            const: fabric
+          sql:
+            const: "select EXECUTION_ID, IID, SOURCE_TABLE_NAME, TARGET_TABLE_NAME,\
+              \ sum(MATCH) as NUMBER_OF_RECORDS_MATCH,  sum(MISMATCH) as NUMBER_OF_RECORDS_MISMATCH,\
+              \ sum(NOFOIS) as NUMBER_OF_RECORDS_ONLY_IN_SOURCE, sum(NOFOIT) as NUMBER_OF_RECORDS_ONLY_IN_TARGET,\
+              \ sum(NOFUIT) as NUMBER_OF_RECORDS_UNSECURED_IN_TARGET from (\r\n\t\
+              SELECT D2D_RECORD_SUMMARY.EXECUTION_ID, D2D_RECORD_SUMMARY.IID, D2D_RECORD_SUMMARY.SOURCE_TABLE_NAME,\
+              \ D2D_RECORD_SUMMARY.TARGET_TABLE_NAME,\r\n\tcase when NUMBER_OF_FIELDS_MISMATCH\
+              \ > 0 then 1 else 0 END MISMATCH, \r\n\tcase when NUMBER_OF_FIELDS_MISMATCH\
+              \ = 0 and NUMBER_OF_FIELDS_ONLY_IN_TARGET = 0 and NUMBER_OF_FIELDS_ONLY_IN_SOURCE\
+              \ = 0 then 1 else 0 END 'MATCH',\r\n\tcase when NUMBER_OF_FIELDS_ONLY_IN_TARGET\
+              \ > 0 then 1 else 0 END NOFOIT, \r\n\tcase when NUMBER_OF_FIELDS_ONLY_IN_SOURCE\
+              \ > 0 then 1 else 0 END NOFOIS,\r\n\tcase when NUMBER_OF_FIELDS_UNSECURED_IN_TARGET\
+              \ > 0 then 1 else 0 END NOFUIT \r\n\tFROM D2D_RECORD_SUMMARY group by\
+              \ D2D_RECORD_SUMMARY.EXECUTION_ID, D2D_RECORD_SUMMARY.IID, D2D_RECORD_SUMMARY.SOURCE_TABLE_NAME,\
+              \ D2D_RECORD_SUMMARY.TARGET_TABLE_NAME, D2D_RECORD_SUMMARY.CUSTOMIZED_KEY\r\
+              \n)  group by EXECUTION_ID, IID, SOURCE_TABLE_NAME, TARGET_TABLE_NAME"
+        out:
+          result:
+            schema: '#ref'
+      Summary Table Map:
+        parent: GetSchema
+        in:
+          luName:
+            external: schema
+          table_name:
+            external: table
+  Each Row:
+    transactional: true
+    actors:
+      Row:
+        parent: Const
+        in:
+          value:
+            const: null
+            link:
+              path: Table Summary Rows/result
+              iterate: Iterate
+        out:
+          value:
+            schema: '#ref'
+      Row Counter:
+        parent: PopulationCount
+  Check Match Result:
+    transactional: true
+    dependsOn: Each Row
+    actors:
+      Instance Found:
+        parent: IsNull
+        condition: result
+        in:
+          value:
+            link: Instance Not Found/result
+      Is Matched:
+        parent: JavaScript
+        in:
+          script:
+            const:
+              userCode: "var rs;\r\nif( mismatch == 0 && source == 0 && target ==\
+                \ 0){\r\n    rs = 'Match';\r\n}else{\r\n    rs = 'Mismatch';\r\n}"
+              script: |-
+                var rs;
+
+                if (mismatch == 0 && source == 0 && target == 0) {
+                  rs = 'Match';
+                } else {
+                  rs = 'Mismatch';
+                }
+          mismatch:
+            link: Row/value/NUMBER_OF_RECORDS_MISMATCH
+            schema: integer
+          source:
+            link: Row/value/NUMBER_OF_RECORDS_ONLY_IN_SOURCE
+            schema: integer
+          target:
+            link: Row/value/NUMBER_OF_RECORDS_ONLY_IN_TARGET
+            schema: integer
+        out:
+          result:
+            schema: string
+    split: '--------------------'
+  Not Found:
+    else: true
+    transactional: true
+    dependsOn: Each Row
+    actors:
+      Instance Not Found Value:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: Instance Not Found/result
+        out:
+          value:
+            schema: string
+  Load To D2D_TABLE_SUMMARY:
+    last: 1
+    transactional: true
+    actors:
+      Check Report Condition:
+        parent: InnerFlow
+        condition: insert
+        in:
+          flowName:
+            const: bwCheckReportCondition
+          result:
+            link: Is Matched/result
+            schema: string
+            mandatory: false
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+        out:
+          insert:
+            schema: boolean
+      D2D LU Results:
+        parent: DbLoad
+        in:
+          interface:
+            const: fabric
+          schema:
+            const: null
+            external: schema
+          table:
+            const: D2D_TABLE_SUMMARY
+          fields:
+            const:
+            - EXECUTION_ID
+            - IID
+            - SOURCE_TABLE_NAME
+            - TARGET_TABLE_NAME
+            - NUMBER_OF_RECORDS_MATCH
+            - NUMBER_OF_RECORDS_MISMATCH
+            - NUMBER_OF_RECORDS_ONLY_IN_SOURCE
+            - NUMBER_OF_RECORDS_ONLY_IN_TARGET
+            - NUMBER_OF_RECORDS_UNSECURED_IN_TARGET
+            - MATCH_RESULT
+          batch:
+            const: true
+          EXECUTION_ID:
+            schema: any
+          IID:
+            schema: any
+          SOURCE_TABLE_NAME:
+            schema: any
+          TARGET_TABLE_NAME:
+            schema: any
+          NUMBER_OF_RECORDS_MATCH:
+            schema: any
+          NUMBER_OF_RECORDS_MISMATCH:
+            schema: any
+          NUMBER_OF_RECORDS_ONLY_IN_SOURCE:
+            schema: any
+          NUMBER_OF_RECORDS_ONLY_IN_TARGET:
+            schema: any
+          MATCH_RESULT:
+            link:
+            - Is Matched/result
+            - Instance Not Found Value/value
+            schema: string
+          NUMBER_OF_RECORDS_UNSECURED_IN_TARGET:
+            link: Row/value/NUMBER_OF_RECORDS_UNSECURED_IN_TARGET
+            schema: integer
+            mandatory: false
+          params:
+            link: Row/value
+      D2D Validation Results:
+        parent: DbLoad
+        in:
+          interface:
+            const: fabric
+            link: Summary Table Map/map/interface_name
+            default: true
+          schema:
+            const: null
+            link: Summary Table Map/map/schema_name
+          table:
+            const: null
+            link: Summary Table Map/map/table_name
+          fields:
+            const:
+            - execution_id
+            - iid
+            - source_table_name
+            - target_table_name
+            - number_of_records_match
+            - number_of_records_mismatch
+            - number_of_records_only_in_source
+            - number_of_records_only_in_target
+            - number_of_records_unsecured_in_target
+            - match_result
+          keys:
+            const:
+            - execution_id
+            - iid
+            - source_table_name
+            - target_table_name
+          batch:
+            const: true
+          execution_id:
+            schema: any
+          iid:
+            schema: any
+          source_table_name:
+            schema: any
+          target_table_name:
+            schema: any
+          number_of_records_match:
+            schema: any
+          number_of_records_mismatch:
+            schema: any
+          number_of_records_only_in_source:
+            schema: any
+          number_of_records_only_in_target:
+            schema: any
+          match_result:
+            link:
+            - Is Matched/result
+            - Instance Not Found Value/value
+            schema: string
+          number_of_records_unsecured_in_target:
+            link: Row/value/NUMBER_OF_RECORDS_UNSECURED_IN_TARGET
+            schema: integer
+            mandatory: false
+          params:
+            link: Row/value
+schemas:
+  PopulationArgs.out.parent_rows:
+    type: array
+    items:
+      type: object
+      properties:
+        iid:
+          type: string
+  Table Summary Rows.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        EXECUTION_ID:
+          type: string
+        IID:
+          type: string
+        SOURCE_TABLE_NAME:
+          type: string
+        TARGET_TABLE_NAME:
+          type: string
+        total_records_mismatch:
+          type: integer
+        total_records_match:
+          type: integer
+        total_records_not_found_target:
+          type: integer
+        total_records_not_found_source:
+          type: integer
+  Row.out.value:
+    type: object
+    properties:
+      EXECUTION_ID:
+        type: string
+      IID:
+        type: string
+      SOURCE_TABLE_NAME:
+        type: string
+      TARGET_TABLE_NAME:
+        type: string
+      NUMBER_OF_RECORDS_MATCH:
+        type: integer
+      NUMBER_OF_RECORDS_MISMATCH:
+        type: integer
+      NUMBER_OF_RECORDS_ONLY_IN_SOURCE:
+        type: integer
+      NUMBER_OF_RECORDS_ONLY_IN_TARGET:
+        type: integer
+      NUMBER_OF_RECORDS_UNSECURED_IN_TARGET:
+        type: integer

@@ -1,0 +1,2 @@
+Lu_Name,Source_Table_Name,Source_Transformation_Function_Name,source_columns_to_Ignore_null,Target_Table_Name,Target_Transformation_Function_Name,target_columns_to_Ignore_null,Customized_Key_Comparison,Mismatch_Columns,Excluded_Columns_Names,Active,Mode,Excluded_Rows_Sql,Column_Mapping
+T2T,customer1,,,customer2,,,customer_id,,,TRUE,,,

@@ -1,0 +1,319 @@
+{
+    "tags": [
+        "d2dv2",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Init",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Execution Id",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Error Message",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Newline1",
+                            "actorType": {
+                                "parentType": "Newline",
+                                "inputs": [
+                                    {
+                                        "name": "mode",
+                                        "const": "System default"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Error",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "actor": {
+                                                    "type": "string"
+                                                },
+                                                "exception": {},
+                                                "stage": {
+                                                    "type": "string"
+                                                },
+                                                "inputParams": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "flowName": {
+                                                            "type": "string"
+                                                        },
+                                                        "innerFlowClose": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "execution_mode": {
+                                                            "type": "string"
+                                                        },
+                                                        "eid": {
+                                                            "type": "string"
+                                                        },
+                                                        "lu_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "interface": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "className": {
+                                                    "type": "string"
+                                                },
+                                                "rootClassName": {
+                                                    "type": "string"
+                                                },
+                                                "message": {
+                                                    "type": "string"
+                                                },
+                                                "flow": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Prepare Log",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "StringFormat1",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "[EXECUTION_ID: ${execution_id}] ${message} ${error}"
+                                    },
+                                    {
+                                        "name": "execution_id",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "message",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "error",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "actor": {
+                                                    "type": "string"
+                                                },
+                                                "exception": {},
+                                                "stage": {
+                                                    "type": "string"
+                                                },
+                                                "inputParams": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "flowName": {
+                                                            "type": "string"
+                                                        },
+                                                        "innerFlowClose": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "execution_mode": {
+                                                            "type": "string"
+                                                        },
+                                                        "eid": {
+                                                            "type": "string"
+                                                        },
+                                                        "lu_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "interface": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "className": {
+                                                    "type": "string"
+                                                },
+                                                "rootClassName": {
+                                                    "type": "string"
+                                                },
+                                                "message": {
+                                                    "type": "string"
+                                                },
+                                                "flow": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Log",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Logger1",
+                            "actorType": {
+                                "parentType": "Logger",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Execution Id",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "StringFormat1",
+                "name": "execution_id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Error Message",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "StringFormat1",
+                "name": "message"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Error",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "StringFormat1",
+                "name": "error"
+            },
+            "path": [
+                "message"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "StringFormat1",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Logger1",
+                "name": "message"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "execution_id"
+            },
+            "rightPort": {
+                "actor": "Execution Id",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "message"
+            },
+            "rightPort": {
+                "actor": "Error Message",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "error"
+            },
+            "rightPort": {
+                "actor": "Error",
+                "name": "value"
+            }
+        }
+    ]
+}

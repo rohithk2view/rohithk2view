@@ -1,0 +1,319 @@
+{
+    "description": "Writes the table records to an Excel file.\n\nInputs\ntaskExecutionID - execution_id to filter the d2d summary records\nfile_type - output file format (xlsx/xls)\nluName - d2d lu name\nstrict - true: include iid filtering (Get), false: no iid filtering (Batch)\niid - d2d instance id\n\nOutputs\npath - Excel file name",
+    "tags": [
+        "d2d"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Inputs",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "DateTime",
+                            "actorType": {
+                                "parentType": "Now",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Select Queries",
+                            "actorType": {
+                                "parentType": "ReadD2DQueries",
+                                "inputs": [
+                                    {
+                                        "name": "strict",
+                                        "remark": "true - include iid filtering (Get)\nfalse - no iid filtering (Batch)"
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "remark": "d2d lu name"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Create WorkBook",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "YMDHmsS",
+                            "actorType": {
+                                "parentType": "Replace",
+                                "inputs": [
+                                    {
+                                        "name": "search",
+                                        "const": "[^0-9]"
+                                    },
+                                    {
+                                        "name": "regex",
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "CopyD2DTablesToExcel1",
+                            "actorType": {
+                                "parentType": "CopyD2DTablesToExcel",
+                                "inputs": [
+                                    {
+                                        "name": "execution_id",
+                                        "remark": "execution_id to filter the d2d summary records"
+                                    },
+                                    {
+                                        "name": "file_type",
+                                        "remark": "xlsx/xls format"
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "remark": "d2d lu name"
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "remark": "d2d instance id"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Prepare file name",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Report Name",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "Compare_Report_${timestamp}.${extension}"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    },
+                                    {
+                                        "name": "timestamp",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "extension",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "remark": "output file format xlsx/xls",
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "xlsx",
+                                                "xls"
+                                            ]
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "string",
+                                        "remark": "output file name"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Save",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Save File",
+                            "minHeight": 105,
+                            "actorType": {
+                                "parentType": "FileWrite",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "EXCEL_FILES"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "DateTime",
+                "name": "date"
+            },
+            "rightPort": {
+                "actor": "YMDHmsS",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Select Queries",
+                "name": "map"
+            },
+            "rightPort": {
+                "actor": "CopyD2DTablesToExcel1",
+                "name": "queries"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "YMDHmsS",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Report Name",
+                "name": "timestamp"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "CopyD2DTablesToExcel1",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Save File",
+                "name": "stream"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Report Name",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Save File",
+                "name": "path"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "strict"
+            },
+            "rightPort": {
+                "actor": "Select Queries",
+                "name": "strict"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Select Queries",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "CopyD2DTablesToExcel1",
+                "name": "execution_id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "file_type"
+            },
+            "rightPort": {
+                "actor": "CopyD2DTablesToExcel1",
+                "name": "file_type"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "CopyD2DTablesToExcel1",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "strict"
+            },
+            "rightPort": {
+                "actor": "CopyD2DTablesToExcel1",
+                "name": "strict"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "iid"
+            },
+            "rightPort": {
+                "actor": "CopyD2DTablesToExcel1",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Report Name",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "path"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "file_type"
+            },
+            "rightPort": {
+                "actor": "Report Name",
+                "name": "extension"
+            }
+        }
+    ]
+}

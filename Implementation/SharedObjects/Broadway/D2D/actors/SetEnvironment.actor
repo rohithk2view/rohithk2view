@@ -1,0 +1,42 @@
+{
+    "type": "SetEnvironment",
+    "parentType": "InnerFlow",
+    "actorClass": null,
+    "inputs": [
+        {
+            "name": "luName",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "lu name"
+        },
+        {
+            "name": "environment",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "set envrionment Only two possible values SOURCE/TARGET."
+        },
+        {
+            "name": "flowName",
+            "schema": {
+                "type": "string"
+            },
+            "const": "bwSetEnvironment",
+            "mandatory": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "environment_name",
+            "schema": {
+                "type": "string"
+            }
+        }
+    ],
+    "tags": [
+        "d2d"
+    ],
+    "doc": "Set Environment",
+    "badge": "Set"
+}

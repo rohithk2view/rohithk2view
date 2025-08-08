@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>ref_d2d_field_summary</Name>
+  <ID>tbl_ref_d2d_field_summary</ID>
+  <ColumnsCollation>BINARY</ColumnsCollation>
+  <FullTextSearch>false</FullTextSearch>
+  <Columns>
+    <Column name="COLUMN_NAME" id="COLUMN_NAME" index="0" datatype="text" mandatory="true" />
+    <Column name="CUSTOMIZED_KEY" id="CUSTOMIZED_KEY" index="1" datatype="text" mandatory="true" />
+    <Column name="EXECUTION_ID" id="EXECUTION_ID" index="2" datatype="text" mandatory="true" />
+    <Column name="IID" id="IID" index="3" datatype="text" mandatory="true" />
+    <Column name="MATCH_RESULT" id="MATCH_RESULT" index="4" datatype="text" />
+    <Column name="SOURCE_COLUMN_VALUE" id="SOURCE_COLUMN_VALUE" index="5" datatype="text" />
+    <Column name="SOURCE_COLUMN_VALUE_TRANS" id="SOURCE_COLUMN_VALUE_TRANS" index="6" datatype="text" />
+    <Column name="SOURCE_TABLE_NAME" id="SOURCE_TABLE_NAME" index="7" datatype="text" mandatory="true" />
+    <Column name="TARGET_COLUMN_VALUE" id="TARGET_COLUMN_VALUE" index="8" datatype="text" />
+    <Column name="TARGET_COLUMN_VALUE_TRANS" id="TARGET_COLUMN_VALUE_TRANS" index="9" datatype="text" />
+    <Column name="TARGET_TABLE_NAME" id="TARGET_TABLE_NAME" index="10" datatype="text" mandatory="true" />
+    <Column name="TARGET_VALUE_SECURED" id="TARGET_VALUE_SECURED" index="11" datatype="text" />
+  </Columns>
+  <IndexesList>
+    <Index id="1" pk="true" unique="true" instanceOnly="true" columnsIdsList="COLUMN_NAME,CUSTOMIZED_KEY,EXECUTION_ID,IID,SOURCE_TABLE_NAME,TARGET_TABLE_NAME" />
+    <Index id="2" pk="false" unique="false" instanceOnly="true" columnsIdsList="IID" />
+  </IndexesList>
+  <EnrichmentList>
+  </EnrichmentList>
+  <LazyDataUpdate syncMethod="None" performEvery="1.00:00:00" syncWaitTimeout="60">
+    <DecisionFunction></DecisionFunction>
+    <TruncateBeforeSync>true</TruncateBeforeSync>
+  </LazyDataUpdate>
+  
+  <Schema>D2DREF</Schema>
+</TableObject>

@@ -1,0 +1,60 @@
+tags: D2D
+stages:
+  Stage 1:
+    actors:
+      MTableLookup1:
+        parent: MTableLookup
+        in:
+          mtable:
+            const: D2DConfig
+          Lu_Name:
+            const: T2T
+            schema: any
+            editor:
+              id: com.k2view.mTableKey
+            default: true
+            mandatory: false
+        out:
+          result:
+            external: result
+            schema: '#ref'
+          Source_Table_Name:
+            schema: any
+          Target_Table_Name:
+            schema: any
+  Stage 2: {
+    }
+schemas:
+  MTableLookup1.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        Lu_Name:
+          type: string
+        Source_Table_Name:
+          type: string
+        Source_Transformation_Function_Name: {
+          }
+        source_columns_to_Ignore_null: {
+          }
+        Target_Table_Name:
+          type: string
+        Target_Transformation_Function_Name: {
+          }
+        target_columns_to_Ignore_null: {
+          }
+        Customized_Key_Comparison:
+          type: string
+        Mismatch_Columns: {
+          }
+        Excluded_Columns_Names: {
+          }
+        Active:
+          type: string
+        Mode:
+          type: string
+        Excluded_Rows_Sql: {
+          }
+        Column_Mapping: {
+          }

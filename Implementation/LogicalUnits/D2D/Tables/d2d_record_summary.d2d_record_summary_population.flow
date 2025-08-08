@@ -1,0 +1,326 @@
+stages:
+  Input:
+    actors:
+      PopulationArgs:
+        parent: PopulationArgs
+        readonly: true
+        disabled: true
+        in:
+          iid:
+            external: iid
+            schema: any
+  Query D2D_FIELD_SUMMARY:
+    transactional: false
+    actors:
+      Instance Not Found:
+        parent: DbFetchField
+        in:
+          interface:
+            const: fabric
+          sql:
+            const: "Select match_result\r\nFrom D2D_FIELD_SUMMARY\r\nWhere match_result\
+              \ In ('Instance Not Found In Source',\r\n  'Instance Not Found In Target')"
+        out:
+          result:
+            schema: string
+      Record Table Rows:
+        parent: DbCommand
+        in:
+          interface:
+            const: fabric
+          sql:
+            const: "/*sqlite*/ SELECT DISTINCT gd.execution_id as execution_id, gd.iid\
+              \ as iid, gd.source_table_name as source_table_name, gd.target_table_name\
+              \ as target_table_name, gd.customized_key as customized_key,\r\n(SELECT\
+              \ ifnull(count(*),0) as MISMATCH from D2D_FIELD_SUMMARY mm WHERE match_result\
+              \ = 'Mismatch' AND gd.execution_id = mm.execution_id AND  gd.iid = mm.iid\
+              \ AND gd.source_table_name = mm.source_table_name AND gd.target_table_name\
+              \ = mm.target_table_name AND gd.customized_key = mm.customized_key)\
+              \ AS number_of_fields_mismatch,\r\n(SELECT ifnull(count(*),0) as MISMATCH\
+              \ from D2D_FIELD_SUMMARY mm WHERE match_result = 'Match' AND gd.execution_id\
+              \ = mm.execution_id AND  gd.iid = mm.iid AND gd.source_table_name =\
+              \ mm.source_table_name AND gd.target_table_name = mm.target_table_name\
+              \ AND gd.customized_key = mm.customized_key) AS number_of_fields_match,\r\
+              \n(SELECT ifnull(count(*),0) as MISMATCH from D2D_FIELD_SUMMARY mm WHERE\
+              \ match_result in ('Target Key Not Found In Source','Instance Not Found\
+              \ In Source') AND gd.execution_id = mm.execution_id AND  gd.iid = mm.iid\
+              \ AND gd.source_table_name = mm.source_table_name AND gd.target_table_name\
+              \ = mm.target_table_name AND gd.customized_key = mm.customized_key)\
+              \ AS number_of_fields_only_in_target,\r\n(SELECT ifnull(count(*),0)\
+              \ as MISMATCH from D2D_FIELD_SUMMARY mm WHERE match_result in ('Source\
+              \ Key Not Found In Target', 'Instance Not Found In Target') AND gd.execution_id\
+              \ = mm.execution_id AND  gd.iid = mm.iid AND gd.source_table_name =\
+              \ mm.source_table_name AND gd.target_table_name = mm.target_table_name\
+              \ AND gd.customized_key = mm.customized_key) AS number_of_fields_only_in_source,\r\
+              \n(SELECT ifnull(count(*),0) as MISMATCH from D2D_FIELD_SUMMARY mm WHERE\
+              \ TARGET_VALUE_SECURED = 'false' AND gd.execution_id = mm.execution_id\
+              \ AND  gd.iid = mm.iid AND gd.source_table_name = mm.source_table_name\
+              \ AND gd.target_table_name = mm.target_table_name AND gd.customized_key\
+              \ = mm.customized_key) AS number_of_fields_unsecured_in_target\r\nFROM\
+              \ D2D_FIELD_SUMMARY gd"
+        out:
+          result:
+            schema: '#ref'
+      Summary Table Map:
+        parent: GetSchema
+        in:
+          luName:
+            external: schema
+          table_name:
+            external: table
+  Each Row:
+    transactional: true
+    actors:
+      Row:
+        parent: Const
+        in:
+          value:
+            const: null
+            link:
+              path: Record Table Rows/result
+              iterate: Iterate
+        out:
+          value:
+            schema: '#ref'
+      Row Counter:
+        parent: PopulationCount
+  Check Match Result:
+    transactional: true
+    dependsOn: Each Row
+    actors:
+      Instance Found:
+        parent: IsNull
+        condition: result
+        in:
+          value:
+            link: Instance Not Found/result
+      Is Matched:
+        parent: JavaScript
+        in:
+          script:
+            const:
+              userCode: "var rs;\r\nif( mismatch == 0 && source == 0 && target ==\
+                \ 0){\r\n    rs = 'Match';\r\n}else{\r\n    rs = 'Mismatch';\r\n}"
+              script: |-
+                var rs;
+
+                if (mismatch == 0 && source == 0 && target == 0) {
+                  rs = 'Match';
+                } else {
+                  rs = 'Mismatch';
+                }
+          mismatch:
+            link: Row/value/number_of_fields_mismatch
+            schema: integer
+          source:
+            link: Row/value/number_of_fields_only_in_target
+            schema: integer
+          target:
+            link: Row/value/number_of_fields_only_in_source
+            schema: integer
+        out:
+          result:
+            schema: string
+    split: '--------------------'
+  Not Found:
+    else: true
+    transactional: true
+    dependsOn: Each Row
+    actors:
+      Instance Not Found Value:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: Instance Not Found/result
+        out:
+          value:
+            schema: string
+  Load To D2D_RECORD_SUMMARY:
+    transactional: true
+    actors:
+      Check Report Condition:
+        parent: InnerFlow
+        condition: insert
+        in:
+          flowName:
+            const: bwCheckReportCondition
+          result:
+            link: Is Matched/result
+            schema: string
+            mandatory: false
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+        out:
+          insert:
+            schema: boolean
+      D2D LU Results:
+        parent: DbLoad
+        in:
+          interface:
+            const: fabric
+          schema:
+            const: null
+            external: schema
+          table:
+            const: null
+            external: table
+          fields:
+            const:
+            - EXECUTION_ID
+            - IID
+            - SOURCE_TABLE_NAME
+            - TARGET_TABLE_NAME
+            - CUSTOMIZED_KEY
+            - NUMBER_OF_FIELDS_MATCH
+            - NUMBER_OF_FIELDS_MISMATCH
+            - NUMBER_OF_FIELDS_ONLY_IN_SOURCE
+            - NUMBER_OF_FIELDS_ONLY_IN_TARGET
+            - NUMBER_OF_FIELDS_UNSECURED_IN_TARGET
+            - MATCH_RESULT
+          batch:
+            const: true
+          EXECUTION_ID:
+            schema: any
+          IID:
+            schema: any
+          SOURCE_TABLE_NAME:
+            schema: any
+          TARGET_TABLE_NAME:
+            schema: any
+          CUSTOMIZED_KEY:
+            schema: any
+          NUMBER_OF_FIELDS_MATCH:
+            schema: any
+          NUMBER_OF_FIELDS_MISMATCH:
+            schema: any
+          NUMBER_OF_FIELDS_ONLY_IN_SOURCE:
+            schema: any
+          NUMBER_OF_FIELDS_ONLY_IN_TARGET:
+            schema: any
+          MATCH_RESULT:
+            link:
+            - Is Matched/result
+            - Instance Not Found Value/value
+            schema: string
+          NUMBER_OF_FIELDS_UNSECURED_IN_TARGET:
+            link: Row/value/number_of_fields_unsecured_in_target
+            schema: integer
+            mandatory: false
+          params:
+            link: Row/value
+      D2D Validation Results:
+        parent: DbLoad
+        in:
+          interface:
+            const: fabric
+            link: Summary Table Map/map/interface_name
+            default: true
+          schema:
+            const: null
+            link: Summary Table Map/map/schema_name
+          table:
+            const: null
+            link: Summary Table Map/map/table_name
+          fields:
+            const:
+            - execution_id
+            - iid
+            - source_table_name
+            - target_table_name
+            - customized_key
+            - number_of_fields_match
+            - number_of_fields_mismatch
+            - number_of_fields_only_in_source
+            - number_of_fields_only_in_target
+            - number_of_fields_unsecured_in_target
+            - match_result
+          keys:
+            const:
+            - execution_id
+            - iid
+            - source_table_name
+            - target_table_name
+            - customized_key
+          batch:
+            const: true
+          execution_id:
+            schema: any
+          iid:
+            schema: any
+          source_table_name:
+            schema: any
+          target_table_name:
+            schema: any
+          customized_key:
+            schema: any
+          number_of_fields_match:
+            schema: any
+          number_of_fields_mismatch:
+            schema: any
+          number_of_fields_only_in_source:
+            schema: any
+          number_of_fields_only_in_target:
+            schema: any
+          match_result:
+            link:
+            - Is Matched/result
+            - Instance Not Found Value/value
+            schema: string
+          number_of_fields_unsecured_in_target:
+            link: Row/value/number_of_fields_unsecured_in_target
+            schema: integer
+            mandatory: false
+          params:
+            link: Row/value
+schemas:
+  Record Table Rows.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        execution_id:
+          type: string
+        iid:
+          type: string
+        source_table_name:
+          type: string
+        target_table_name:
+          type: string
+        customized_key:
+          type: string
+        number_of_fields_mismatch:
+          type: integer
+        number_of_fields_match:
+          type: integer
+        number_of_fields_only_in_target:
+          type: integer
+        number_of_fields_only_in_source:
+          type: integer
+        number_of_fields_unsecured_in_target:
+          type: integer
+  Row.out.value:
+    type: object
+    properties:
+      execution_id:
+        type: string
+      iid:
+        type: string
+      source_table_name:
+        type: string
+      target_table_name:
+        type: string
+      customized_key:
+        type: string
+      number_of_fields_mismatch:
+        type: integer
+      number_of_fields_match:
+        type: integer
+      number_of_fields_only_in_target:
+        type: integer
+      number_of_fields_only_in_source:
+        type: integer
+      number_of_fields_unsecured_in_target:
+        type: integer

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TableObject xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>d2d_record_summary</Name>
+  <ID>tbl_d2d_record_summary</ID>
+  <Columns>
+    <Column name="execution_id" id="tblCol_c415a187f084445ca961c8570082fe6a" index="0" datatype="text" />
+    <Column name="iid" id="tblCol_94282ace1f5f473aaeaa8169152e9407" index="1" datatype="text" />
+    <Column name="source_table_name" id="tblCol_b6f9227cf6454269ba38e499fde17c17" index="2" datatype="text" />
+    <Column name="target_table_name" id="tblCol_70ada8408d6d4d2a911ddeb8a0c81207" index="3" datatype="text" />
+    <Column name="customized_key" id="tblCol_019f4bb1471a4a469f5b30cdac59084c" index="4" datatype="text" />
+    <Column name="number_of_fields_match" id="tblCol_011fc3502db4408fa725ee6f3421703a" index="5" datatype="integer" />
+    <Column name="number_of_fields_mismatch" id="tblCol_a98fc40fca5d43bfaae164cdaa526970" index="6" datatype="integer" />
+    <Column name="number_of_fields_only_in_source" id="tblCol_0c9406e552f14dc1916478c2634a7ebe" index="7" datatype="integer" />
+    <Column name="number_of_fields_only_in_target" id="tblCol_a3bed4d50436460b8804f78a317c2a26" index="8" datatype="integer" />
+    <Column name="number_of_fields_unsecured_in_target" id="number_of_fields_unsecured_in_target" index="9" datatype="integer" />
+    <Column name="match_result" id="tblCol_e9d79e3c936d4cbc853adad903d7d299" index="10" datatype="text" />
+  </Columns>
+  <IndexesList>
+    <Index id="1" pk="true" unique="true" instanceOnly="true" columnsIdsList="tblCol_c415a187f084445ca961c8570082fe6a,tblCol_94282ace1f5f473aaeaa8169152e9407,tblCol_b6f9227cf6454269ba38e499fde17c17,tblCol_70ada8408d6d4d2a911ddeb8a0c81207,tblCol_019f4bb1471a4a469f5b30cdac59084c" />
+  </IndexesList>
+  <EnrichmentList />
+  <LazyDataUpdate syncMethod="Inherited" performEvery="1.00:00:00">
+    <TruncateBeforeSync>true</TruncateBeforeSync>
+  </LazyDataUpdate>
+  <TriggersList />
+</TableObject>

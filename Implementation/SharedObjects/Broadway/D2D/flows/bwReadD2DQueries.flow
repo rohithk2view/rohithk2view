@@ -1,0 +1,412 @@
+{
+    "description": "Sql Statements to run on the summary interface",
+    "tags": [
+        "d2d"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Input",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Custom Selects",
+                            "actorType": {
+                                "parentType": "ConstTable",
+                                "inputs": [
+                                    {
+                                        "name": "table",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "sheet_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "sql": {
+                                                        "type": "string"
+                                                    },
+                                                    "active": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "table",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "sheet_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "sql": {
+                                                        "type": "string"
+                                                    },
+                                                    "active": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "D2D SCHEMA",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [
+                                    {
+                                        "name": "variableName",
+                                        "const": "D2D_LOAD_SCHEMA"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Filter",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Only Active Row",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "And",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Table Name",
+                            "actorType": {
+                                "parentType": "Lookup",
+                                "inputs": [
+                                    {
+                                        "name": "lookupKeys",
+                                        "const": [
+                                            "name"
+                                        ]
+                                    },
+                                    {
+                                        "name": "lookupData",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "table_name": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "const": [
+                                            {
+                                                "name": "field_summary",
+                                                "table_name": "ref_d2d_field_summary"
+                                            },
+                                            {
+                                                "name": "entity_summary",
+                                                "table_name": "ref_d2d_entity_summary"
+                                            },
+                                            {
+                                                "name": "table_summary",
+                                                "table_name": "ref_d2d_table_summary"
+                                            },
+                                            {
+                                                "name": "record_summary",
+                                                "table_name": "ref_d2d_record_summary"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "table_name": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Prepare Select Query",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Custom/Default Query",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": {
+                                            "userCode": "var out = sql\r\nif(out == null|| out.trim().length == 0){\r\n    out = \"select * from \" + schema.concat(\".\", table)  + \" where execution_id = ?\"\r\n    if(strict){\r\n        out = out +  \" and iid = ?\"\r\n    }\r\n}\r\n\r\nout",
+                                            "script": "var out = sql;\n\nif (out == null || out.trim().length == 0) {\n  out = \"select * from \" + schema.concat(\".\", table) + \" where execution_id = ?\";\n\n  if (strict) {\n    out = out + \" and iid = ?\";\n  }\n}\n\nout;"
+                                        }
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "table",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "strict",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Output",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Queries Map",
+                            "actorType": {
+                                "parentType": "MapBuild",
+                                "inputs": [],
+                                "outputs": [
+                                    {
+                                        "name": "map",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "entity_summary": {
+                                                    "type": "string"
+                                                },
+                                                "table_summary": {
+                                                    "type": "string"
+                                                },
+                                                "record_summary": {
+                                                    "type": "string"
+                                                },
+                                                "field_summary": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Custom Selects",
+                "name": "table"
+            },
+            "rightPort": {
+                "actor": "Table Name",
+                "name": "name"
+            },
+            "iterate": "Iterate",
+            "path": [
+                "sheet_name"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Custom Selects",
+                "name": "table"
+            },
+            "rightPort": {
+                "actor": "Queries Map",
+                "name": "key"
+            },
+            "path": [
+                "sheet_name"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Custom Selects",
+                "name": "table"
+            },
+            "rightPort": {
+                "actor": "Only Active Row",
+                "name": "a"
+            },
+            "path": [
+                "active"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Custom Selects",
+                "name": "table"
+            },
+            "rightPort": {
+                "actor": "Custom/Default Query",
+                "name": "sql"
+            },
+            "path": [
+                "sql"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "D2D SCHEMA",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Custom/Default Query",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Table Name",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Custom/Default Query",
+                "name": "table"
+            },
+            "path": [
+                "table_name"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Custom/Default Query",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Queries Map",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "table"
+            },
+            "rightPort": {
+                "actor": "Custom Selects",
+                "name": "table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "D2D SCHEMA",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "strict"
+            },
+            "rightPort": {
+                "actor": "Custom/Default Query",
+                "name": "strict"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Queries Map",
+                "name": "map"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "map"
+            }
+        }
+    ]
+}

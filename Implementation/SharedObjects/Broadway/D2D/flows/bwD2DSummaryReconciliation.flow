@@ -1,0 +1,1003 @@
+{
+    "description": "Fetch D2D instances and write summary to an excel report. instance list is prepared from the task parameters.\n\nInputs\ntaskExecutionID - Unique task execution_id",
+    "tags": [
+        "d2d",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "SET Session Globals",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Get Lu Name",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "fnGetLuType"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Execution Mode - Recon",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "Reconciliation"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Query",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Interface",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Check if query was provided",
+                    "dependsOnList": [
+                        "SET Session Globals"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Query Provided?",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": {
+                                            "userCode": "if (query != null && dbinterface != null)\r\n    true;\r\nelse if (query != null && dbinterface == null )\r\n    throw new Error(\"interface param is missing\")\r\nelse if (query == null && dbinterface != null )\r\n    throw new Error(\"sql_query param is missing\")\r\nelse \r\n    false;",
+                                            "script": "if (query != null && dbinterface != null) true;else if (query != null && dbinterface == null) throw new Error(\"interface param is missing\");else if (query == null && dbinterface != null) throw new Error(\"sql_query param is missing\");else false;"
+                                        }
+                                    },
+                                    {
+                                        "name": "query",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "dbinterface",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Query IIDs",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "customer_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "id_number": {
+                                                        "type": "string"
+                                                    },
+                                                    "first_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "last_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "string"
+                                                    },
+                                                    "primary_phone": {
+                                                        "type": "string"
+                                                    },
+                                                    "additional_phone": {
+                                                        "type": "string"
+                                                    },
+                                                    "social_net_fb": {
+                                                        "type": "string"
+                                                    },
+                                                    "social_net_tw": {
+                                                        "type": "string"
+                                                    },
+                                                    "social_net_lnk": {
+                                                        "type": "string"
+                                                    },
+                                                    "occupation": {
+                                                        "type": "string"
+                                                    },
+                                                    "birthday": {
+                                                        "type": "date"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Process all IIDs",
+                    "dependsOnList": [
+                        "SET Session Globals"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "get Instances;",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "list instances lu_name=${@lu_name}"
+                                    },
+                                    {
+                                        "name": "lu_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Instance": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Read Params",
+                    "dependsOnList": [
+                        "Check if query was provided"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Check Query Condition",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "Equals",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Format Input",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": {
+                                            "userCode": "var val = {\r\n    Instance: iid[0]+\"\"\r\n}\r\nval;\r\n",
+                                            "script": "var val = {\n  Instance: iid[0] + \"\"\n};\nval;"
+                                        }
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "customer_id": {
+                                                    "type": "integer"
+                                                },
+                                                "id_number": {
+                                                    "type": "string"
+                                                },
+                                                "first_name": {
+                                                    "type": "string"
+                                                },
+                                                "last_name": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "primary_phone": {
+                                                    "type": "string"
+                                                },
+                                                "additional_phone": {
+                                                    "type": "string"
+                                                },
+                                                "social_net_fb": {
+                                                    "type": "string"
+                                                },
+                                                "social_net_tw": {
+                                                    "type": "string"
+                                                },
+                                                "social_net_lnk": {
+                                                    "type": "string"
+                                                },
+                                                "occupation": {
+                                                    "type": "string"
+                                                },
+                                                "birthday": {
+                                                    "type": "date"
+                                                }
+                                            }
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "query_cond_result",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "Instance": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "customer_id": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Query Provided Else",
+                    "dependsOnList": [
+                        "Process all IIDs"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Dummy",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Check if prefixed",
+                    "dependsOnList": [
+                        "Dummy"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Check starts with D2D_",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "input1 != null && input1.Instance != null && !input1.Instance.contains(\"D2D_\")"
+                                    },
+                                    {
+                                        "name": "input1",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "Instance": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Extract Instance",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": " input1.Instance"
+                                    },
+                                    {
+                                        "name": "input1",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "Instance": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Not prefixed",
+                    "dependsOnList": [
+                        "Dummy"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Format the IID",
+                    "dependsOnList": [
+                        "Check if prefixed"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Format IID",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "'D2D_${input1}'"
+                                    },
+                                    {
+                                        "name": "input1",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 12",
+                    "dependsOnList": [
+                        "Not prefixed"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Build the IID String",
+                    "dependsOnList": [
+                        "Format the IID"
+                    ],
+                    "isLast": 1,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Build IID String",
+                            "actorType": {
+                                "parentType": "StringBuild",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 13",
+                    "dependsOnList": [
+                        "Stage 12"
+                    ],
+                    "isLast": 1,
+                    "isTransactional": false,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Execute",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "run bwD2DExecute",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "batch CRM.(${@iids}) fabric_command=\"broadway ${@luType}.bwD2DExecute iid=?, execution_mode='${@exec_mode}'\" WITH ASYNC=TRUE;"
+                                    },
+                                    {
+                                        "name": "iids",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "exec_mode",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Batch id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Execution id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Notes": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Wait until finished",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "BatchWait1",
+                            "actorType": {
+                                "parentType": "BatchWait",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Create Excel",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "True",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "And",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Excel - PrintD2Dv2Result",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwPrintD2Dv2Result"
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "xlsx",
+                                        "name": "file_type",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "xlsx",
+                                                "xls"
+                                            ]
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": false,
+                                        "name": "strict",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "",
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "path",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Excel - PrintD2Dv2Result",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "run bwD2DExecute",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "get Instances;",
+                "name": "lu_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Execution Mode - Recon",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "run bwD2DExecute",
+                "name": "exec_mode"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Query",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Query Provided?",
+                "name": "query"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Query",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Query IIDs",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Interface",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Query Provided?",
+                "name": "dbinterface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Interface",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Query IIDs",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Query Provided?",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Check Query Condition",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Query IIDs",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Format Input",
+                "name": "iid"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "get Instances;",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Check starts with D2D_",
+                "name": "input1"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "get Instances;",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Extract Instance",
+                "name": "input1"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Format Input",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Extract Instance",
+                "name": "input1"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Format Input",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Check starts with D2D_",
+                "name": "input1"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Extract Instance",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Format IID",
+                "name": "input1"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Format IID",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Build IID String",
+                "name": "input"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "Build IID String",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "run bwD2DExecute",
+                "name": "iids"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "run bwD2DExecute",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "BatchWait1",
+                "name": "batchId"
+            },
+            "iterate": "First",
+            "path": [
+                "Batch id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "run bwD2DExecute",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Excel - PrintD2Dv2Result",
+                "name": "taskExecutionID"
+            },
+            "iterate": "First",
+            "path": [
+                "Execution id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "BatchWait1",
+                "name": "succeeded"
+            },
+            "rightPort": {
+                "actor": "True",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "db_query"
+            },
+            "rightPort": {
+                "actor": "Query",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "db_interface"
+            },
+            "rightPort": {
+                "actor": "Interface",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Excel - PrintD2Dv2Result",
+                "name": "path"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "path"
+            }
+        }
+    ]
+}

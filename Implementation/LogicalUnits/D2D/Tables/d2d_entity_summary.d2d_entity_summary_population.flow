@@ -1,0 +1,354 @@
+stages:
+  Input:
+    actors:
+      PopulationArgs:
+        parent: PopulationArgs
+        readonly: true
+        in:
+          iid:
+            external: iid
+            schema: any
+        out:
+          parent_rows:
+            schema: '#ref'
+  Query D2D_RECORD_SUMMARY:
+    actors:
+      Instance Not Found:
+        parent: DbFetchField
+        in:
+          interface:
+            const: fabric
+          sql:
+            const: "Select match_result\r\nFrom D2D_FIELD_SUMMARY\r\nWhere match_result\
+              \ In ('Instance Not Found In Source',\r\n  'Instance Not Found In Target')"
+        out:
+          result:
+            schema: string
+      Entity Rows:
+        parent: DbCommand
+        in:
+          interface:
+            const: fabric
+          sql:
+            const: "SELECT EXECUTION_ID, \r\n       IID, \r\n       ifnull(sum(NUMBER_OF_FIELDS_MATCH),\
+              \ 0) as NUMBER_OF_FIELDS_MATCH, \r\n       ifnull(sum(NUMBER_OF_FIELDS_MISMATCH),\
+              \ 0) as NUMBER_OF_FIELDS_MISMATCH, \r\n       ifnull(sum(NUMBER_OF_FIELDS_ONLY_IN_SOURCE),0)\
+              \ as NUMBER_OF_FIELDS_ONLY_IN_SOURCE, \r\n       ifnull(sum (NUMBER_OF_FIELDS_ONLY_IN_TARGET),0)\
+              \ as NUMBER_OF_FIELDS_ONLY_IN_TARGET,\r\n       ifnull(sum (NUMBER_OF_FIELDS_UNSECURED_IN_TARGET),0)\
+              \ as NUMBER_OF_FIELDS_UNSECURED_IN_TARGET,\r\n       (select count(*)\
+              \ from D2D_RECORD_SUMMARY where MATCH_RESULT = 'Match') as NUMBER_OF_RECORDS_MATCH,\
+              \ \r\n       (select count(*) from D2D_RECORD_SUMMARY where MATCH_RESULT\
+              \ = 'Mismatch') as NUMBER_OF_RECORDS_MISMATCH,\r\n       (select count(*)\
+              \ from D2D_RECORD_SUMMARY where NUMBER_OF_FIELDS_UNSECURED_IN_TARGET\
+              \ != 0) as NUMBER_OF_RECORDS_UNSECURED_IN_TARGET,\r\n       current_timestamp\
+              \ as UPDATE_TIME\r\nFROM   D2D_RECORD_SUMMARY"
+        out:
+          result:
+            schema: '#ref'
+      Summary Table Map:
+        parent: GetSchema
+        in:
+          luName:
+            external: schema
+          table_name:
+            external: table
+      EXECUTION ID:
+        parent: GetD2DExecutionID
+        in:
+          luName:
+            external: schema
+  Each Row:
+    transactional: true
+    actors:
+      NotNull1:
+        parent: NotNull
+        condition: result
+        in:
+          value:
+            link:
+              path: Entity Rows/result/IID
+              iterate: Iterate
+      Row:
+        parent: Const
+        in:
+          value:
+            const: null
+            link:
+              path: Entity Rows/result
+              iterate: Iterate
+        out:
+          value:
+            schema: '#ref'
+      Row Counter:
+        parent: PopulationCount
+  Check Match Result:
+    transactional: true
+    dependsOn: Each Row
+    actors:
+      Instance Found:
+        parent: IsNull
+        condition: result
+        in:
+          value:
+            link: Instance Not Found/result
+      Is Matched:
+        parent: JavaScript
+        in:
+          script:
+            const:
+              userCode: "var rs;\r\nif( (mismatch == 0 || mismatch == null) && (source\
+                \ == 0 || source == null) && (target == 0 || target == null)){\r\n\
+                \    rs = 'Match';\r\n}else{\r\n    rs = 'Mismatch';\r\n}"
+              script: |-
+                var rs;
+
+                if ((mismatch == 0 || mismatch == null) && (source == 0 || source == null) && (target == 0 || target == null)) {
+                  rs = 'Match';
+                } else {
+                  rs = 'Mismatch';
+                }
+          mismatch:
+            link: Row/value/NUMBER_OF_RECORDS_MISMATCH
+            schema: integer
+          source:
+            link: Row/value/NUMBER_OF_FIELDS_ONLY_IN_SOURCE
+            schema: integer
+          target:
+            link: Row/value/NUMBER_OF_FIELDS_ONLY_IN_TARGET
+            schema: integer
+          match:
+            link: Row/value/NUMBER_OF_FIELDS_MATCH
+            schema: integer
+            mandatory: false
+        out:
+          result:
+            schema: string
+    split: '--------------------'
+  Not Found:
+    else: true
+    transactional: true
+    dependsOn: Each Row
+    actors:
+      Instance Not Found Value:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: Instance Not Found/result
+        out:
+          value:
+            schema: string
+  Update:
+    last: 1
+    transactional: true
+    actors:
+      Check Report Condition:
+        parent: InnerFlow
+        condition: insert
+        in:
+          flowName:
+            const: bwCheckReportCondition
+          result:
+            link: Is Matched/result
+            schema: string
+            mandatory: false
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+        out:
+          insert:
+            schema: boolean
+      D2D LU Inserts:
+        parent: DbLoad
+        in:
+          interface:
+            const: fabric
+          schema:
+            const: null
+            external: schema
+          table:
+            const: D2D_ENTITY_SUMMARY
+          fields:
+            const:
+            - EXECUTION_ID
+            - IID
+            - NUMBER_OF_FIELDS_MATCH
+            - NUMBER_OF_FIELDS_MISMATCH
+            - NUMBER_OF_FIELDS_ONLY_IN_SOURCE
+            - NUMBER_OF_FIELDS_ONLY_IN_TARGET
+            - NUMBER_OF_FIELDS_UNSECURED_IN_TARGET
+            - NUMBER_OF_RECORDS_MATCH
+            - NUMBER_OF_RECORDS_MISMATCH
+            - NUMBER_OF_RECORDS_UNSECURED_IN_TARGET
+            - MATCH_RESULT
+            - UPDATE_TIME
+          batch:
+            const: true
+          EXECUTION_ID:
+            link: EXECUTION ID/result
+            schema: string
+          IID:
+            schema: string
+          NUMBER_OF_FIELDS_MATCH:
+            schema: any
+          NUMBER_OF_FIELDS_MISMATCH:
+            schema: any
+          NUMBER_OF_FIELDS_ONLY_IN_SOURCE:
+            schema: any
+          NUMBER_OF_FIELDS_ONLY_IN_TARGET:
+            schema: any
+          NUMBER_OF_RECORDS_MATCH:
+            schema: any
+          NUMBER_OF_RECORDS_MISMATCH:
+            schema: any
+          MATCH_RESULT:
+            link:
+            - Is Matched/result
+            - Instance Not Found Value/value
+            schema: string
+          NUMBER_OF_FIELDS_UNSECURED_IN_TARGET:
+            link: Row/value/NUMBER_OF_FIELDS_UNSECURED_IN_TARGET
+            schema: integer
+            mandatory: false
+          NUMBER_OF_RECORDS_UNSECURED_IN_TARGET:
+            link: Row/value/NUMBER_OF_RECORDS_UNSECURED_IN_TARGET
+            schema: integer
+            mandatory: false
+          UPDATE_TIME:
+            schema: any
+            mandatory: false
+          params:
+            link: Row/value
+      D2D Validation Results:
+        parent: DbLoad
+        in:
+          interface:
+            const: fabric
+            link: Summary Table Map/map/interface_name
+            default: true
+          schema:
+            const: null
+            link: Summary Table Map/map/schema_name
+          table:
+            const: null
+            link: Summary Table Map/map/table_name
+          fields:
+            const:
+            - execution_id
+            - iid
+            - number_of_fields_match
+            - number_of_fields_mismatch
+            - number_of_fields_only_in_source
+            - number_of_fields_only_in_target
+            - number_of_fields_unsecured_in_target
+            - number_of_records_match
+            - number_of_records_mismatch
+            - number_of_records_unsecured_in_target
+            - match_result
+            - update_time
+          keys:
+            const:
+            - execution_id
+            - iid
+          dialect:
+            const: sqlite
+          batch:
+            const: true
+          execution_id:
+            link: EXECUTION ID/result
+            schema: string
+          iid:
+            schema: string
+          number_of_fields_match:
+            schema: any
+          number_of_fields_mismatch:
+            schema: any
+          number_of_fields_only_in_source:
+            schema: any
+          number_of_fields_only_in_target:
+            schema: any
+          number_of_records_match:
+            schema: any
+          number_of_records_mismatch:
+            schema: any
+          match_result:
+            link:
+            - Is Matched/result
+            - Instance Not Found Value/value
+            schema: string
+          number_of_fields_unsecured_in_target:
+            link: Row/value/NUMBER_OF_FIELDS_UNSECURED_IN_TARGET
+            schema: integer
+            mandatory: false
+          number_of_records_unsecured_in_target:
+            link: Row/value/NUMBER_OF_RECORDS_UNSECURED_IN_TARGET
+            schema: integer
+            mandatory: false
+          update_time:
+            schema: any
+            mandatory: false
+          params:
+            link: Row/value
+  Stage 3:
+    transactional: false
+schemas:
+  PopulationArgs.out.parent_rows:
+    type: array
+    items:
+      type: object
+      properties:
+        iid:
+          type: string
+  Entity Rows.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        EXECUTION_ID:
+          type: string
+        IID:
+          type: string
+        NUMBER_OF_FIELDS_MATCH:
+          type: integer
+        NUMBER_OF_FIELDS_MISMATCH:
+          type: integer
+        NUMBER_OF_FIELDS_ONLY_IN_SOURCE:
+          type: integer
+        NUMBER_OF_FIELDS_ONLY_IN_TARGET:
+          type: integer
+        NUMBER_OF_FIELDS_UNSECURED_IN_TARGET:
+          type: integer
+        NUMBER_OF_RECORDS_MATCH:
+          type: integer
+        NUMBER_OF_RECORDS_MISMATCH:
+          type: integer
+        NUMBER_OF_RECORDS_UNSECURED_IN_TARGET:
+          type: integer
+        UPDATE_TIME:
+          type: string
+  Row.out.value:
+    type: object
+    properties:
+      EXECUTION_ID:
+        type: string
+      IID:
+        type: string
+      NUMBER_OF_FIELDS_MATCH:
+        type: integer
+      NUMBER_OF_FIELDS_MISMATCH:
+        type: integer
+      NUMBER_OF_FIELDS_ONLY_IN_SOURCE:
+        type: integer
+      NUMBER_OF_FIELDS_ONLY_IN_TARGET:
+        type: integer
+      NUMBER_OF_FIELDS_UNSECURED_IN_TARGET:
+        type: integer
+      NUMBER_OF_RECORDS_MATCH:
+        type: integer
+      NUMBER_OF_RECORDS_MISMATCH:
+        type: integer
+      NUMBER_OF_RECORDS_UNSECURED_IN_TARGET:
+        type: integer
+      UPDATE_TIME:
+        type: string

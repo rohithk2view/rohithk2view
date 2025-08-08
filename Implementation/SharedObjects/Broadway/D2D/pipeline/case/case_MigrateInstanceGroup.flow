@@ -1,0 +1,505 @@
+{
+    "tags": [
+        "d2d",
+        "pipeline"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Prepare",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Sync",
+                            "actorType": {
+                                "parentType": "FabricSet",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "sync",
+                                        "isDefault": false
+                                    },
+                                    {
+                                        "name": "value",
+                                        "const": "force",
+                                        "isDefault": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "StringFormat1",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "BATCH ${luName} FROM ${schema_name} USING ('${sql}')  FABRIC_COMMAND=\"sync_instance ${luName}.?\" with async='true';"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "schema_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "path to monitor",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "/app/admin/batches/batch-monitor/"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Execute",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Batch Run",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Batch id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Execution id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Notes": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Pause",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Wait on Batch Completion",
+                            "actorType": {
+                                "parentType": "BatchWait",
+                                "inputs": [
+                                    {
+                                        "name": "waitForSeconds",
+                                        "const": 0
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "path with batch id",
+                            "actorType": {
+                                "parentType": "Concat",
+                                "inputs": [
+                                    {
+                                        "name": "delimiter",
+                                        "const": ""
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Prepare Links",
+                    "dependsOnList": [
+                        "Pause"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Number Succeeded",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${succeeded} succeeded from total of ${total} instances"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    },
+                                    {
+                                        "name": "succeeded",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "total",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Check Common",
+                    "dependsOnList": [
+                        "Pause"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Print Activated?",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "a",
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "false",
+                                                "true"
+                                            ]
+                                        },
+                                        "const": "false",
+                                        "isDefault": true
+                                    },
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "true"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Summary DB Updated?",
+                            "remark": "If Common load wait for sync operations",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwIsDBUpdated"
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "countOfEntities",
+                                        "schema": {
+                                            "type": "number"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Update Links",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Succeeded instances",
+                            "actorType": {
+                                "parentType": "Label",
+                                "inputs": [
+                                    {
+                                        "name": "Success",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Monitor Page",
+                            "actorType": {
+                                "parentType": "Link",
+                                "inputs": [
+                                    {
+                                        "name": "name",
+                                        "const": "Monitor Link"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "StringFormat1",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Batch Run",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "path to monitor",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "path with batch id",
+                "name": "elements"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "Batch Run",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Wait on Batch Completion",
+                "name": "batchId"
+            },
+            "iterate": "First",
+            "path": [
+                "Batch id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Batch Run",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "path with batch id",
+                "name": "elements"
+            },
+            "iterate": "First",
+            "path": [
+                "Batch id"
+            ],
+            "arrayPosition": 1
+        },
+        {
+            "leftPort": {
+                "actor": "Wait on Batch Completion",
+                "name": "succeeded"
+            },
+            "rightPort": {
+                "actor": "Number Succeeded",
+                "name": "succeeded"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Wait on Batch Completion",
+                "name": "total"
+            },
+            "rightPort": {
+                "actor": "Number Succeeded",
+                "name": "total"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Wait on Batch Completion",
+                "name": "succeeded"
+            },
+            "rightPort": {
+                "actor": "Summary DB Updated?",
+                "name": "countOfEntities"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "path with batch id",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Monitor Page",
+                "name": "link"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Number Succeeded",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Succeeded instances",
+                "name": "Success"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "StringFormat1",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "schema_name"
+            },
+            "rightPort": {
+                "actor": "StringFormat1",
+                "name": "schema_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "sql"
+            },
+            "rightPort": {
+                "actor": "StringFormat1",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "print_report"
+            },
+            "rightPort": {
+                "actor": "Print Activated?",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Summary DB Updated?",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "Summary DB Updated?",
+                "name": "taskExecutionID"
+            }
+        }
+    ]
+}

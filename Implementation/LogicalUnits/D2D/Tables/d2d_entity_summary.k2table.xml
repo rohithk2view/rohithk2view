@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TableObject xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>d2d_entity_summary</Name>
+  <ID>tbl_d2d_entity_summary</ID>
+  <Columns>
+    <Column name="execution_id" id="tblCol_c415a187f084445ca961c8570082fe6a" index="0" datatype="text" />
+    <Column name="iid" id="tblCol_94282ace1f5f473aaeaa8169152e9407" index="1" datatype="text" />
+    <Column name="number_of_fields_match" id="tblCol_011fc3502db4408fa725ee6f3421703a" index="2" datatype="integer" />
+    <Column name="number_of_fields_mismatch" id="tblCol_a98fc40fca5d43bfaae164cdaa526970" index="3" datatype="integer" />
+    <Column name="number_of_fields_only_in_source" id="tblCol_0c9406e552f14dc1916478c2634a7ebe" index="4" datatype="integer" />
+    <Column name="number_of_fields_only_in_target" id="tblCol_a3bed4d50436460b8804f78a317c2a26" index="5" datatype="integer" />
+    <Column name="number_of_fields_unsecured_in_target" id="number_of_fields_unsecured_in_target" index="6" datatype="integer" />
+    <Column name="number_of_records_match" id="tblCol_e9d79e3c936d4cbc853adad903d7d299" index="7" datatype="integer" />
+    <Column name="number_of_records_mismatch" id="tblCol_cbf65f0f8653439ca6d17b9165365396" index="8" datatype="integer" />
+    <Column name="number_of_records_unsecured_in_target" id="number_of_records_unsecured_in_target" index="9" datatype="integer" />
+    <Column name="match_result" id="tblCol_af488dd349d4434189a5fae465a12eb7" index="10" datatype="text" />
+    <Column name="update_time" id="update_time" index="11" datatype="datetime" />
+  </Columns>
+  <IndexesList>
+    <Index id="1" pk="true" unique="true" instanceOnly="true" columnsIdsList="tblCol_c415a187f084445ca961c8570082fe6a,tblCol_94282ace1f5f473aaeaa8169152e9407" />
+  </IndexesList>
+  <EnrichmentList />
+  <LazyDataUpdate syncMethod="Inherited" performEvery="1.00:00:00" />
+  <TriggersList />
+</TableObject>

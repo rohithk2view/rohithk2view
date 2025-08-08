@@ -1,0 +1,8 @@
+Lu_Name,Source_Table_Name,Source_Transformation_Function_Name,source_columns_to_Ignore_null,Target_Table_Name,Target_Transformation_Function_Name,target_columns_to_Ignore_null,Customized_Key_Comparison,Mismatch_Columns,Excluded_Columns_Names,Active,Mode
+CRM,customer,,,tar_customer,,,customer_id,ID_NUMBER|EMAIL|PRIMARY_PHONE|LAST_NAME|FIRST_NAME|ADDITIONAL_PHONE,,TRUE,EXACT
+CRM,contract,,,tar_contract,,,contract_id,,ASSOCIATED_LINE,TRUE,EXACT
+CRM,activity,,,tar_activity,,,activity_id|customer_id,,,TRUE,EXACT
+CRM,address,zip:address_zip_trans,STREET_ADDRESS_2,tar_address,zip:address_zip_trans,,address_id,STREET_ADDRESS_1|STREET_ADDRESS_2|STATE,,TRUE,EXACT
+CRM,cases,,,tar_cases,,,case_id,,,FALSE,EXACT
+CRM,case_note,,,tar_case_note,,,note_id,,,FALSE,EXACT
+Billing,balance,,,tar_balance,,,,,,,THRESHOLD_5

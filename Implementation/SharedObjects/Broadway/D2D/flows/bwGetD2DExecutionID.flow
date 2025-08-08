@@ -1,0 +1,120 @@
+{
+    "description": "Read presetted TaskId/Session ID\n\nInputs\nluName: d2d lu name",
+    "tags": [
+        "d2d",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Inputs",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "D2D_EXEC_ID",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [
+                                    {
+                                        "name": "luName",
+                                        "remark": "d2d lu name"
+                                    },
+                                    {
+                                        "name": "variableName",
+                                        "const": "D2D_EXEC_ID"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Execution ID",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "EXECUTION_ID",
+                                        "isDefault": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Output",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Elvis1",
+                            "actorType": {
+                                "parentType": "Elvis",
+                                "inputs": [],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "remark": "unique ID",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "D2D_EXEC_ID",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Elvis1",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Execution ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Elvis1",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "D2D_EXEC_ID",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Elvis1",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "result"
+            }
+        }
+    ]
+}

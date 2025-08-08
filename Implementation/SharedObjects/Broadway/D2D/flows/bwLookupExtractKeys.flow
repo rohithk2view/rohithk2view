@@ -1,0 +1,294 @@
+tags: D2D
+stages:
+  Keys table details:
+    actors:
+      KEYS_TABLE_INTERFACE:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_KEYS_TABLE_INTERFACE
+          luName:
+            external: schema
+      KEYS_TABLE_SCHEMA:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_KEYS_TABLE_SCHEMA
+          luName:
+            external: schema
+      KEYS_TABLE_NAME:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_KEYS_TABLE_NAME
+          luName:
+            external: schema
+  Create keys table:
+    actors:
+      ErrorHandler2:
+        parent: ErrorHandler
+        error: result
+        in:
+          config:
+            const:
+            - exceptionKey: java.lang.Exception
+              conditions:
+                message: already exists
+              actions:
+                suppress: true
+                log: false
+                flowName: ''
+                number_of_retries: ''
+                retry_interval: ''
+            - exceptionKey: java.lang.Exception
+              conditions:
+                message: doesn't exist
+              actions:
+                suppress: true
+                log: false
+                flowName: ''
+                number_of_retries: ''
+                retry_interval: ''
+      Drop table:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: KEYS_TABLE_INTERFACE/variableValue
+          sql:
+            const: drop table if exists ${@schema}.${@tableName}
+          tableName:
+            link: KEYS_TABLE_NAME/variableValue
+            schema: string
+            mandatory: false
+          schema:
+            link: KEYS_TABLE_SCHEMA/variableValue
+            schema: string
+            mandatory: false
+      Create table:
+        parent: DbCreateTable
+        in:
+          interface:
+            const: null
+            link: KEYS_TABLE_INTERFACE/variableValue
+          schema:
+            const: null
+            link: KEYS_TABLE_SCHEMA/variableValue
+          table:
+            const: null
+            link: KEYS_TABLE_NAME/variableValue
+          fields:
+            const:
+            - name: group_id
+              type: text
+              pk: true
+              mandatory: false
+            - name: org_key
+              type: text
+              pk: true
+              mandatory: false
+  Check db types:
+    actors:
+      CheckSourceDB:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwCheckDBType
+          innerFlowClose:
+            const: false
+          id:
+            schema: string
+            mandatory: false
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+          variableNameSchema:
+            const: D2D_LKP_SCHEMA_SRC
+            schema: string
+            mandatory: false
+          variableNameInterface:
+            const: D2D_LKP_INTERFACE_SRC
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+          schema:
+            schema: string
+          type:
+            schema: string
+      CheckTargetDB:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwCheckDBType
+          innerFlowClose:
+            const: false
+          id:
+            schema: string
+            mandatory: false
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+          variableNameSchema:
+            const: D2D_LKP_SCHEMA_TAR
+            schema: string
+            mandatory: false
+          variableNameInterface:
+            const: D2D_LKP_INTERFACE_TAR
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+          schema:
+            schema: string
+          type:
+            schema: string
+  Both Cass:
+    dependsOn: Check db types
+    actors:
+      Both:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: srcDB =='Cassandra (Db)' && tarDB =='Cassandra (Db)'
+          srcDB:
+            link: CheckSourceDB/type
+            schema: string
+            mandatory: false
+          tarDB:
+            link: CheckTargetDB/type
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      bwT2TExtractKeysBasedOnTokens1:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwT2TExtractKeysBasedOnTokens
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+          cassandra_role:
+            const: Both
+            schema: string
+            editor:
+              id: com.k2view.dropdown
+              options:
+              - Source
+              - Target
+              - Both
+              - None
+              syncOutput: true
+            mandatory: false
+    split: '--------------------'
+  Only src is cass:
+    else: true
+    dependsOn: Check db types
+    actors:
+      Source:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: srcDB =='Cassandra (Db)'
+          srcDB:
+            link: CheckSourceDB/type
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      bwT2TExtractKeysBasedOnTokens11:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwT2TExtractKeysBasedOnTokens
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+          cassandra_role:
+            const: Source
+            schema: string
+            editor:
+              id: com.k2view.dropdown
+              options:
+              - Source
+              - Target
+              - Both
+              - None
+              syncOutput: true
+            mandatory: false
+    split: '--------------------'
+  Only tar is cass:
+    else: true
+    dependsOn: Check db types
+    actors:
+      Target:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: tarDB =='Cassandra (Db)'
+          tarDB:
+            link: CheckTargetDB/type
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      bwT2TExtractKeysBasedOnTokens111:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwT2TExtractKeysBasedOnTokens
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+          cassandra_role:
+            const: Target
+            schema: string
+            editor:
+              id: com.k2view.dropdown
+              options:
+              - Source
+              - Target
+              - Both
+              - None
+              syncOutput: true
+            mandatory: false
+    split: '--------------------'
+  None is cass:
+    else: true
+    dependsOn: Check db types
+    actors:
+      bwT2TExtractKeysBasedOnTokens1111:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwT2TExtractKeysBasedOnTokens
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+          cassandra_role:
+            const: None
+            schema: string
+            editor:
+              id: com.k2view.dropdown
+              options:
+              - Source
+              - Target
+              - Both
+              - None
+              syncOutput: true
+            mandatory: false

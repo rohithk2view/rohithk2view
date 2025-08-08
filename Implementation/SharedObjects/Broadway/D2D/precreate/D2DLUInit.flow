@@ -1,0 +1,671 @@
+{
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "LuName",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "PROJECT_DIR",
+                            "actorType": {
+                                "parentType": "SysEnv",
+                                "inputs": [
+                                    {
+                                        "name": "name",
+                                        "const": "PROJECT_DIR"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Implementation Folder",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "file://${ProjDir}/Implementation"
+                                    },
+                                    {
+                                        "name": "ProjDir",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "IidFinder xml path",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${path}/LogicalUnits/${luName}"
+                                    },
+                                    {
+                                        "name": "path",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Tables Dir",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${path}/LogicalUnits/${luName}/Tables"
+                                    },
+                                    {
+                                        "name": "path",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 5",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Delete IIDF XML",
+                            "actorType": {
+                                "parentType": "rm",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "path",
+                                        "const": "IidFinder/IidFinder.k2iiF.xml"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Read IIDF Table Pop",
+                            "actorType": {
+                                "parentType": "FileRead",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "path",
+                                        "const": "Tables/IIDF.query_IIDF.k2tablePop.xml"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Read VDB Schema",
+                            "actorType": {
+                                "parentType": "FileRead",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "path",
+                                        "const": "vdb.k2vdb.xml"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 4",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "ReplacePopFunction",
+                            "actorType": {
+                                "parentType": "Replace",
+                                "inputs": [
+                                    {
+                                        "name": "search",
+                                        "const": "fnIIDFConsMsgs\\b"
+                                    },
+                                    {
+                                        "name": "replace",
+                                        "const": "fnIIDFConsMsgsD2D"
+                                    },
+                                    {
+                                        "name": "regex",
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "ReplaceSyncMethod",
+                            "actorType": {
+                                "parentType": "Replace",
+                                "inputs": [
+                                    {
+                                        "name": "search",
+                                        "const": "syncMethod=\"DecisionFunction\""
+                                    },
+                                    {
+                                        "name": "replace",
+                                        "const": "syncMethod=\"None\""
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 8",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "List All Populations",
+                            "actorType": {
+                                "parentType": "ls",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "pattern",
+                                        "const": "*.population.flow"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "size": {
+                                                        "type": "integer"
+                                                    },
+                                                    "createTime": {
+                                                        "type": "integer"
+                                                    },
+                                                    "lastModifiedTime": {
+                                                        "type": "integer"
+                                                    },
+                                                    "lastAccessTime": {
+                                                        "type": "integer"
+                                                    },
+                                                    "directory": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 6",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Read Table Pop",
+                            "actorType": {
+                                "parentType": "FileRead",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 7",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Replace MBD Finder",
+                            "actorType": {
+                                "parentType": "Replace",
+                                "inputs": [
+                                    {
+                                        "name": "search",
+                                        "const": ",\\s*\\{\\s*\\n\\s+\"name\":\\s*\"use_mbd_finder\",\\n\\s*\"const\":\\s*true\\n\\s*\\}"
+                                    },
+                                    {
+                                        "name": "regex",
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 9",
+                    "dependsOnList": [],
+                    "isLast": 1,
+                    "actors": [
+                        {
+                            "name": "Write Table Pop",
+                            "actorType": {
+                                "parentType": "FileWrite",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 10",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Update IIDF Pop",
+                            "actorType": {
+                                "parentType": "FileWrite",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "path",
+                                        "const": "Tables/IIDF.query_IIDF.k2tablePop.xml"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Update VDB",
+                            "actorType": {
+                                "parentType": "FileWrite",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "path",
+                                        "const": "vdb.k2vdb.xml"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "LuName",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "IidFinder xml path",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "LuName",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Tables Dir",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "PROJECT_DIR",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Implementation Folder",
+                "name": "ProjDir"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Implementation Folder",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "IidFinder xml path",
+                "name": "path"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Implementation Folder",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Tables Dir",
+                "name": "path"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IidFinder xml path",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Delete IIDF XML",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IidFinder xml path",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Read IIDF Table Pop",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IidFinder xml path",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Read VDB Schema",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IidFinder xml path",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Update IIDF Pop",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IidFinder xml path",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Update VDB",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Tables Dir",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "List All Populations",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Tables Dir",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Read Table Pop",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Tables Dir",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Write Table Pop",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Read IIDF Table Pop",
+                "name": "stream"
+            },
+            "rightPort": {
+                "actor": "ReplacePopFunction",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Read VDB Schema",
+                "name": "stream"
+            },
+            "rightPort": {
+                "actor": "ReplaceSyncMethod",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReplacePopFunction",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Update IIDF Pop",
+                "name": "stream"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReplaceSyncMethod",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Update VDB",
+                "name": "stream"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "List All Populations",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Read Table Pop",
+                "name": "path"
+            },
+            "iterate": "Iterate",
+            "path": [
+                "name"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "List All Populations",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Write Table Pop",
+                "name": "path"
+            },
+            "iterate": "Iterate",
+            "path": [
+                "name"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Read Table Pop",
+                "name": "stream"
+            },
+            "rightPort": {
+                "actor": "Replace MBD Finder",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Replace MBD Finder",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Write Table Pop",
+                "name": "stream"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "LU_NAME"
+            },
+            "rightPort": {
+                "actor": "LuName",
+                "name": "value"
+            }
+        }
+    ]
+}

@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VirtualDB xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7.2.2.5">
+  <Name>vdb</Name>
+  <RootView>d2d_root</RootView>
+  <LuLazyDataUpdate syncMethod="None" performEvery="1.00:00:00">
+    <DecisionFunction />
+  </LuLazyDataUpdate>
+  <EventsList />
+  <IidFinderProp>
+    <NumberOfPartitions>100</NumberOfPartitions>
+    <NumberOfJobs>50</NumberOfJobs>
+  </IidFinderProp>
+  <Tables>
+    <Table>d2d_entity_summary</Table>
+    <Table>d2d_field_summary</Table>
+    <Table>d2d_record_summary</Table>
+    <Table>d2d_root</Table>
+    <Table>d2d_table_summary</Table>
+  </Tables>
+  <TablesProperties>
+    <TableProperties name="d2d_entity_summary">
+      <Populations>
+        <Population name="d2d_entity_summary_population.flow" order="903" disabled="false" populationType="Flow" />
+      </Populations>
+    </TableProperties>
+    <TableProperties name="d2d_field_summary">
+      <Populations>
+        <Population name="d2d_fields_summary_population.flow" order="900" disabled="false" populationType="Flow" />
+        <Population name="d2d_fields_summery_population.flow" order="900" disabled="true" populationType="Flow" />
+        <Population name="d2d_field_summary_population.flow" order="900" disabled="false" populationType="Flow" />
+      </Populations>
+    </TableProperties>
+    <TableProperties name="d2d_record_summary">
+      <Populations>
+        <Population name="d2d_record_summary_population.flow" order="901" disabled="false" populationType="Flow" />
+      </Populations>
+    </TableProperties>
+    <TableProperties name="d2d_root">
+      <Populations>
+        <Population name="population.flow" order="1" disabled="false" populationType="Flow" />
+      </Populations>
+    </TableProperties>
+    <TableProperties name="d2d_table_summary">
+      <Populations>
+        <Population name="d2d_table_summary_population.flow" order="902" disabled="false" populationType="Flow" />
+      </Populations>
+    </TableProperties>
+  </TablesProperties>
+  <EnrichmentsOrderList />
+  <ReferencesList />
+  <Relations />
+  <DatabaseRelations>
+    <Relation>
+      <From tableType="TableObject" table="d2d_root" column="IID" columnId="IID" />
+      <To tableType="TableObject" table="d2d_field_summary" populationObjectName="d2d_fields_summary_population.flow" column="iid" columnId="tblCol_94282ace1f5f473aaeaa8169152e9407" />
+    </Relation>
+    <Relation>
+      <From tableType="TableObject" table="d2d_root" column="IID" columnId="IID" />
+      <To tableType="TableObject" table="d2d_field_summary" populationObjectName="d2d_fields_summery_population.flow" column="iid" columnId="tblCol_94282ace1f5f473aaeaa8169152e9407" />
+    </Relation>
+    <Relation>
+      <From tableType="TableObject" table="d2d_root" column="IID" columnId="IID" />
+      <To tableType="TableObject" table="d2d_record_summary" populationObjectName="d2d_record_summary_population.flow" column="iid" columnId="tblCol_94282ace1f5f473aaeaa8169152e9407" />
+    </Relation>
+    <Relation>
+      <From tableType="TableObject" table="d2d_root" column="IID" columnId="IID" />
+      <To tableType="TableObject" table="d2d_table_summary" populationObjectName="d2d_table_summary_population.flow" column="iid" columnId="tblCol_94282ace1f5f473aaeaa8169152e9407" />
+    </Relation>
+    <Relation>
+      <From tableType="TableObject" table="d2d_root" column="IID" columnId="IID" />
+      <To tableType="TableObject" table="d2d_entity_summary" populationObjectName="d2d_entity_summary_population.flow" column="iid" columnId="tblCol_94282ace1f5f473aaeaa8169152e9407" />
+    </Relation>
+    <Relation>
+      <From tableType="TableObject" table="d2d_root" column="IID" columnId="IID" />
+      <To tableType="TableObject" table="d2d_field_summary" populationObjectName="d2d_field_summary_population.flow" column="iid" columnId="tblCol_94282ace1f5f473aaeaa8169152e9407" />
+    </Relation>
+  </DatabaseRelations>
+  <PreVCsSqlScript />
+  <PostVCsSqlScript />
+  <Indexes />
+  <LudbProperties />
+  <DiagramGraph>
+    <Graph version="7.2.2.5" name="vdb.k2vdb.xml">
+      <Group name="D2D" pos="-66 195.908859" size="566 750.0911" wasexpanded="false" expanded="true">
+        <Node name="d2d_entity_summary" pos="239 806" size="257 136" listGroupSize="250 100" viewType="Table" />
+        <Node name="d2d_field_summary" pos="239 215" size="257 168" listGroupSize="250 100" viewType="Table" />
+        <Node name="d2d_record_summary" pos="239 431" size="257 136" listGroupSize="250 100" viewType="Table" />
+        <Node name="d2d_root" pos="-62 481" size="257 136" listGroupSize="250 100" viewType="Table" />
+        <Node name="d2d_table_summary" pos="239 606" size="257 136" listGroupSize="250 100" viewType="Table" />
+      </Group>
+    </Graph>
+  </DiagramGraph>
+</VirtualDB>

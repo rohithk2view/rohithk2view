@@ -1,0 +1,928 @@
+{
+    "tags": [
+        "d2dv2",
+        "d2d",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Preinit",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Report Interface Key",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${lu_name}.${key}"
+                                    },
+                                    {
+                                        "const": "D2D_RESULT_INTERFACE",
+                                        "name": "key",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "lu_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Report Schema Key",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${lu_name}.${key}"
+                                    },
+                                    {
+                                        "const": "D2D_LOAD_SCHEMA",
+                                        "name": "key",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "lu_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Init",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "IID",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "ReportInterface",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": null,
+                                        "isDefault": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "EXECUTION ID",
+                            "actorType": {
+                                "parentType": "GetD2DExecutionID",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "GetSummaryTables",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwGetSummaryTableNames"
+                                    },
+                                    {
+                                        "name": "interface",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "field_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "record_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "table_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "entity_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Get from Record Summary Table",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Instance Not Found",
+                            "actorType": {
+                                "parentType": "DbFetchField",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "Select match_result\nFrom ${@schema}.${@res_table} gd where gd.IID = ${iid} and gd.EXECUTION_ID=${execution_id}\nand match_result In ('Instance Not Found In Source',  'Instance Not Found In Target')"
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "res_table",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "execution_id",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Entity Rows",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "SELECT execution_id,\n\t\tiid,\n\t\tcoalesce(sum(NUMBER_OF_FIELDS_MATCH), 0) as NUMBER_OF_FIELDS_MATCH,\n\t\tcoalesce(sum(NUMBER_OF_FIELDS_MISMATCH), 0) as NUMBER_OF_FIELDS_MISMATCH,\n\t\tcoalesce(sum(NUMBER_OF_FIELDS_ONLY_IN_SOURCE),0) as NUMBER_OF_FIELDS_ONLY_IN_SOURCE,\n\t\tcoalesce(sum (NUMBER_OF_FIELDS_ONLY_IN_TARGET),0) as NUMBER_OF_FIELDS_ONLY_IN_TARGET,\n\t\tcoalesce(sum (NUMBER_OF_FIELDS_UNSECURED_IN_TARGET),0) as NUMBER_OF_FIELDS_UNSECURED_IN_TARGET,\n\t\t(select count(*) from ${@res_schema}.${@res_table} where MATCH_RESULT = 'Match' and iid=${iid} and execution_id=${exec_id}) as NUMBER_OF_RECORDS_MATCH,\n\t\t(select count(*) from ${@res_schema}.${@res_table} where MATCH_RESULT = 'Mismatch' and iid=${iid} and execution_id=${exec_id}) as NUMBER_OF_RECORDS_MISMATCH,\n\t\t(select count(*) from ${@res_schema}.${@res_table} where NUMBER_OF_FIELDS_UNSECURED_IN_TARGET != 0 and iid=${iid} and execution_id=${exec_id}) as NUMBER_OF_RECORDS_UNSECURED_IN_TARGET,\n\t\tcurrent_timestamp as UPDATE_TIME\nFROM  ${@res_schema}.${@res_table} where iid=${iid} and execution_id=${exec_id} group by EXECUTION_ID, IID"
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "exec_id",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "res_schema",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "res_table",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "EXECUTION_ID": {
+                                                        "type": "string"
+                                                    },
+                                                    "IID": {
+                                                        "type": "string"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_MATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_MISMATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_ONLY_IN_SOURCE": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_ONLY_IN_TARGET": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_UNSECURED_IN_TARGET": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_MATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_MISMATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_UNSECURED_IN_TARGET": {
+                                                        "type": "integer"
+                                                    },
+                                                    "UPDATE_TIME": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Pass Through and Row Counter",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": true,
+                    "actors": [
+                        {
+                            "name": "Row",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "execution_id": {
+                                                    "type": "string"
+                                                },
+                                                "iid": {
+                                                    "type": "string"
+                                                },
+                                                "number_of_fields_match": {
+                                                    "type": "integer"
+                                                },
+                                                "number_of_fields_mismatch": {
+                                                    "type": "integer"
+                                                },
+                                                "number_of_fields_only_in_source": {
+                                                    "type": "integer"
+                                                },
+                                                "number_of_fields_only_in_target": {
+                                                    "type": "integer"
+                                                },
+                                                "number_of_fields_unsecured_in_target": {
+                                                    "type": "integer"
+                                                },
+                                                "number_of_records_match": {
+                                                    "type": "integer"
+                                                },
+                                                "number_of_records_mismatch": {
+                                                    "type": "integer"
+                                                },
+                                                "number_of_records_unsecured_in_target": {
+                                                    "type": "integer"
+                                                },
+                                                "update_time": {
+                                                    "type": "date"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Check Match",
+                    "dependsOnList": [
+                        "Pass Through and Row Counter"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": true,
+                    "actors": [
+                        {
+                            "name": "Instance Found",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "IsNull",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Is Matched",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": {
+                                            "userCode": "var rs;\r\nif( (mismatch == 0 || mismatch == null) && (source == 0 || source == null) && (target == 0 || target == null)){\r\n    rs = 'Match';\r\n}else{\r\n    rs = 'Mismatch';\r\n}",
+                                            "script": "var rs;\n\nif ((mismatch == 0 || mismatch == null) && (source == 0 || source == null) && (target == 0 || target == null)) {\n  rs = 'Match';\n} else {\n  rs = 'Mismatch';\n}"
+                                        }
+                                    },
+                                    {
+                                        "name": "mismatch",
+                                        "schema": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    {
+                                        "name": "source",
+                                        "schema": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    {
+                                        "name": "target",
+                                        "schema": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [
+                        "Pass Through and Row Counter"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": true,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "Instance Not Found Value",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Load to Entity Summary",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": true,
+                    "actors": [
+                        {
+                            "name": "D2D Validation Results",
+                            "actorType": {
+                                "parentType": "DbLoad",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric",
+                                        "isDefault": true
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "table",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "fields",
+                                        "const": [
+                                            "execution_id",
+                                            "iid",
+                                            "number_of_fields_match",
+                                            "number_of_fields_mismatch",
+                                            "number_of_fields_only_in_source",
+                                            "number_of_fields_only_in_target",
+                                            "number_of_fields_unsecured_in_target",
+                                            "number_of_records_match",
+                                            "number_of_records_mismatch",
+                                            "number_of_records_unsecured_in_target",
+                                            "match_result",
+                                            "update_time"
+                                        ]
+                                    },
+                                    {
+                                        "name": "keys",
+                                        "const": [
+                                            "execution_id",
+                                            "iid"
+                                        ]
+                                    },
+                                    {
+                                        "name": "execution_id",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "number_of_fields_match",
+                                        "schema": {}
+                                    },
+                                    {
+                                        "name": "number_of_fields_mismatch",
+                                        "schema": {}
+                                    },
+                                    {
+                                        "name": "number_of_fields_only_in_source",
+                                        "schema": {}
+                                    },
+                                    {
+                                        "name": "number_of_fields_only_in_target",
+                                        "schema": {}
+                                    },
+                                    {
+                                        "name": "number_of_records_match",
+                                        "schema": {}
+                                    },
+                                    {
+                                        "name": "number_of_records_mismatch",
+                                        "schema": {}
+                                    },
+                                    {
+                                        "name": "match_result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "number_of_fields_unsecured_in_target",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_records_unsecured_in_target",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "update_time",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Report Interface Key",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "ReportInterface",
+                "name": "key"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IID",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Instance Not Found",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IID",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Entity Rows",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReportInterface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "GetSummaryTables",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReportInterface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Instance Not Found",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReportInterface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Entity Rows",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReportInterface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "D2D Validation Results",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EXECUTION ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Instance Not Found",
+                "name": "execution_id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EXECUTION ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Entity Rows",
+                "name": "exec_id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EXECUTION ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "D2D Validation Results",
+                "name": "execution_id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "GetSummaryTables",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "Instance Not Found",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "GetSummaryTables",
+                "name": "field_summary"
+            },
+            "rightPort": {
+                "actor": "Instance Not Found",
+                "name": "res_table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "GetSummaryTables",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "Entity Rows",
+                "name": "res_schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "GetSummaryTables",
+                "name": "record_summary"
+            },
+            "rightPort": {
+                "actor": "Entity Rows",
+                "name": "res_table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "GetSummaryTables",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "D2D Validation Results",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "GetSummaryTables",
+                "name": "entity_summary"
+            },
+            "rightPort": {
+                "actor": "D2D Validation Results",
+                "name": "table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Instance Not Found",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Instance Found",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Instance Not Found",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Instance Not Found Value",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Entity Rows",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Row",
+                "name": "value"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Row",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Is Matched",
+                "name": "mismatch"
+            },
+            "path": [
+                "number_of_records_mismatch"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Row",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Is Matched",
+                "name": "source"
+            },
+            "path": [
+                "number_of_fields_only_in_source"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Row",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Is Matched",
+                "name": "target"
+            },
+            "path": [
+                "number_of_fields_only_in_target"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Row",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "D2D Validation Results",
+                "name": "number_of_records_unsecured_in_target"
+            },
+            "path": [
+                "number_of_records_unsecured_in_target"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Row",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "D2D Validation Results",
+                "name": "params"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Is Matched",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "D2D Validation Results",
+                "name": "match_result"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Instance Not Found Value",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "D2D Validation Results",
+                "name": "match_result"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "lu_name"
+            },
+            "rightPort": {
+                "actor": "Report Interface Key",
+                "name": "lu_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "lu_name"
+            },
+            "rightPort": {
+                "actor": "Report Schema Key",
+                "name": "lu_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "iid"
+            },
+            "rightPort": {
+                "actor": "IID",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "lu_name"
+            },
+            "rightPort": {
+                "actor": "EXECUTION ID",
+                "name": "luName"
+            }
+        }
+    ]
+}

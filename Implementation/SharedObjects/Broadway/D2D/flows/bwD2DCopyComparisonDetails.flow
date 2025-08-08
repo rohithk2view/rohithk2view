@@ -1,0 +1,1358 @@
+{
+    "tags": [
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "execution_id",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "iid",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Get LU Name",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "fnGetLuType"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Report Interface Key",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${luType}.${key}"
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "D2D_RESULT_INTERFACE",
+                                        "name": "key",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 4",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "ReportInterface",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": null,
+                                        "isDefault": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "FabricGet",
+                            "actorType": {
+                                "parentType": "FabricGet",
+                                "inputs": [
+                                    {
+                                        "name": "luType",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "const": null,
+                                        "isDefault": false
+                                    },
+                                    {
+                                        "name": "syncMode",
+                                        "const": "OFF"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Source Table Names",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwGetSummaryTableNames"
+                                    },
+                                    {
+                                        "name": "interface",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "field_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "record_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "table_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "entity_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Target Table Names",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwGetSummaryTableNames"
+                                    },
+                                    {
+                                        "name": "interface",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "field_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "record_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "table_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "entity_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 5",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Field Summary",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "SELECT * FROM ${@fields_table};"
+                                    },
+                                    {
+                                        "name": "fields_table",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "EXECUTION_ID": {
+                                                        "type": "string"
+                                                    },
+                                                    "IID": {
+                                                        "type": "string"
+                                                    },
+                                                    "SOURCE_TABLE_NAME": {
+                                                        "type": "string"
+                                                    },
+                                                    "TARGET_TABLE_NAME": {
+                                                        "type": "string"
+                                                    },
+                                                    "CUSTOMIZED_KEY": {
+                                                        "type": "string"
+                                                    },
+                                                    "COLUMN_NAME": {
+                                                        "type": "string"
+                                                    },
+                                                    "MATCH_RESULT": {
+                                                        "type": "string"
+                                                    },
+                                                    "TARGET_VALUE_SECURED": {
+                                                        "type": "string"
+                                                    },
+                                                    "SOURCE_COLUMN_VALUE": {
+                                                        "type": "string"
+                                                    },
+                                                    "TARGET_COLUMN_VALUE": {
+                                                        "type": "string"
+                                                    },
+                                                    "SOURCE_COLUMN_VALUE_TRANS": {
+                                                        "type": "string"
+                                                    },
+                                                    "TARGET_COLUMN_VALUE_TRANS": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 6",
+                    "dependsOnList": [],
+                    "isLast": 1,
+                    "isTransactional": true,
+                    "actors": [
+                        {
+                            "name": "DbLoad Fields",
+                            "actorType": {
+                                "parentType": "DbLoad",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "table",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "fields",
+                                        "const": [
+                                            "EXECUTION_ID",
+                                            "IID",
+                                            "SOURCE_TABLE_NAME",
+                                            "TARGET_TABLE_NAME",
+                                            "CUSTOMIZED_KEY",
+                                            "COLUMN_NAME",
+                                            "MATCH_RESULT",
+                                            "TARGET_VALUE_SECURED",
+                                            "SOURCE_COLUMN_VALUE",
+                                            "TARGET_COLUMN_VALUE",
+                                            "SOURCE_COLUMN_VALUE_TRANS",
+                                            "TARGET_COLUMN_VALUE_TRANS"
+                                        ]
+                                    },
+                                    {
+                                        "name": "keys",
+                                        "const": [
+                                            "EXECUTION_ID",
+                                            "IID",
+                                            "SOURCE_TABLE_NAME",
+                                            "TARGET_TABLE_NAME",
+                                            "CUSTOMIZED_KEY",
+                                            "COLUMN_NAME"
+                                        ]
+                                    },
+                                    {
+                                        "name": "dialect",
+                                        "const": "postgres"
+                                    },
+                                    {
+                                        "name": "EXECUTION_ID",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "IID",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "SOURCE_TABLE_NAME",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "TARGET_TABLE_NAME",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "CUSTOMIZED_KEY",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "COLUMN_NAME",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "MATCH_RESULT",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "TARGET_VALUE_SECURED",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "SOURCE_COLUMN_VALUE",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "TARGET_COLUMN_VALUE",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "SOURCE_COLUMN_VALUE_TRANS",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "TARGET_COLUMN_VALUE_TRANS",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 7",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Record Summary",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "SELECT * FROM ${@records_table};"
+                                    },
+                                    {
+                                        "name": "records_table",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "EXECUTION_ID": {
+                                                        "type": "string"
+                                                    },
+                                                    "IID": {
+                                                        "type": "string"
+                                                    },
+                                                    "SOURCE_TABLE_NAME": {
+                                                        "type": "string"
+                                                    },
+                                                    "TARGET_TABLE_NAME": {
+                                                        "type": "string"
+                                                    },
+                                                    "CUSTOMIZED_KEY": {
+                                                        "type": "string"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_MATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_MISMATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_ONLY_IN_SOURCE": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_ONLY_IN_TARGET": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_UNSECURED_IN_TARGET": {
+                                                        "type": "integer"
+                                                    },
+                                                    "MATCH_RESULT": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 8",
+                    "dependsOnList": [],
+                    "isLast": 1,
+                    "isTransactional": true,
+                    "actors": [
+                        {
+                            "name": "DbLoad Records",
+                            "actorType": {
+                                "parentType": "DbLoad",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "table",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "fields",
+                                        "const": [
+                                            "execution_id",
+                                            "iid",
+                                            "source_table_name",
+                                            "target_table_name",
+                                            "customized_key",
+                                            "number_of_fields_match",
+                                            "number_of_fields_mismatch",
+                                            "number_of_fields_only_in_source",
+                                            "number_of_fields_only_in_target",
+                                            "number_of_fields_unsecured_in_target",
+                                            "match_result"
+                                        ]
+                                    },
+                                    {
+                                        "name": "keys",
+                                        "const": [
+                                            "execution_id",
+                                            "iid",
+                                            "source_table_name",
+                                            "target_table_name",
+                                            "customized_key"
+                                        ]
+                                    },
+                                    {
+                                        "name": "dialect",
+                                        "const": "postgres"
+                                    },
+                                    {
+                                        "name": "execution_id",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "source_table_name",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "target_table_name",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "customized_key",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_fields_match",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_fields_mismatch",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_fields_only_in_source",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_fields_only_in_target",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_fields_unsecured_in_target",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "match_result",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 9",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Table Summary",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "SELECT * FROM ${@tables_table};"
+                                    },
+                                    {
+                                        "name": "tables_table",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "EXECUTION_ID": {
+                                                        "type": "string"
+                                                    },
+                                                    "IID": {
+                                                        "type": "string"
+                                                    },
+                                                    "SOURCE_TABLE_NAME": {
+                                                        "type": "string"
+                                                    },
+                                                    "TARGET_TABLE_NAME": {
+                                                        "type": "string"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_MATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_MISMATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_ONLY_IN_SOURCE": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_ONLY_IN_TARGET": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_UNSECURED_IN_TARGET": {
+                                                        "type": "integer"
+                                                    },
+                                                    "MATCH_RESULT": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 10",
+                    "dependsOnList": [],
+                    "isLast": 1,
+                    "isTransactional": true,
+                    "actors": [
+                        {
+                            "name": "DbLoad Tables",
+                            "actorType": {
+                                "parentType": "DbLoad",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "table",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "fields",
+                                        "const": [
+                                            "execution_id",
+                                            "iid",
+                                            "source_table_name",
+                                            "target_table_name",
+                                            "number_of_records_match",
+                                            "number_of_records_mismatch",
+                                            "number_of_records_only_in_source",
+                                            "number_of_records_only_in_target",
+                                            "number_of_records_unsecured_in_target",
+                                            "match_result"
+                                        ]
+                                    },
+                                    {
+                                        "name": "keys",
+                                        "const": [
+                                            "execution_id",
+                                            "iid",
+                                            "source_table_name",
+                                            "target_table_name"
+                                        ]
+                                    },
+                                    {
+                                        "name": "dialect",
+                                        "const": "postgres"
+                                    },
+                                    {
+                                        "name": "execution_id",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "source_table_name",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "target_table_name",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_records_match",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_records_mismatch",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_records_only_in_source",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_records_only_in_target",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_records_unsecured_in_target",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "match_result",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 11",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Entity Summary",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "SELECT * FROM ${@entities_table};"
+                                    },
+                                    {
+                                        "name": "entities_table",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "EXECUTION_ID": {
+                                                        "type": "string"
+                                                    },
+                                                    "IID": {
+                                                        "type": "string"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_MATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_MISMATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_ONLY_IN_SOURCE": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_ONLY_IN_TARGET": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_FIELDS_UNSECURED_IN_TARGET": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_MATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_MISMATCH": {
+                                                        "type": "integer"
+                                                    },
+                                                    "NUMBER_OF_RECORDS_UNSECURED_IN_TARGET": {
+                                                        "type": "integer"
+                                                    },
+                                                    "MATCH_RESULT": {
+                                                        "type": "string"
+                                                    },
+                                                    "UPDATE_TIME": {
+                                                        "type": "date"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 12",
+                    "dependsOnList": [],
+                    "isLast": 1,
+                    "isTransactional": true,
+                    "actors": [
+                        {
+                            "name": "DbLoad Entities",
+                            "actorType": {
+                                "parentType": "DbLoad",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "table",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "fields",
+                                        "const": [
+                                            "execution_id",
+                                            "iid",
+                                            "number_of_fields_match",
+                                            "number_of_fields_mismatch",
+                                            "number_of_fields_only_in_source",
+                                            "number_of_fields_only_in_target",
+                                            "number_of_fields_unsecured_in_target",
+                                            "number_of_records_match",
+                                            "number_of_records_mismatch",
+                                            "number_of_records_unsecured_in_target",
+                                            "match_result",
+                                            "update_time"
+                                        ]
+                                    },
+                                    {
+                                        "name": "keys",
+                                        "const": [
+                                            "execution_id",
+                                            "iid"
+                                        ]
+                                    },
+                                    {
+                                        "name": "dialect",
+                                        "const": "postgres"
+                                    },
+                                    {
+                                        "name": "execution_id",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_fields_match",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_fields_mismatch",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_fields_only_in_source",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_fields_only_in_target",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_fields_unsecured_in_target",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_records_match",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_records_mismatch",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "number_of_records_unsecured_in_target",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "match_result",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "update_time",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "iid",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "FabricGet",
+                "name": "iid"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "Get LU Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Report Interface Key",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Report Interface Key",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "ReportInterface",
+                "name": "key"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReportInterface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Target Table Names",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReportInterface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "DbLoad Fields",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReportInterface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "DbLoad Records",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReportInterface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "DbLoad Tables",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReportInterface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "DbLoad Entities",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Source Table Names",
+                "name": "field_summary"
+            },
+            "rightPort": {
+                "actor": "Field Summary",
+                "name": "fields_table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Source Table Names",
+                "name": "record_summary"
+            },
+            "rightPort": {
+                "actor": "Record Summary",
+                "name": "records_table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Source Table Names",
+                "name": "table_summary"
+            },
+            "rightPort": {
+                "actor": "Table Summary",
+                "name": "tables_table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Source Table Names",
+                "name": "entity_summary"
+            },
+            "rightPort": {
+                "actor": "Entity Summary",
+                "name": "entities_table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Target Table Names",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "DbLoad Fields",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Target Table Names",
+                "name": "field_summary"
+            },
+            "rightPort": {
+                "actor": "DbLoad Fields",
+                "name": "table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Target Table Names",
+                "name": "record_summary"
+            },
+            "rightPort": {
+                "actor": "DbLoad Records",
+                "name": "table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Target Table Names",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "DbLoad Records",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Target Table Names",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "DbLoad Tables",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Target Table Names",
+                "name": "table_summary"
+            },
+            "rightPort": {
+                "actor": "DbLoad Tables",
+                "name": "table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Target Table Names",
+                "name": "entity_summary"
+            },
+            "rightPort": {
+                "actor": "DbLoad Entities",
+                "name": "table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Target Table Names",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "DbLoad Entities",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Field Summary",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "DbLoad Fields",
+                "name": "params"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Record Summary",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "DbLoad Records",
+                "name": "params"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Table Summary",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "DbLoad Tables",
+                "name": "params"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Entity Summary",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "DbLoad Entities",
+                "name": "params"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "execution_id"
+            },
+            "rightPort": {
+                "actor": "execution_id",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "iid"
+            },
+            "rightPort": {
+                "actor": "iid",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "FabricGet",
+                "name": "luType"
+            }
+        }
+    ]
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>ref_d2d_record_summary</Name>
+  <ID>tbl_ref_d2d_record_summary</ID>
+  <ColumnsCollation>BINARY</ColumnsCollation>
+  <FullTextSearch>false</FullTextSearch>
+  <Columns>
+    <Column name="CUSTOMIZED_KEY" id="CUSTOMIZED_KEY" index="0" datatype="text" />
+    <Column name="EXECUTION_ID" id="EXECUTION_ID" index="1" datatype="text" />
+    <Column name="IID" id="IID" index="2" datatype="text" />
+    <Column name="MATCH_RESULT" id="MATCH_RESULT" index="3" datatype="text" />
+    <Column name="NUMBER_OF_FIELDS_MATCH" id="NUMBER_OF_FIELDS_MATCH" index="4" datatype="integer" />
+    <Column name="NUMBER_OF_FIELDS_MISMATCH" id="NUMBER_OF_FIELDS_MISMATCH" index="5" datatype="integer" />
+    <Column name="NUMBER_OF_FIELDS_ONLY_IN_SOURCE" id="NUMBER_OF_FIELDS_ONLY_IN_SOURCE" index="6" datatype="integer" />
+    <Column name="NUMBER_OF_FIELDS_ONLY_IN_TARGET" id="NUMBER_OF_FIELDS_ONLY_IN_TARGET" index="7" datatype="integer" />
+    <Column name="NUMBER_OF_FIELDS_UNSECURED_IN_TARGET" id="NUMBER_OF_FIELDS_UNSECURED_IN_TARGET" index="8" datatype="integer" />
+    <Column name="SOURCE_TABLE_NAME" id="SOURCE_TABLE_NAME" index="9" datatype="text" />
+    <Column name="TARGET_TABLE_NAME" id="TARGET_TABLE_NAME" index="10" datatype="text" />
+  </Columns>
+  <IndexesList>
+    <Index id="1" pk="true" unique="true" instanceOnly="true" columnsIdsList="CUSTOMIZED_KEY,EXECUTION_ID,IID,SOURCE_TABLE_NAME,TARGET_TABLE_NAME" />
+    <Index id="2" pk="false" unique="false" instanceOnly="true" columnsIdsList="IID" />
+  </IndexesList>
+  <EnrichmentList>
+  </EnrichmentList>
+  <LazyDataUpdate syncMethod="None" performEvery="1.00:00:00" syncWaitTimeout="60">
+    <DecisionFunction></DecisionFunction>
+    <TruncateBeforeSync>true</TruncateBeforeSync>
+  </LazyDataUpdate>
+  
+  <Schema>D2DREF</Schema>
+</TableObject>

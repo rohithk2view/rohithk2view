@@ -1,0 +1,661 @@
+{
+    "Name": "Report",
+    "Width": "8.5in",
+    "ReportParameters": [
+        {
+            "DataType": "String",
+            "Name": "exec_id",
+            "Prompt": "exec_id"
+        },
+        {
+            "DataType": "String",
+            "Name": "iid",
+            "Prompt": "iid"
+        },
+        {
+            "DataType": "String",
+            "Name": "luType",
+            "Prompt": "LU Type"
+        }
+    ],
+    "Layers": [
+        {
+            "Name": "default"
+        }
+    ],
+    "CustomProperties": [
+        {
+            "Name": "DisplayType",
+            "Value": "Page"
+        },
+        {
+            "Name": "SizeType",
+            "Value": "Default"
+        },
+        {
+            "Name": "PaperOrientation",
+            "Value": "Portrait"
+        }
+    ],
+    "Page": {
+        "PageWidth": "8.5in",
+        "PageHeight": "11in",
+        "RightMargin": "0in",
+        "LeftMargin": "0in",
+        "TopMargin": "0in",
+        "BottomMargin": "0in",
+        "Columns": 1,
+        "ColumnSpacing": "0.5in"
+    },
+    "DataSources": [
+        {
+            "Name": "fabricApi",
+            "ConnectionProperties": {
+                "DataProvider": "JSON",
+                "ConnectString": "endpoint=/api/"
+            }
+        }
+    ],
+    "PageHeader": {
+        "Name": "PageHeader",
+        "Height": "1.1319in",
+        "ReportItems": [
+            {
+                "Type": "textbox",
+                "Name": "TextBox111",
+                "CanGrow": true,
+                "KeepTogether": true,
+                "Value": "D2D Compare Report",
+                "Style": {
+                    "FontFamily": "Helvetica",
+                    "FontSize": "36pt",
+                    "PaddingLeft": "2pt",
+                    "PaddingRight": "2pt",
+                    "PaddingTop": "2pt",
+                    "PaddingBottom": "2pt",
+                    "Color": "#0d0e13"
+                },
+                "Left": "0.2917in",
+                "Top": "0.25in",
+                "Width": "5.3958in",
+                "Height": "0.6771in"
+            },
+            {
+                "Type": "textbox",
+                "Name": "TextBox2",
+                "ZIndex": 1,
+                "CanGrow": true,
+                "KeepTogether": true,
+                "Value": "Table Summary",
+                "Style": {
+                    "FontFamily": "Helvetica",
+                    "FontSize": "18pt",
+                    "PaddingLeft": "2pt",
+                    "PaddingRight": "2pt",
+                    "PaddingTop": "2pt",
+                    "PaddingBottom": "2pt",
+                    "Color": "#0d0e13",
+                    "TextAlign": "Center"
+                },
+                "Left": "6.6148in",
+                "Top": "0.25in",
+                "Width": "1.5625in",
+                "Height": "0.7812in"
+            },
+            {
+                "Type": "line",
+                "Name": "Line1",
+                "ZIndex": 2,
+                "StartPoint": {
+                    "X": "0in",
+                    "Y": "0in"
+                },
+                "EndPoint": {
+                    "X": "1in",
+                    "Y": "0in"
+                }
+            },
+            {
+                "Type": "line",
+                "Name": "Line2",
+                "ZIndex": 3,
+                "StartPoint": {
+                    "X": "0in",
+                    "Y": "0in"
+                },
+                "EndPoint": {
+                    "X": "1in",
+                    "Y": "0in"
+                }
+            },
+            {
+                "Type": "line",
+                "Name": "Line3",
+                "ZIndex": 4,
+                "StartPoint": {
+                    "X": "6in",
+                    "Y": "0.05in"
+                },
+                "EndPoint": {
+                    "X": "6in",
+                    "Y": "0.95in"
+                },
+                "LineColor": "#afb5b7"
+            },
+            {
+                "Type": "shape",
+                "Name": "Shape1",
+                "ZIndex": 5,
+                "Style": {
+                    "Border": {
+                        "Color": "#a3b7bb",
+                        "Style": "Solid"
+                    },
+                    "BackgroundColor": "#a3b7bb"
+                },
+                "Top": "1in",
+                "Width": "6in",
+                "Height": "0.1319in"
+            },
+            {
+                "Type": "shape",
+                "Name": "Shape2",
+                "ZIndex": 6,
+                "Style": {
+                    "Border": {
+                        "Color": "#afb5b7",
+                        "Style": "Solid"
+                    },
+                    "BackgroundColor": "#566d78"
+                },
+                "Left": "6in",
+                "Top": "1in",
+                "Width": "2.5in",
+                "Height": "0.1319in"
+            }
+        ],
+        "Style": {
+            "Border": {
+                "Color": "#2196f3"
+            },
+            "TopBorder": {
+                "Color": "#2196f3"
+            },
+            "BottomBorder": {
+                "Color": "#2196f3"
+            },
+            "LeftBorder": {
+                "Color": "#2196f3"
+            },
+            "RightBorder": {
+                "Color": "#2196f3"
+            },
+            "BackgroundColor": "White"
+        }
+    },
+    "Body": {
+        "Height": "1.2in",
+        "ReportItems": [
+            {
+                "Type": "textbox",
+                "Name": "TextBox1",
+                "CanGrow": true,
+                "KeepTogether": true,
+                "Value": "=Parameters!exec_id.Value",
+                "Style": {
+                    "PaddingLeft": "2pt",
+                    "PaddingRight": "2pt",
+                    "PaddingTop": "2pt",
+                    "PaddingBottom": "2pt",
+                    "Color": "White",
+                    "BackgroundColor": "#2196f3"
+                },
+                "Left": "1.3in",
+                "Top": "0.1in",
+                "Width": "4in",
+                "Height": "0.25in"
+            },
+            {
+                "Type": "table",
+                "Name": "Table1",
+                "ZIndex": 1,
+                "DataSetName": "TableSummary",
+                "Style": {
+                    "TextAlign": "Center"
+                },
+                "TableColumns": [
+                    {
+                        "Width": "1.8655in"
+                    },
+                    {
+                        "Width": "1.8655in"
+                    },
+                    {
+                        "Width": "1.8655in"
+                    },
+                    {
+                        "Width": "1.8654in"
+                    },
+                    {
+                        "Width": "1.0381in"
+                    }
+                ],
+                "Header": {
+                    "TableRows": [
+                        {
+                            "Height": "0.25in",
+                            "TableCells": [
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox4",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "IID",
+                                        "Style": {
+                                            "FontFamily": "Helvetica",
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "Color": "#0d0e13",
+                                            "TextAlign": "Left",
+                                            "BackgroundColor": "#c8c5bb"
+                                        },
+                                        "Width": "1.8655in",
+                                        "Height": "0.25in"
+                                    }
+                                },
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox5",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "Match Result",
+                                        "Style": {
+                                            "FontFamily": "Helvetica",
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "Color": "#0d0e13",
+                                            "TextAlign": "Left",
+                                            "BackgroundColor": "#c8c5bb"
+                                        },
+                                        "Width": "1.8655in",
+                                        "Height": "0.25in"
+                                    }
+                                },
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox6",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "Source Table",
+                                        "Style": {
+                                            "FontFamily": "Helvetica",
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "Color": "#0d0e13",
+                                            "TextAlign": "Left",
+                                            "BackgroundColor": "#c8c5bb"
+                                        },
+                                        "Width": "1.8655in",
+                                        "Height": "0.25in"
+                                    }
+                                },
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox7",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "Target Table",
+                                        "Style": {
+                                            "FontFamily": "Helvetica",
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "Color": "#0d0e13",
+                                            "TextAlign": "Left",
+                                            "BackgroundColor": "#c8c5bb"
+                                        },
+                                        "Width": "1.8654in",
+                                        "Height": "0.25in"
+                                    }
+                                },
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox13",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "Details",
+                                        "Style": {
+                                            "FontFamily": "Helvetica",
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "Color": "#0d0e13",
+                                            "TextAlign": "Left",
+                                            "BackgroundColor": "#a3b7bb"
+                                        },
+                                        "Width": "1.0381in",
+                                        "Height": "0.25in"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "RepeatOnNewPage": true
+                },
+                "Details": {
+                    "TableRows": [
+                        {
+                            "Height": "0.25in",
+                            "TableCells": [
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox8",
+                                        "DataElementName": "IID",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "=Fields!IID.Value",
+                                        "Style": {
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "TextAlign": "Left"
+                                        },
+                                        "Width": "1.8655in",
+                                        "Height": "0.25in"
+                                    }
+                                },
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox9",
+                                        "DataElementName": "MATCH_RESULT",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "=Fields!MATCH_RESULT.Value",
+                                        "Style": {
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "TextAlign": "Left",
+                                            "BackgroundColor": "=IIF(Fields!match_result.Value.Contains(\"Match\"), \"#cde9ce\", \"#fccac7\")"
+                                        },
+                                        "Width": "1.8655in",
+                                        "Height": "0.25in"
+                                    }
+                                },
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox10",
+                                        "DataElementName": "SOURCE_TABLE_NAME",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "=Fields!SOURCE_TABLE_NAME.Value",
+                                        "Style": {
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "TextAlign": "Left"
+                                        },
+                                        "Width": "1.8655in",
+                                        "Height": "0.25in"
+                                    }
+                                },
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox11",
+                                        "DataElementName": "TARGET_TABLE_NAME",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "=Fields!TARGET_TABLE_NAME.Value",
+                                        "Style": {
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "TextAlign": "Left"
+                                        },
+                                        "Width": "1.8654in",
+                                        "Height": "0.25in"
+                                    }
+                                },
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox14",
+                                        "Action": {
+                                            "Drillthrough": {
+                                                "ReportName": "./rptD2DCompareRecord.report",
+                                                "Parameters": [
+                                                    {
+                                                        "ParameterName": "exec_id",
+                                                        "Value": "=Parameters!exec_id.Value"
+                                                    },
+                                                    {
+                                                        "ParameterName": "iid",
+                                                        "Value": "=Fields!IID.Value"
+                                                    },
+                                                    {
+                                                        "ParameterName": "table",
+                                                        "Value": "=Fields!SOURCE_TABLE_NAME.Value"
+                                                    },
+                                                    {
+                                                        "ParameterName": "luType",
+                                                        "Value": "=Parameters!luType.Value"
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": ">>>",
+                                        "Style": {
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "Color": "#1971b6",
+                                            "TextAlign": "Left"
+                                        },
+                                        "Width": "1.0381in",
+                                        "Height": "0.25in"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "Top": "0.7in",
+                "Width": "8.5in",
+                "Height": "0.5in"
+            },
+            {
+                "Type": "textbox",
+                "Name": "TextBox12",
+                "ZIndex": 2,
+                "CanGrow": true,
+                "KeepTogether": true,
+                "Value": "Execution ID",
+                "Style": {
+                    "PaddingLeft": "2pt",
+                    "PaddingRight": "2pt",
+                    "PaddingTop": "2pt",
+                    "PaddingBottom": "2pt",
+                    "Color": "White",
+                    "BackgroundColor": "#2196f3"
+                },
+                "Left": "0.25in",
+                "Top": "0.1in",
+                "Width": "1in",
+                "Height": "0.25in"
+            },
+            {
+                "Type": "textbox",
+                "Name": "TextBox17",
+                "ZIndex": 5,
+                "CanGrow": true,
+                "KeepTogether": true,
+                "Value": "Execution ID",
+                "Style": {
+                    "FontFamily": "Helvetica",
+                    "PaddingLeft": "2pt",
+                    "PaddingRight": "2pt",
+                    "PaddingTop": "2pt",
+                    "PaddingBottom": "2pt",
+                    "Color": "#1b202c",
+                    "TextAlign": "Right",
+                    "VerticalAlign": "Middle",
+                    "BackgroundColor": "#e1c5aa"
+                },
+                "Width": "2.125in",
+                "Height": "0.35in"
+            },
+            {
+                "Type": "textbox",
+                "Name": "TextBox3",
+                "ZIndex": 6,
+                "CanGrow": true,
+                "KeepTogether": true,
+                "Value": "=Parameters!exec_id.Value",
+                "Style": {
+                    "Border": {
+                        "Color": "#e1c5aa"
+                    },
+                    "FontFamily": "Courier New",
+                    "PaddingLeft": "2pt",
+                    "PaddingRight": "2pt",
+                    "PaddingTop": "2pt",
+                    "PaddingBottom": "2pt",
+                    "Color": "#1b202c",
+                    "TextAlign": "Left",
+                    "VerticalAlign": "Middle",
+                    "BackgroundColor": "#e1c5aa"
+                },
+                "Left": "2.125in",
+                "Width": "6.375in",
+                "Height": "0.35in"
+            },
+            {
+                "Type": "textbox",
+                "Name": "TextBox18",
+                "ZIndex": 7,
+                "CanGrow": true,
+                "KeepTogether": true,
+                "Value": "IID",
+                "Style": {
+                    "FontFamily": "Helvetica",
+                    "PaddingLeft": "2pt",
+                    "PaddingRight": "2pt",
+                    "PaddingTop": "2pt",
+                    "PaddingBottom": "2pt",
+                    "Color": "#1b202c",
+                    "TextAlign": "Right",
+                    "VerticalAlign": "Middle",
+                    "BackgroundColor": "#e1c5aa"
+                },
+                "Top": "0.35in",
+                "Width": "2.125in",
+                "Height": "0.35in"
+            },
+            {
+                "Type": "textbox",
+                "Name": "TextBox19",
+                "ZIndex": 8,
+                "CanGrow": true,
+                "KeepTogether": true,
+                "Value": "=Parameters!iid.Value",
+                "Style": {
+                    "Border": {
+                        "Color": "#e1c5aa"
+                    },
+                    "FontFamily": "Courier New",
+                    "PaddingLeft": "2pt",
+                    "PaddingRight": "2pt",
+                    "PaddingTop": "2pt",
+                    "PaddingBottom": "2pt",
+                    "Color": "#1b202c",
+                    "TextAlign": "Left",
+                    "VerticalAlign": "Middle",
+                    "BackgroundColor": "#e1c5aa"
+                },
+                "Left": "2.125in",
+                "Top": "0.35in",
+                "Width": "6.375in",
+                "Height": "0.35in"
+            }
+        ]
+    },
+    "DataSets": [
+        {
+            "Name": "TableSummary",
+            "Fields": [
+                {
+                    "Name": "EXECUTION_ID",
+                    "DataField": "EXECUTION_ID"
+                },
+                {
+                    "Name": "IID",
+                    "DataField": "IID"
+                },
+                {
+                    "Name": "MATCH_RESULT",
+                    "DataField": "MATCH_RESULT"
+                },
+                {
+                    "Name": "NUMBER_OF_RECORDS_MATCH",
+                    "DataField": "NUMBER_OF_RECORDS_MATCH"
+                },
+                {
+                    "Name": "NUMBER_OF_RECORDS_MISMATCH",
+                    "DataField": "NUMBER_OF_RECORDS_MISMATCH"
+                },
+                {
+                    "Name": "NUMBER_OF_RECORDS_ONLY_IN_SOURCE",
+                    "DataField": "NUMBER_OF_RECORDS_ONLY_IN_SOURCE"
+                },
+                {
+                    "Name": "NUMBER_OF_RECORDS_ONLY_IN_TARGET",
+                    "DataField": "NUMBER_OF_RECORDS_ONLY_IN_TARGET"
+                },
+                {
+                    "Name": "NUMBER_OF_RECORDS_UNSECURED_IN_TARGET",
+                    "DataField": "NUMBER_OF_RECORDS_UNSECURED_IN_TARGET"
+                },
+                {
+                    "Name": "SOURCE_TABLE_NAME",
+                    "DataField": "SOURCE_TABLE_NAME"
+                },
+                {
+                    "Name": "TARGET_TABLE_NAME",
+                    "DataField": "TARGET_TABLE_NAME"
+                }
+            ],
+            "Query": {
+                "DataSourceName": "fabricApi",
+                "CommandText": "=\"uri=/d2d/table-summary?luType=\" & Parameters!luType.Value & \"&executionId=\" & Parameters!exec_id.Value & \"&iid=\" & Parameters!iid.Value & \";jpath=$.*\""
+            },
+            "CaseSensitivity": "Auto",
+            "KanatypeSensitivity": "Auto",
+            "AccentSensitivity": "Auto",
+            "WidthSensitivity": "Auto"
+        }
+    ]
+}

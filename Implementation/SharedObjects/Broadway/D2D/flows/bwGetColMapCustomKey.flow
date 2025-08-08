@@ -1,0 +1,141 @@
+tags: D2D
+stages:
+  Stage 1:
+    actors:
+      Split4:
+        parent: Split
+        in:
+          string:
+            external: CustomizedKey
+  Stage 21:
+    actors:
+      Split2:
+        parent: Split
+        in:
+          string:
+            external: ColumnMapping
+      Key:
+        parent: Const
+        in:
+          value:
+            const: null
+            link:
+              path: Split4/strings
+              iterate: Iterate
+        out:
+          value:
+            schema: string
+  Stage 2:
+    actors:
+      Split3:
+        parent: Split
+        in:
+          delimiter:
+            const: ':'
+          string:
+            link:
+              path: Split2/strings
+              iterate: Iterate
+      SRC Col:
+        parent: JavaScript
+        in:
+          script:
+            const: mapping[0]
+          mapping:
+            link: Split3/strings
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: string
+      TAR Col:
+        parent: JavaScript
+        in:
+          script:
+            const: mapping[1]
+          mapping:
+            link: Split3/strings
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: string
+  Stage 22:
+    actors:
+      SRC Col1:
+        parent: Uppercase
+        in:
+          string:
+            link: SRC Col/result
+      TAR Col Map:
+        parent: Uppercase
+        in:
+          string:
+            link: TAR Col/result
+  Stage 23:
+    last: 1
+    dependsOn: Stage 22
+    actors:
+      EqualsIgnoreCase1:
+        parent: EqualsIgnoreCase
+        condition: result
+        in:
+          b:
+            link: Key/value
+          a:
+            link: SRC Col1/string
+      Replace1:
+        parent: Replace
+        in:
+          search:
+            const: null
+            link: Key/value
+          replace:
+            const: null
+            link: TAR Col Map/string
+          string:
+            link: Key/value
+      LoopStop1:
+        parent: LoopStop
+    split: '--------------------'
+  Stage 6:
+    last: 1
+    else: true
+    dependsOn: Stage 22
+    actors:
+      Const1:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: Key/value
+            schema: string
+        out:
+          value:
+            schema: string
+  Stage 24:
+    actors:
+      StringBuild2:
+        parent: StringBuild
+        resetOnFirstIteration: true
+        in:
+          input:
+            link:
+            - path: Replace1/string
+              pos: 0
+            - path: Const1/value
+              pos: 0
+        out:
+          string:
+            external: string
+  Stage 5: {
+    }
+schemas:
+  SRC Col.in.mapping:
+    type: array
+    items:
+      type: string
+  TAR Col.in.mapping:
+    type: array
+    items:
+      type: string

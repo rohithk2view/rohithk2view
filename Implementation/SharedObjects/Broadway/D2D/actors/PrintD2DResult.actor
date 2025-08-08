@@ -1,0 +1,66 @@
+{
+    "type": "PrintD2DResult",
+    "parentType": "InnerFlow",
+    "actorClass": null,
+    "inputs": [
+        {
+            "name": "taskExecutionID",
+            "schema": {},
+            "doc": "execution_id to filter the d2d summary records"
+        },
+        {
+            "name": "iid",
+            "schema": {},
+            "doc": "d2d instance id"
+        },
+        {
+            "name": "file_type",
+            "schema": {},
+            "doc": "output file format (xlsx/xls)",
+            "editor": {
+                "id": "com.k2view.dropdown",
+                "options": [
+                    "xlsx",
+                    "xls"
+                ]
+            }
+        },
+        {
+            "name": "strict",
+            "schema": {
+                "type": "boolean"
+            },
+            "doc": "true - include iid filtering (Get), false - no iid filtering (Batch)"
+        },
+        {
+            "name": "luName",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "d2d lu name",
+            "editor": {
+                "id": "com.k2view.logicalUnit"
+            }
+        },
+        {
+            "name": "flowName",
+            "schema": {
+                "type": "string"
+            },
+            "const": "bwPrintD2DResult",
+            "mandatory": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "path",
+            "schema": {
+                "type": "string"
+            }
+        }
+    ],
+    "tags": [
+        "d2d"
+    ],
+    "doc": "Writes the table records to an Excel file."
+}

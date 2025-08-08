@@ -1,0 +1,532 @@
+[
+    {
+        "id": "k2view.d2d",
+        "version": "1.0.3",
+        "artifacts": [
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Broadway/flow/bwIsDBUpdated.flow",
+                "sha256": "4ce09e90236a8fc15cf832ec737223918bcef8e7035b94a5675861c9e32bba8c"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Broadway/system/deploy.flow",
+                "sha256": "718e2c1d8a982aab343e05fbdd69b873274cb35b59bf585554be31ef12932228"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/IidFinder/IidFinder.k2iiF.xml",
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Java/src/com/k2view/cdbms/usercode/lu/D2D/Globals.java",
+                "sha256": "45ea99d4a8a5b2fcbad287dc33ed68d788609ba27b576ea5279b0ee79bcfb396"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Jobs/Jobs.k2job.xml",
+                "sha256": "8b2fc78b263c88fc057445192f01de271da1561f820b8a60fc726d0833eace0c"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Mtable/D2DConfig.csv",
+                "sha256": "23d65c9a56b80c8f71f462c3d1975eb09681a5d29f0ccc1c4de4a949057bf7e2"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Mtable/D2DConfig_full_lu.csv",
+                "sha256": "2353956edd1c0518f8b10d92879bdf800e54313b175af607a6dd8526d64118a1"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Mtable/D2DConfig_tdm.csv",
+                "sha256": "ad8aac6e7cc409bf27b17c414a6d2a7de8a61be151ce48ee5776cffac4ee8d33"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/SecurityProfiles/SecurityProfiles.k2secProfiles.xml",
+                "sha256": "b42465ffb22a6c300a5d26a86e57f387799a021aa91dae8567829d749f66c8db"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_entity_summary.d2d_entity_summary_population.flow",
+                "sha256": "5e6b44fbdc334e9c3054d410c39eb7153d6bd7af0cba3f33daf70bf216f7e872"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_entity_summary.k2table.xml",
+                "sha256": "b39fe9b7b4c77e0ebe4fc70d3dca02febe456b767b0740d71a26cff86c3b845a"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_field_summary.d2d_field_summary_population.flow",
+                "sha256": "5d2e556d4b745f36d20193934feea58ccff0c5e01a3c187ad8cb377caab4cdc4"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_field_summary.d2d_fields_summary_population.flow",
+                "sha256": "43b451c99584ee232c275915cf4686468af39a5f7b622d040398405ddcb33d5d"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_field_summary.d2d_fields_summery_population.flow",
+                "sha256": "77a6b1e22551745ab230b724dcdedacb8a842ccccecc28155501044e2dab630d"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_field_summary.k2table.xml",
+                "sha256": "ded9da95ca7a040c299c099bb0318a3080daadd73ca309af4b8095945b842493"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_record_summary.d2d_record_summary_population.flow",
+                "sha256": "55563b483f7478ad0d796aa2a015449ee25d1a941f76b7b2e72229f8dcc04f4a"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_record_summary.k2table.xml",
+                "sha256": "f51a05d12792314e735988881cac457087491d5a798c98d1bc0558690684c154"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_root.k2table.xml",
+                "sha256": "694b9d6819deae0d1dabfadca8d8c43b13036b06ebead1478dc93d96a3c8ae93"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_root.population.flow",
+                "sha256": "73c8547bc10760574027675b28a9b8fe13166a430e4a68672a2a97e63bc11a0f"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_table_summary.d2d_table_summary_population.flow",
+                "sha256": "3ff31f97672860e4a6d73fd8bddf1850eae208ad7c31e0cfc38fbe797194b057"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/Tables/d2d_table_summary.k2table.xml",
+                "sha256": "0fe63f4a9b576932053ad9ebeeb7489b124d69cbf3d212e33f3fce9c50a57504"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/reports/rptD2DCompare.report",
+                "sha256": "5c8dbabdf5ef05facf77368dae3eef3f5e26c2ae067257182ceeedc7fcd2648f"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/reports/rptD2DCompareEntity.report",
+                "sha256": "a07c326ac3a5c86aad9bc03bf52bb0f457bb58558702693682b394589b26d0a4"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/reports/rptD2DCompareExcel.report",
+                "sha256": "4ddc7c756e3ff6e4248ad1952d390e6ab9313a353be88f011abb39d05920e776"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/reports/rptD2DCompareFields.report",
+                "sha256": "ffe0993efa8c175010ad683fbb1fb8a7f2da60e427df2e5e95c8e7bbdc438f82"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/reports/rptD2DCompareRecord.report",
+                "sha256": "9986a10a54bece8a36a19fc84f4e95ac1c985eb3868f47a8656cae9a941bcba6"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/reports/rptD2DCompareTable.report",
+                "sha256": "45e4db021dcb9cd2fdc23e94c1c83a9ad8cd74a8734ce41a8a9e325c4902884d"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/vdb.k2vdb.xml",
+                "sha256": "ca333e073de2fc5969b08205c35fae538c11cf175fd46d3d9e61f5ee96a921f5"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/web/D2D/assets/favicon-C49brna2.svg",
+                "sha256": "17e50649ce0babbf448e8a728d4475192b60b4d096a7d9414df727128435519e"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/web/D2D/assets/favicon.svg",
+                "sha256": "17e50649ce0babbf448e8a728d4475192b60b4d096a7d9414df727128435519e"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/web/D2D/assets/index-Bdmn_NrH.js",
+                "sha256": "b36f669c87a7def18e902cfe47840a053a98e6b92e1deeb752ecdb60d7e0cd96"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/web/D2D/assets/index-CfJJnbWR.js",
+                "sha256": "fa53124eaf7c2c5a04386b300403b9f543d02fcb4e7b77b1c4750f2b7e977429"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/web/D2D/assets/index-D_uRC0Cl.css",
+                "sha256": "30370dd1a51a3dcde378400163a2c49360112aee075f25dfa762ba9e9a2da89f"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/web/D2D/assets/index-vAywlWr9.js",
+                "sha256": "0257efe979d47a1924df062374959c94ffd75053dc719386c800773813028820"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/web/D2D/assets/index.css",
+                "sha256": "30370dd1a51a3dcde378400163a2c49360112aee075f25dfa762ba9e9a2da89f"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/web/D2D/assets/index.js",
+                "sha256": "26297588ad3872a159821dd5e92aba2999d008a7536a88ed0ef2daa378cfdb97"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/web/D2D/index.html",
+                "sha256": "3a445c0fdcadd6c98f710c482b4cd6201f52d9f23bd43c141743a707b96d0d77"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/D2D/web/apps.json",
+                "sha256": "238ba807197c8864094b36be7754f1d82d081ad356bb71da29fef776b6597ecb"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/k2_ref/Tables/ref_d2d_entity_summary.k2table.xml",
+                "sha256": "74e66df1f9a434c6332765ac2acbfc5eb5a6441c799ff019f9175b20c9687a11"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/k2_ref/Tables/ref_d2d_field_summary.k2table.xml",
+                "sha256": "86fdd721681b1616a960ba28f5fa43dcc9b85928e2a157bfa188ce007cc47604"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/k2_ref/Tables/ref_d2d_record_summary.k2table.xml",
+                "sha256": "93c78f1327bf22214058774b41c8e07195b2a4d221a3fada68fd9a2d2da7e718"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/k2_ref/Tables/ref_d2d_table_summary.k2table.xml",
+                "sha256": "e8ed6d8d9b12367d20e10b956fa60d9a35729dd60f89b69bdc3c650e3d0abf80"
+            },
+            {
+                "path": "/Implementation/LogicalUnits/k2_ws/Java/src/com/k2view/cdbms/usercode/lu/k2_ws/D2D/Logic.java",
+                "sha256": "e096849d7108b3fe6d42bca2591bcbad54bfb20eae5e83acc34c9d9feb6d39c7"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/CheckIsRefSynced.actor",
+                "sha256": "3b8154fb947514af9bb81faf74827c9f21712cba51d4765253cea7506861a3e1"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/CopyD2DTablesToExcel.actor",
+                "sha256": "bc150a9b95f6435de7b140b9dc949e9830301403a33a7794592b02c1b14fe1bb"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/GetD2DExecutionID.actor",
+                "sha256": "13e3f0b4a25df7018d4f4d13335f33a37c5d8c709729b5f3c9b0de91ec1d87bb"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/GetLUVariable.actor",
+                "sha256": "26acdc035fe7e19536a3714d4cd653d6f69803c1db1a3043bf5c62d851486a39"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/GetSchema.actor",
+                "sha256": "b3a89dcdd3a8e76b8215b6a582da2e954ed600cab31c8cd4bb830e1a63f4ff42"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/GetSchemaFromInterface.actor",
+                "sha256": "7152ba2c931376363ba8a1f23c7e95cc22c91e063113c4200f2ca9df59730e75"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/MapDiffD2D.actor",
+                "sha256": "17a4a150226c74370bd1286296bf4ca7d516fe4f53dba7a5bcc90792a6aa5806"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/PopulationUtil.actor",
+                "sha256": "15ede57ce12ddd2f08688e9ece3d9862ef64cf4b1cc47822b488d330615c1a5f"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/PrintD2DResult.actor",
+                "sha256": "714382e4e89d2ac4bace043335d3526972a8cfdbd35a77588fb81b5d472535cf"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/ReadD2DQueries.actor",
+                "sha256": "5995403bf57f43ce43a8adaf91b687cf3068a0674f461ced439602e5b708a1d9"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/actors/SetEnvironment.actor",
+                "sha256": "c1fc13e8dae1065d18108e1d5d9cdbd5a85f3afce69a39e6023e291df742e4df"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/customFlows/bwMapSrcToTarIID.flow",
+                "sha256": "bf67aae1b440520be553e4b6df40145132d79af3103912e1bc6c24114759cbbd"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwCheckDBType.flow",
+                "sha256": "efc16990db280ec8e2972e0f952b61082965147457a1913b09b2efdf39886265"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwCheckIsRefSynced.flow",
+                "sha256": "76b984c1375edd385693d5e20c19c183d6d73d7902846d9c4856411d1fc9cddc"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwCheckReportCondition.flow",
+                "sha256": "e095f91f9127f9ff4b1e1d98d8708c309e06a6a17fb1405379042388fbed5dd9"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwCopyD2DTablesToJson.flow",
+                "sha256": "d69f198ede3ac9d61df3815add5bb8757c1bf6a269466eb91d6fd7abcedd010c"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DArrayToMap.flow",
+                "sha256": "d28bad3b053fd31933734703ffa648302bd8b19729faa101c068811e0837b7c9"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DBatchExecute.flow",
+                "sha256": "4cdc99688e4bbde84a12c50320d0f8433d321988801b8033264ae1b71d3e80c0"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DCleanComparisonDetails.flow",
+                "sha256": "e471cb4ff06af29a05b881647291261cb0974a3f8bf93f2c415347830801acac"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DConfig.flow",
+                "sha256": "656a8c4a3f9056f3e4dbaa982d0762a6955b5fd8fbc876434df4e9f7f1061ab6"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DCopyComparisonDetails.flow",
+                "sha256": "12825406596c7bbedccd6ac459d186e18ebea20e7b6ba6b72f48ee9c42052c47"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DCreateResultTables.flow",
+                "sha256": "88580d023d0008ec6e1d95d9ae506acccc54f021465ffa3413148feb52cd1d97"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DDirectQuery.flow",
+                "sha256": "a13e222a2d325405512131d0aec138920f88b839bd625fd05842dd20b4c323f5"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DDirectSelect.flow",
+                "sha256": "758432e1f13f432698fea6e7e14b20a500dbed550c1850815fdb98be9113e576"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DEntitySummary.flow",
+                "sha256": "3676dc05ba2b1738670c56ad0d8458ba8d7ae9ae54b1e04c4a16939ab0064532"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DExecute.flow",
+                "sha256": "529491308346864f8e1004e25550e27005a1b48154c054fafb912df96282c35c"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DFieldsSummary.flow",
+                "sha256": "d78434ac3104eb5a386cc5b4351b0bd5e5986ae3ceee5e909ef0fd3d892d8ca0"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DIIDExecute.flow",
+                "sha256": "7cd7ab7bf0b5478689bc23b6c3fa19d5ca8c0312d41abc7b765f1a5b75b8f794"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DKeyNotFound.flow",
+                "sha256": "dc1d5e883559e7d75bb97b57ede4ede0b65a33e05f8aa77570cb513728293751"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DLogError.flow",
+                "sha256": "496887c61b3e85da092bc930101fa61870ab13c31b22a1ba269567886d1960bf"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DMapToArray.flow",
+                "sha256": "74b46ae57dee031288716a1062b6ce22a01c1beda2e35e3149917f18f59d2751"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DPrintReport.flow",
+                "sha256": "04cf4e212ca240de7c94637f05fda1c1262422d5b110099e264e0798da079148"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DRecordSummary.flow",
+                "sha256": "39a89ab40ab1149223788a32068e057a1035c39da8a4784f8308c1d7c1bab581"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DSourceInTarget.flow",
+                "sha256": "7db94a5a24a18b7c71fb575d4cd2878c3f23f1a44cd4e503da2f24fb72d59966"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DSummaryPostExec.flow",
+                "sha256": "1c210a8b357327e97fb7230dce5bdbe43a97519e15bf837b82fc017689089fa1"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DSummaryReconciliation.flow",
+                "sha256": "159996b1354e72f5e6f292ee15e30f036856d4335e433f26ffcf8c8d01db9978"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DTableNotFound.flow",
+                "sha256": "cf9379876061d541f0bbdba354ecf4c616926f819db1dc87000ed4c3080cca57"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2DTableSummary.flow",
+                "sha256": "85a3ca246361cab91075dad0af3e93db08f363bfa6276261b37cfb1ce7b8bf53"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2Dv2KeyNotFound.flow",
+                "sha256": "0bc263ffe4761774a352489bbaa9573370d1e86327c62b42b61ad7a9d4ed4764"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwD2Dv2SourceInTarget.flow",
+                "sha256": "c5ffd21c8ee4384d3921d8fbbbfba2722f47b1025f5d124a36daf2a9522737ac"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwF2FFieldsSummary.flow",
+                "sha256": "c625571ce2092c7718c26abc030c5e9bb283a4c10d4b3a464aea9a65175839a3"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwF2FKeyNotFound.flow",
+                "sha256": "077997ad34cb104eb4abd44500ea275c576ddb675740a2cbc4b3d76cc79fbb15"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwF2FQuery.flow",
+                "sha256": "a50f25f40766669bf759c48fdacd193112310236be1df598ff3a50bad5607704"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwF2FSourceInTarget.flow",
+                "sha256": "7adede7bea0c55eaea1fee39bb59f897c6954c30a0dc1dffab200c9f6ed197e4"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwGetColMapCustomKey.flow",
+                "sha256": "802d99e7a8088298b2a89b68bbe124aa735d543074b0b69f72a1c1347035f720"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwGetD2DExecutionID.flow",
+                "sha256": "d5b2c46f3409b6285c989a9949b336839634e4ebdf5d7cb77b7832a6e4d44ad9"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwGetLUVariable.flow",
+                "sha256": "39b0bdc65b0942aaad749c1cef5a610b6f543eea6c8fbaf688b0c72f853eb60a"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwGetSchema.flow",
+                "sha256": "21a0a00916496f979034cdfdccbc8253554015aeecd8640662bfcd308ff6a5c8"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwGetSchemaFromInterface.flow",
+                "sha256": "d1478cb764db3232bccacb18a5e2c5e195b7192dad3977ad12368b32a0a8019b"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwGetSummaryTableNames.flow",
+                "sha256": "4a8867ce9661eb73a6d9530636c82a1c44da1bc79f7fb26ed503e4323c4565fd"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwIsCommonUpdated.flow",
+                "sha256": "bbc88dc4f2a998d605fd6f789f7c2d418e418931ba10991faa5e138b40e6b26c"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwLookupExtractKeys.flow",
+                "sha256": "ab0e09b95f7ee57b7524da025cc791b3eaf1facc999f17185d3a6fa7f0b8c6a9"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwLookupTableNames.flow",
+                "sha256": "4984947ebdb4eb417ac7bd6f5659fddb5d9ac703407af57130c188673ed11844"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwPrintD2DResult.flow",
+                "sha256": "12d1293c6240820be1a9efb34876e7a3631e7ebbf6705c9e610ae5e0471be36f"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwPrintD2Dv2Result.flow",
+                "sha256": "2e7774b870146d523cac4108a5fcaa5775b2999ef711754694442905862e415a"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwReadD2DQueries.flow",
+                "sha256": "492c12dbe3567503c4d615423b2bd0c0ff3ce8e3f0e9e47be3063260def6d6c0"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwReadD2Dv2Queries.flow",
+                "sha256": "564026ca13e0637bf3795f74b29547581c947cddd1a5ec9f86f5c9bfe25482b8"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwSetEnvironment.flow",
+                "sha256": "65514202d681c583836db0903cb7621f4deac0c1965cd4d173e6a759c0049a09"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwT2TCompareSourceNTarget.flow",
+                "sha256": "a659443de4cfb832c3989199490e03478699b17109a500b5726e31d7a708719e"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/bwT2TExtractKeysBasedOnTokens.flow",
+                "sha256": "7690c81d5f328981777948ca43be06201be6860ad33b6c6d047bc4c0ec269d6a"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/flows/d2dBatchExecute.flow",
+                "sha256": "f08971d267df5dac170e42560fdc22bf2f1f06b25bad674905b2f7b7ebb319a9"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/pipeline/case/case_CreateReport.flow",
+                "sha256": "10a502a099d93f5c1d8cbaffeff78564894b0fe4089519ef01828773b8ab0a0d"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/pipeline/case/case_FetchInstance.flow",
+                "sha256": "6d7a66acf8ae95426b78a9f044b455062f90d4cfef2eed19c010a32847e3aab1"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/pipeline/case/case_MigrateInstanceGroup.flow",
+                "sha256": "4f33b93b2757a28f7973e0746fa519127b0d3a6367726dcc74cfe0a978e2a511"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/pipeline/pipelines/Pipeline_CompareBatchOfEntities.flow",
+                "sha256": "66c1bdc505f722f5b6d5e29737a003b62e80d82cfe6beb66a18f0934c4d87751"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/pipeline/pipelines/Pipeline_CompareEntity.flow",
+                "sha256": "423092f7c2a5e1588566a6d0e4a213d161cbbf7c4cc5778185467d739b3a91c0"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/pipeline/pipelines/Pipeline_GenerateReport.flow",
+                "sha256": "44692495eed292d085ecff3ffc2264c359bf95cb3d0ddb6f45b11f6ab8ba3d96"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/pipeline/suite/suite_CreateReport.flow",
+                "sha256": "20911eab56205c6f04e1dd1aeab6b1d1de01a7aaea5173f66ecdbe8ca707b1ef"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/pipeline/suite/suite_FetchInstance.flow",
+                "sha256": "bfb9d3380731d2b46c3df6278e242383ad80477640e6f0eb719888ca006e796d"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/pipeline/suite/suite_MigrateInstanceGroup.flow",
+                "sha256": "60f282b15cda526157ec16c1b5afa350f8d1da355074332cb04b9c2e8801d22a"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/precreate/D2DLUInit.flow",
+                "sha256": "4439a60c00262da06ee6e108d9e2c391a2f5302c85dbc55b06296a4782c7537d"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/precreate/bwCleanD2DTables.flow",
+                "sha256": "2aed4550e9e44b6ebd5918d70a3cb29f8eab3ac5a8c40e919ffd4a7016568392"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Broadway/D2D/precreate/bwCreateD2DTablesNdViews.flow",
+                "sha256": "771cf9644a5611f421432cdc455cf0bf8bc0e717a4a2e9f19ec64b6b56251021"
+            },
+            {
+                "path": "/Implementation/SharedObjects/InterfaceTypes/DatabaseDrivers/RemoteFabricD2D.k2DriverConf.xml",
+                "sha256": "0efc5ca0d3dc0b237492955437275ca8c2c6df4f5fb6fd2a7da4003315bc5345"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Interfaces/Databases/FabricRemoteSrc.k2dbConn.xml",
+                "sha256": "8baad09b4fc038bc075b7b52d7be30975117577960d91373fb70a6ec9cea0d23"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Interfaces/Databases/FabricRemoteTar.k2dbConn.xml",
+                "sha256": "86f36c99e9ffa8b178b4ff6262bb04883710bd339bbd2312a901a5954808e370"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Interfaces/GenericInterfaces/EXCEL_FILES.k2interface.xml",
+                "sha256": "b6e95b638fc5295ec6047ae8c6aeb2738f0542a1631d22d88e2e6fd1fe892131"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Java/resources/d2d/Aspose.Total.Java.lic",
+                "sha256": "3e46c9e81454bfed009cde3dfb47656693fbaba18d70108b159509ae83a8a589"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Java/resources/d2d/d2dCreate.sql",
+                "sha256": "aac42703ad0a891f4c2280a2581c33a25450bf78599fc75673cc0ac051640730"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Java/src/com/k2view/cdbms/usercode/common/D2D/CopyD2DTablesToExcel.java",
+                "sha256": "9c6f8c3d293d4b1ae7a7c7323b84f00312b53394c60e1e16414becccea19cfd3"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Java/src/com/k2view/cdbms/usercode/common/D2D/MapDiffD2D.java",
+                "sha256": "f0683e46890ed936436f5ddd24f223fec1525df77d8d1545466797854b8234c1"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Java/src/com/k2view/cdbms/usercode/common/D2D/PopulationUtil.java",
+                "sha256": "e1e509ccc48ea33ffba9a3e2b3e839d090e1e547f0b84dcc1177e665d1d215f9"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Java/src/com/k2view/cdbms/usercode/common/D2D/SharedGlobals.java",
+                "sha256": "100c86aba59a1b1c96524121258accfba055104ad5dd2f4b4c408d95453c13f7"
+            },
+            {
+                "path": "/Implementation/SharedObjects/Java/src/com/k2view/cdbms/usercode/common/D2D/SharedLogic.java",
+                "sha256": "4544664f031aab3128d7fa308adf4f3902ee7335fa62af2d6e78b9d8dba378c6"
+            },
+            {
+                "path": "/lib/RemoteFabricD2D/fabric-jdbc-shaded-6.1.11_4-SNAPSHOT.jar",
+                "sha256": "2fc3df8a5b91d686dbdcb9820074651912cfd37d7477360b5043d3aa16bfa93e"
+            },
+            {
+                "path": "/lib/annotations-24.0.1.jar",
+                "sha256": "61666dbce7e42e6c85b43c04fcfb8293a21dcb55b3c80e869270ce42c01a6b35"
+            },
+            {
+                "path": "/lib/aspose-cells-22.3.jar",
+                "sha256": "b176194ad23cd1fed91b5ecbadbcf77aa93a2c7f19d4393071e4f72975b15b1f"
+            },
+            {
+                "path": "/lib/json-20240303.jar",
+                "sha256": "3cf6cd6892e32e2b4c1c39e0f52f5248a2f5b37646fdfbb79a66b46b618414ed"
+            }
+        ]
+    }
+]

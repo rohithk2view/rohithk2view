@@ -1,0 +1,606 @@
+{
+    "description": "Sets the desired environment SOURCE/TARGET table groups.",
+    "tags": [
+        "d2d"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Read",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Execution ID",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "D2D_EXEC_ID",
+                                        "isDefault": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Env From Table",
+                    "dependsOnList": [
+                        "Read"
+                    ],
+                    "isLast": 0,
+                    "remark": "D2D_EXEC_ID > 0, happens when the LUI is fetched from a task post-execution process.",
+                    "actors": [
+                        {
+                            "name": "ID > 0",
+                            "remark": "ID > 0 represents a TaskExecutionId from tdmdb",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "input1 > 0"
+                                    },
+                                    {
+                                        "name": "input1",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Get Environments",
+                            "actorType": {
+                                "parentType": "DbFetchFirstRow",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "TDM"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "SELECT DISTINCT task_execution_list.source_env_name ,\r\n                environments.environment_name as target_env_name \r\nFROM            public.task_execution_list \r\n           JOIN public.environments ON (task_execution_list.environment_id = environments.environment_id)\r\nWHERE           task_execution_id = ${task_execution_id}"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "schema": {
+                                            "type": "object"
+                                        },
+                                        "const": {}
+                                    },
+                                    {
+                                        "name": "task_execution_id",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "source_env_name": {
+                                                    "type": "string"
+                                                },
+                                                "target_env_name": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Env From Global",
+                    "dependsOnList": [
+                        "Read"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "remark": "if it is not from a task post execution process. \nD2D_EXEC_ID will be a session_id (UUID) ",
+                    "actors": [
+                        {
+                            "name": "D2D SOURCE ENV",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [
+                                    {
+                                        "name": "variableName",
+                                        "const": "D2D_SOURCE_ENV"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "D2D TARGET ENV",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [
+                                    {
+                                        "name": "variableName",
+                                        "const": "D2D_TARGET_ENV"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "No Op",
+                    "dependsOnList": [
+                        "Env From Table"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": false,
+                    "actors": []
+                },
+                {
+                    "name": "Check & Pass",
+                    "dependsOnList": [
+                        "Env From Global"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Both Not null?",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "src != \"\"  && tar != \"\""
+                                    },
+                                    {
+                                        "name": "src",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "tar",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "SOURCE",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "TARGET",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Run with default Environments",
+                    "dependsOnList": [
+                        "Env From Global"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Close IF-ELSE",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Output if SOURCE",
+                    "dependsOnList": [
+                        "Close IF-ELSE"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "== SOURCE",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "a",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "SOURCE"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Set Source Env",
+                            "actorType": {
+                                "parentType": "FabricSet",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "environment",
+                                        "isDefault": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Source Name",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Output if TARGET",
+                    "dependsOnList": [
+                        "Close IF-ELSE"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "Set Target Env",
+                            "actorType": {
+                                "parentType": "FabricSet",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "environment",
+                                        "isDefault": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Target Name",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Execution ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "ID > 0",
+                "name": "input1"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Execution ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Get Environments",
+                "name": "task_execution_id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Environments",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Set Source Env",
+                "name": "value"
+            },
+            "path": [
+                "source_env_name"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Get Environments",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Set Target Env",
+                "name": "value"
+            },
+            "path": [
+                "target_env_name"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Get Environments",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Source Name",
+                "name": "value"
+            },
+            "path": [
+                "source_env_name"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Get Environments",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Target Name",
+                "name": "value"
+            },
+            "path": [
+                "target_env_name"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "D2D SOURCE ENV",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "SOURCE",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "D2D SOURCE ENV",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Both Not null?",
+                "name": "src"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "D2D TARGET ENV",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "TARGET",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "D2D TARGET ENV",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Both Not null?",
+                "name": "tar"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "SOURCE",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Set Source Env",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "SOURCE",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Source Name",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "TARGET",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Set Target Env",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "TARGET",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Target Name",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "D2D SOURCE ENV",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "D2D TARGET ENV",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "environment"
+            },
+            "rightPort": {
+                "actor": "== SOURCE",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Source Name",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "environment_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Target Name",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "environment_name"
+            }
+        }
+    ]
+}

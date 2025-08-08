@@ -1,0 +1,787 @@
+{
+    "tags": [
+        "D2D",
+        "D2D\flows"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "error",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "object"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "actor": {
+                                                    "type": "string"
+                                                },
+                                                "exception": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "array",
+                                                                            "items": {
+                                                                                "type": "array",
+                                                                                "items": {
+                                                                                    "type": "array",
+                                                                                    "items": {
+                                                                                        "type": "array",
+                                                                                        "items": {
+                                                                                            "type": "array",
+                                                                                            "items": {
+                                                                                                "type": "array",
+                                                                                                "items": {
+                                                                                                    "type": "array",
+                                                                                                    "items": {
+                                                                                                        "type": "array",
+                                                                                                        "items": {
+                                                                                                            "type": "array",
+                                                                                                            "items": {
+                                                                                                                "type": "array",
+                                                                                                                "items": {
+                                                                                                                    "type": "array",
+                                                                                                                    "items": {
+                                                                                                                        "type": "array",
+                                                                                                                        "items": {
+                                                                                                                            "type": "array",
+                                                                                                                            "items": {
+                                                                                                                                "type": "array",
+                                                                                                                                "items": {
+                                                                                                                                    "type": "array",
+                                                                                                                                    "items": {
+                                                                                                                                        "type": "array",
+                                                                                                                                        "items": {
+                                                                                                                                            "type": "array",
+                                                                                                                                            "items": {
+                                                                                                                                                "type": "array",
+                                                                                                                                                "items": {
+                                                                                                                                                    "type": "array",
+                                                                                                                                                    "items": {
+                                                                                                                                                        "type": "array",
+                                                                                                                                                        "items": {
+                                                                                                                                                            "type": "array",
+                                                                                                                                                            "items": {
+                                                                                                                                                                "type": "array",
+                                                                                                                                                                "items": {
+                                                                                                                                                                    "type": "array",
+                                                                                                                                                                    "items": {
+                                                                                                                                                                        "type": "array",
+                                                                                                                                                                        "items": {
+                                                                                                                                                                            "type": "array",
+                                                                                                                                                                            "items": {
+                                                                                                                                                                                "type": "array",
+                                                                                                                                                                                "items": {
+                                                                                                                                                                                    "type": "array",
+                                                                                                                                                                                    "items": {
+                                                                                                                                                                                        "type": "array",
+                                                                                                                                                                                        "items": {
+                                                                                                                                                                                            "type": "array",
+                                                                                                                                                                                            "items": {
+                                                                                                                                                                                                "type": "array",
+                                                                                                                                                                                                "items": {
+                                                                                                                                                                                                    "type": "array",
+                                                                                                                                                                                                    "items": {
+                                                                                                                                                                                                        "type": "array",
+                                                                                                                                                                                                        "items": {
+                                                                                                                                                                                                            "type": "array",
+                                                                                                                                                                                                            "items": {
+                                                                                                                                                                                                                "type": "array",
+                                                                                                                                                                                                                "items": {
+                                                                                                                                                                                                                    "type": "array",
+                                                                                                                                                                                                                    "items": {
+                                                                                                                                                                                                                        "type": "array",
+                                                                                                                                                                                                                        "items": {
+                                                                                                                                                                                                                            "type": "array",
+                                                                                                                                                                                                                            "items": {
+                                                                                                                                                                                                                                "type": "array",
+                                                                                                                                                                                                                                "items": {
+                                                                                                                                                                                                                                    "type": "array",
+                                                                                                                                                                                                                                    "items": {
+                                                                                                                                                                                                                                        "type": "array",
+                                                                                                                                                                                                                                        "items": {
+                                                                                                                                                                                                                                            "type": "array",
+                                                                                                                                                                                                                                            "items": {
+                                                                                                                                                                                                                                                "type": "array",
+                                                                                                                                                                                                                                                "items": {
+                                                                                                                                                                                                                                                    "type": "array",
+                                                                                                                                                                                                                                                    "items": {
+                                                                                                                                                                                                                                                        "type": "array",
+                                                                                                                                                                                                                                                        "items": {}
+                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                }
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                        }
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                }
+                                                                                                                                                                                            }
+                                                                                                                                                                                        }
+                                                                                                                                                                                    }
+                                                                                                                                                                                }
+                                                                                                                                                                            }
+                                                                                                                                                                        }
+                                                                                                                                                                    }
+                                                                                                                                                                }
+                                                                                                                                                            }
+                                                                                                                                                        }
+                                                                                                                                                    }
+                                                                                                                                                }
+                                                                                                                                            }
+                                                                                                                                        }
+                                                                                                                                    }
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "stage": {
+                                                    "type": "string"
+                                                },
+                                                "inputParams": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "batch": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "schema": {
+                                                            "type": "string"
+                                                        },
+                                                        "interface": {
+                                                            "type": "string"
+                                                        },
+                                                        "sql": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "className": {
+                                                    "type": "string"
+                                                },
+                                                "rootClassName": {
+                                                    "type": "string"
+                                                },
+                                                "message": {
+                                                    "type": "string"
+                                                },
+                                                "flow": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "luTypeSrc",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "sourceTableName",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "tableSummaryName",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "execution_id",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "iid",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "targetTableName",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "schema",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "origin",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "schema translator",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": {
+                                            "userCode": "var res='d2dref';\r\nif (input1 === 'common'){\r\n    res = 'd2dref';\r\n}\r\nres;",
+                                            "script": "var res = 'd2dref';\n\nif (input1 === 'common') {\n  res = 'd2dref';\n}\n\nres;"
+                                        }
+                                    },
+                                    {
+                                        "name": "input1",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "origin formatter",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": {
+                                            "userCode": "var res=\"Missing\"\r\nif (input1 !== null){\r\n    res+=\" in \"+input1\r\n}\r\nres",
+                                            "script": "var res = \"Missing\";\n\nif (input1 !== null) {\n  res += \" in \" + input1;\n}\n\nres;"
+                                        }
+                                    },
+                                    {
+                                        "name": "input1",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Insert Missing Table",
+                            "actorType": {
+                                "parentType": "DbLoad",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "command",
+                                        "const": "upsert"
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "table",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "fields",
+                                        "const": [
+                                            "EXECUTION_ID",
+                                            "IID",
+                                            "SOURCE_TABLE_NAME",
+                                            "TARGET_TABLE_NAME",
+                                            "NUMBER_OF_RECORDS_MATCH",
+                                            "NUMBER_OF_RECORDS_MISMATCH",
+                                            "NUMBER_OF_RECORDS_ONLY_IN_SOURCE",
+                                            "NUMBER_OF_RECORDS_ONLY_IN_TARGET",
+                                            "NUMBER_OF_RECORDS_UNSECURED_IN_TARGET",
+                                            "MATCH_RESULT"
+                                        ]
+                                    },
+                                    {
+                                        "name": "keys",
+                                        "const": [
+                                            "EXECUTION_ID",
+                                            "IID",
+                                            "SOURCE_TABLE_NAME",
+                                            "TARGET_TABLE_NAME"
+                                        ]
+                                    },
+                                    {
+                                        "name": "dialect",
+                                        "const": "sqlite"
+                                    },
+                                    {
+                                        "name": "EXECUTION_ID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "IID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "SOURCE_TABLE_NAME",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "TARGET_TABLE_NAME",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "NUMBER_OF_RECORDS_MATCH",
+                                        "const": 0,
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "NUMBER_OF_RECORDS_MISMATCH",
+                                        "const": 0,
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "NUMBER_OF_RECORDS_ONLY_IN_SOURCE",
+                                        "const": 0,
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "NUMBER_OF_RECORDS_ONLY_IN_TARGET",
+                                        "const": 0,
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "NUMBER_OF_RECORDS_UNSECURED_IN_TARGET",
+                                        "const": 0,
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "MATCH_RESULT",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "luTypeSrc",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "schema translator",
+                "name": "input1"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "sourceTableName",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Insert Missing Table",
+                "name": "SOURCE_TABLE_NAME"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "tableSummaryName",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Insert Missing Table",
+                "name": "table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "execution_id",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Insert Missing Table",
+                "name": "EXECUTION_ID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "iid",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Insert Missing Table",
+                "name": "IID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "targetTableName",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Insert Missing Table",
+                "name": "TARGET_TABLE_NAME"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "origin",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "origin formatter",
+                "name": "input1"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "schema translator",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Insert Missing Table",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "origin formatter",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Insert Missing Table",
+                "name": "MATCH_RESULT"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "error"
+            },
+            "rightPort": {
+                "actor": "error",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luTypeSrc"
+            },
+            "rightPort": {
+                "actor": "luTypeSrc",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "sourceTableName"
+            },
+            "rightPort": {
+                "actor": "sourceTableName",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "tableSummaryName"
+            },
+            "rightPort": {
+                "actor": "tableSummaryName",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "execution_id"
+            },
+            "rightPort": {
+                "actor": "execution_id",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "iid"
+            },
+            "rightPort": {
+                "actor": "iid",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "targetTableName"
+            },
+            "rightPort": {
+                "actor": "targetTableName",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "schema",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "origin"
+            },
+            "rightPort": {
+                "actor": "origin",
+                "name": "value"
+            }
+        }
+    ]
+}

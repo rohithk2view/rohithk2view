@@ -1,0 +1,1888 @@
+{
+    "tags": [
+        "D2D",
+        "D2D\flows"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "User Input",
+                    "dependsOnList": [],
+                    "actors": [
+                        {
+                            "name": "SQL",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "EntityList",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Interface",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.interface",
+                                            "interfaceType": [
+                                                "database",
+                                                "CassandraLoader"
+                                            ],
+                                            "interfaces": [
+                                                "fabric"
+                                            ]
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Get Lu Name",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "fnGetLuType"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Execution Mode",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "F2F",
+                                        "isDefault": true
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Create Count Query",
+                    "dependsOnList": [
+                        "User Input"
+                    ],
+                    "actors": [
+                        {
+                            "name": "SqlNotNull",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "NotNull",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Count Query",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "select count (*) from (${sql}) cnt"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "IGNOREMATCH",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${lut}.IGNOREMATCH"
+                                    },
+                                    {
+                                        "name": "lut",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "F2F or D2D Legacy Batch Command",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "BATCH ${lut} FROM ${interface} USING ('${sql}') FABRIC_COMMAND=\"sync_instance ${lut}.?\" with async='true';"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "interface",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "lut",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Direct Batch Command",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "BATCH ${lut} FROM ${interface} USING ('@sql@') FABRIC_COMMAND=\"broadway ${lut}.bwD2DExecute iid=?, execution_mode='Direct'\" with async='true';"
+                                    },
+                                    {
+                                        "name": "interface",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "lut",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Extract Batch Command",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "BATCH ${lut} FROM ${interface} USING (\"${sql}\") FABRIC_COMMAND=\"broadway ${lut}.bwD2DExecute iid=?, execution_mode='Extract'\" with async='true';"
+                                    },
+                                    {
+                                        "name": "interface",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "lut",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Get D2D_REPORT_MAX_SIZE",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [
+                                    {
+                                        "name": "variableName",
+                                        "const": "D2D_REPORT_MAX_SIZE"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Max Value for Full Report",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "const": 1000,
+                                        "isDefault": true
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Entity List Mode",
+                    "dependsOnList": [
+                        "User Input"
+                    ],
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "EntityListNotNull",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "NotNull",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Add Quotes",
+                            "actorType": {
+                                "parentType": "Replace",
+                                "inputs": [
+                                    {
+                                        "name": "search",
+                                        "const": ","
+                                    },
+                                    {
+                                        "name": "replace",
+                                        "const": "','"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Table Level",
+                    "dependsOnList": [
+                        "User Input"
+                    ],
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "T2T Mode",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "T2T"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "LookupExtractKeys",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwLookupExtractKeys"
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "DbCommand1",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "set D2D_EXEC_MODE=T2T;"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Execute Count Query",
+                    "dependsOnList": [
+                        "Create Count Query"
+                    ],
+                    "actors": [
+                        {
+                            "name": "Count",
+                            "actorType": {
+                                "parentType": "DbFetchField",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Entity List Batch",
+                    "dependsOnList": [
+                        "Entity List Mode"
+                    ],
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "F2F or D2D Legacy Batch Command Entity List",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "BATCH ${lut}.('${list}') FABRIC_COMMAND=\"sync_instance ${lut}.?\" with async='true';"
+                                    },
+                                    {
+                                        "name": "lut",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "list",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Direct Batch Command Entity List",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "BATCH ${lut}.('${list}') FABRIC_COMMAND=\"broadway ${lut}.bwD2DExecute iid=?, execution_mode='Direct'\" with async='true';"
+                                    },
+                                    {
+                                        "name": "lut",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "list",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Extract Batch Command Entity List",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "BATCH ${lut}.('${list}') FABRIC_COMMAND=\"broadway ${lut}.bwD2DExecute iid=?, execution_mode='Extract'\" with async='true';"
+                                    },
+                                    {
+                                        "name": "lut",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "list",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "LKP Batch Command Entity List",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "BATCH ${lut}.(${list}) FABRIC_COMMAND=\"sync_instance ${lut}.?\" with async='true';"
+                                    },
+                                    {
+                                        "name": "lut",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "list",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Generate D2D entity list",
+                    "dependsOnList": [
+                        "Table Level"
+                    ],
+                    "actors": [
+                        {
+                            "name": "FabricSet1",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "FabricSet",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "D2D_EXEC_MODE"
+                                    },
+                                    {
+                                        "name": "value",
+                                        "const": "T2T"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "KEYS_TABLE_GROUPS",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [
+                                    {
+                                        "name": "variableName",
+                                        "const": "D2D_LKP_GROUPS_COUNT"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "ForLoop1",
+                            "actorType": {
+                                "parentType": "ForLoop",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Mapper1",
+                            "actorType": {
+                                "parentType": "Mapper",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "\"'\"+value+\"'\";"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "values",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "StringBuild1",
+                            "actorType": {
+                                "parentType": "StringBuild",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Set IGNOREMATCH",
+                    "dependsOnList": [
+                        "Execute Count Query"
+                    ],
+                    "actors": [
+                        {
+                            "name": "Check Max",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "GreaterThanEquals",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "IGNOREMATCH = true",
+                            "actorType": {
+                                "parentType": "FabricSet",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": "true"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Do Not Change IGNOREMATCH",
+                    "dependsOnList": [
+                        "Execute Count Query"
+                    ],
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": []
+                },
+                {
+                    "name": "Nothing",
+                    "dependsOnList": [
+                        "Entity List Batch"
+                    ],
+                    "isTransactional": false,
+                    "actors": []
+                },
+                {
+                    "name": "Table Level batch command",
+                    "dependsOnList": [
+                        "Generate D2D entity list"
+                    ],
+                    "actors": [
+                        {
+                            "name": "LKP Batch Command",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "BATCH ${lut}.(${list}) FABRIC_COMMAND=\"sync_instance ${lut}.?\" with async='true';"
+                                    },
+                                    {
+                                        "name": "lut",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "list",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Mapper for Batch Command",
+                    "dependsOnList": [],
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Batch",
+                            "actorType": {
+                                "parentType": "Mapper",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "var batch;\nif (value == \"F2F\") batch = d2d_f2f;\nelse if (value == \"Direct\") batch = d2d_direct;\nelse if (value == \"Extract\") batch = d2d_extract;\nelse if (value == \"T2T\") batch = t2t;\nbatch;"
+                                    },
+                                    {
+                                        "name": "d2d_f2f",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "d2d_direct",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "d2d_extract",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "t2t",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "values",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Start Batch",
+                    "dependsOnList": [],
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Log Count",
+                            "actorType": {
+                                "parentType": "Logger",
+                                "inputs": [
+                                    {
+                                        "name": "message",
+                                        "const": "##### Batch will be executed for: ${cnt} entities"
+                                    },
+                                    {
+                                        "name": "level",
+                                        "const": "info"
+                                    },
+                                    {
+                                        "name": "cnt",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "sync=force",
+                            "actorType": {
+                                "parentType": "FabricSet",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "sync"
+                                    },
+                                    {
+                                        "name": "value",
+                                        "const": "force"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Execute Batch",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Batch id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Execution id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Notes": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Wait Batch",
+                    "dependsOnList": [],
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Log Batch Cmd",
+                            "actorType": {
+                                "parentType": "Logger",
+                                "inputs": [
+                                    {
+                                        "name": "message",
+                                        "const": "##### Batch Started: ${cmd}, batchID=${batchid}, executionID=${executionid}"
+                                    },
+                                    {
+                                        "name": "level",
+                                        "const": "info"
+                                    },
+                                    {
+                                        "name": "cmd",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "batchid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "executionid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "BatchId",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Set D2D_EXEC_ID",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "set_global global 'D2D.D2D_EXEC_ID=${@execution_id}'"
+                                    },
+                                    {
+                                        "name": "execution_id",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "BatchWait",
+                            "actorType": {
+                                "parentType": "BatchWait",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Report",
+                    "dependsOnList": [
+                        "Wait Batch"
+                    ],
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Check if Report Enabled",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "a",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "const": false,
+                                        "isDefault": true
+                                    },
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Log Report",
+                            "actorType": {
+                                "parentType": "Logger",
+                                "inputs": [
+                                    {
+                                        "name": "message",
+                                        "const": "##### Excel Report Requested: ${requested}"
+                                    },
+                                    {
+                                        "name": "level",
+                                        "const": "info"
+                                    },
+                                    {
+                                        "name": "requested",
+                                        "const": "true",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false,
+                                        "isDefault": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Create Excel Report",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwPrintD2Dv2Result"
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "xlsx",
+                                        "name": "file_type",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "xlsx",
+                                                "xls"
+                                            ]
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "strict",
+                                        "schema": {},
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "filename",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "No Report",
+                    "dependsOnList": [
+                        "Wait Batch"
+                    ],
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "Log Finish",
+                            "actorType": {
+                                "parentType": "Logger",
+                                "inputs": [
+                                    {
+                                        "name": "message",
+                                        "const": "##### Batch Completed, Excel Report was not Requested"
+                                    },
+                                    {
+                                        "name": "level",
+                                        "const": "info"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Finish",
+                    "dependsOnList": [
+                        "Report"
+                    ],
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Log Report File",
+                            "actorType": {
+                                "parentType": "Logger",
+                                "inputs": [
+                                    {
+                                        "name": "message",
+                                        "const": "##### Report Created with filename: ${name}"
+                                    },
+                                    {
+                                        "name": "level",
+                                        "const": "info"
+                                    },
+                                    {
+                                        "name": "name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [
+                        "No Report"
+                    ],
+                    "isTransactional": false,
+                    "actors": []
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "SQL",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Count Query",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "SQL",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "SqlNotNull",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "SQL",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Extract Batch Command",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "SQL",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "F2F or D2D Legacy Batch Command",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EntityList",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Add Quotes",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EntityList",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Log Count",
+                "name": "cnt"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EntityList",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Extract Batch Command Entity List",
+                "name": "list"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EntityList",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "EntityListNotNull",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EntityList",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "LKP Batch Command Entity List",
+                "name": "list"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Interface",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Count",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Interface",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Direct Batch Command",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Interface",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Extract Batch Command",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Interface",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "F2F or D2D Legacy Batch Command",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "IGNOREMATCH",
+                "name": "lut"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Create Excel Report",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Get D2D_REPORT_MAX_SIZE",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "F2F or D2D Legacy Batch Command Entity List",
+                "name": "lut"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Direct Batch Command Entity List",
+                "name": "lut"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Direct Batch Command",
+                "name": "lut"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Extract Batch Command",
+                "name": "lut"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Extract Batch Command Entity List",
+                "name": "lut"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "F2F or D2D Legacy Batch Command",
+                "name": "lut"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "LKP Batch Command Entity List",
+                "name": "lut"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "LookupExtractKeys",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "KEYS_TABLE_GROUPS",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "LKP Batch Command",
+                "name": "lut"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Execution Mode",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Batch",
+                "name": "values"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Execution Mode",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "T2T Mode",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Count Query",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Count",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IGNOREMATCH",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "IGNOREMATCH = true",
+                "name": "key"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "F2F or D2D Legacy Batch Command",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Batch",
+                "name": "d2d_f2f"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Direct Batch Command",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Batch",
+                "name": "d2d_direct"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Extract Batch Command",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Batch",
+                "name": "d2d_extract"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get D2D_REPORT_MAX_SIZE",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Check Max",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Max Value for Full Report",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Check Max",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Add Quotes",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "F2F or D2D Legacy Batch Command Entity List",
+                "name": "list"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Add Quotes",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Direct Batch Command Entity List",
+                "name": "list"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Count",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Log Count",
+                "name": "cnt"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Count",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Check Max",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "F2F or D2D Legacy Batch Command Entity List",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Batch",
+                "name": "d2d_f2f"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Direct Batch Command Entity List",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Batch",
+                "name": "d2d_direct"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Extract Batch Command Entity List",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Batch",
+                "name": "d2d_extract"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "LKP Batch Command Entity List",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Batch",
+                "name": "t2t"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "KEYS_TABLE_GROUPS",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "ForLoop1",
+                "name": "to"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ForLoop1",
+                "name": "i"
+            },
+            "rightPort": {
+                "actor": "Mapper1",
+                "name": "values"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Mapper1",
+                "name": "values"
+            },
+            "rightPort": {
+                "actor": "StringBuild1",
+                "name": "input"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "StringBuild1",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "LKP Batch Command",
+                "name": "list"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "LKP Batch Command",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Batch",
+                "name": "t2t"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Batch",
+                "name": "values"
+            },
+            "rightPort": {
+                "actor": "Execute Batch",
+                "name": "sql"
+            },
+            "iterate": "First"
+        },
+        {
+            "leftPort": {
+                "actor": "Batch",
+                "name": "values"
+            },
+            "rightPort": {
+                "actor": "Log Batch Cmd",
+                "name": "cmd"
+            },
+            "iterate": "First"
+        },
+        {
+            "leftPort": {
+                "actor": "Execute Batch",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "BatchWait",
+                "name": "batchId"
+            },
+            "iterate": "First",
+            "path": [
+                "Batch id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Execute Batch",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Log Batch Cmd",
+                "name": "batchid"
+            },
+            "iterate": "First",
+            "path": [
+                "Batch id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Execute Batch",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Create Excel Report",
+                "name": "taskExecutionID"
+            },
+            "iterate": "First",
+            "path": [
+                "Execution id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Execute Batch",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Set D2D_EXEC_ID",
+                "name": "execution_id"
+            },
+            "iterate": "First",
+            "path": [
+                "Execution id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Execute Batch",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Log Batch Cmd",
+                "name": "executionid"
+            },
+            "iterate": "First",
+            "path": [
+                "Execution id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Execute Batch",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "BatchId",
+                "name": "value"
+            },
+            "iterate": "First",
+            "path": [
+                "Batch id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Create Excel Report",
+                "name": "filename"
+            },
+            "rightPort": {
+                "actor": "Log Report File",
+                "name": "name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "sql"
+            },
+            "rightPort": {
+                "actor": "SQL",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "entity_list"
+            },
+            "rightPort": {
+                "actor": "EntityList",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "interface"
+            },
+            "rightPort": {
+                "actor": "Interface",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "execution_mode"
+            },
+            "rightPort": {
+                "actor": "Execution Mode",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "limitFullMode"
+            },
+            "rightPort": {
+                "actor": "Max Value for Full Report",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "BatchId",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "batch_id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "printSummaryReport"
+            },
+            "rightPort": {
+                "actor": "Check if Report Enabled",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "printSummaryReport"
+            },
+            "rightPort": {
+                "actor": "Log Report",
+                "name": "requested"
+            }
+        }
+    ]
+}

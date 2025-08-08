@@ -1,0 +1,271 @@
+{
+    "description": "print latest d2d summary table results to an excel\n\nInputs\niid - d2d instance id\nexecution_id - execution_id (summary table record key)",
+    "tags": [
+        "d2d"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Inputs",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Get Lu Name",
+                            "minHeight": 108,
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "fnGetLuType"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "luType",
+                                        "schema": {}
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Scope",
+                    "dependsOnList": [
+                        "Inputs"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "IID Provided",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "NotNull",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "remark": "d2d instance id"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Use LUI Off Mode",
+                            "actorType": {
+                                "parentType": "FabricGet",
+                                "inputs": [
+                                    {
+                                        "name": "luType",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "remark": "d2d instance id",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null,
+                                        "isDefault": false
+                                    },
+                                    {
+                                        "name": "syncMode",
+                                        "const": "OFF"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Execution ID",
+                            "actorType": {
+                                "parentType": "DbFetchField",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "select EXECUTION_ID from ${@lu_name}.D2D_ENTITY_SUMMARY limit 1"
+                                    },
+                                    {
+                                        "name": "lu_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "continue",
+                    "dependsOnList": [
+                        "Inputs"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Filter",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Activate",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "Elvis",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "remark": "execution_id (summary table record key)"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Create",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Excel",
+                            "actorType": {
+                                "parentType": "PrintD2DResult",
+                                "inputs": [
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "file_type",
+                                        "const": "xlsx"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "IID Provided",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Excel",
+                "name": "strict"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Execution ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Activate",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Activate",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Excel",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "entity"
+            },
+            "rightPort": {
+                "actor": "IID Provided",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "entity"
+            },
+            "rightPort": {
+                "actor": "Use LUI Off Mode",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "executionId"
+            },
+            "rightPort": {
+                "actor": "Activate",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "entity"
+            },
+            "rightPort": {
+                "actor": "Excel",
+                "name": "iid"
+            }
+        }
+    ]
+}

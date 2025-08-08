@@ -1,0 +1,517 @@
+{
+    "tags": [
+        "d2dv2"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "DB Interface",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "D2D_RESULT_INTERFACE"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Create d2d_entity_summary",
+                            "actorType": {
+                                "parentType": "DbCreateTable",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "const": "@D2D_LOAD_SCHEMA@"
+                                    },
+                                    {
+                                        "name": "table",
+                                        "const": "d2d_entity_summary"
+                                    },
+                                    {
+                                        "name": "fields",
+                                        "const": [
+                                            {
+                                                "name": "execution_id",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "iid",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "match_result",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_fields_match",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_fields_only_in_source",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_fields_only_in_target",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_fields_unsecured_in_target",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_records_match",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_records_mismatch",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_records_unsecured_in_target",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "update_time",
+                                                "type": "timestamp",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_fields_mismatch",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "dialect",
+                                        "const": "postgres"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Create d2d_field_summary",
+                            "actorType": {
+                                "parentType": "DbCreateTable",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "const": "@D2D_LOAD_SCHEMA@"
+                                    },
+                                    {
+                                        "name": "table",
+                                        "const": "d2d_field_summary"
+                                    },
+                                    {
+                                        "name": "fields",
+                                        "const": [
+                                            {
+                                                "name": "execution_id",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "iid",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "match_result",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "column_name",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "customized_key",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "source_column_value",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "source_column_value_trans",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "source_table_name",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "target_column_value",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "target_column_value_trans",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "target_table_name",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "target_value_secured",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "dialect",
+                                        "const": "postgres"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Create d2d_record_summary",
+                            "actorType": {
+                                "parentType": "DbCreateTable",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "const": "@D2D_LOAD_SCHEMA@"
+                                    },
+                                    {
+                                        "name": "table",
+                                        "const": "d2d_record_summary"
+                                    },
+                                    {
+                                        "name": "fields",
+                                        "const": [
+                                            {
+                                                "name": "execution_id",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "iid",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "match_result",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_fields_match",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "customized_key",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_fields_mismatch",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_fields_only_in_source",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_fields_only_in_target",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_fields_unsecured_in_target",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "source_table_name",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "target_table_name",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "dialect",
+                                        "const": "postgres"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Create d2d_table_summary",
+                            "actorType": {
+                                "parentType": "DbCreateTable",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "const": "@D2D_LOAD_SCHEMA@"
+                                    },
+                                    {
+                                        "name": "table",
+                                        "const": "d2d_table_summary"
+                                    },
+                                    {
+                                        "name": "fields",
+                                        "const": [
+                                            {
+                                                "name": "execution_id",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "iid",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "match_result",
+                                                "type": "text",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_records_match",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_records_mismatch",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_records_only_in_source",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_records_only_in_target",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "number_of_records_unsecured_in_target",
+                                                "type": "integer",
+                                                "pk": false,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "source_table_name",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            },
+                                            {
+                                                "name": "target_table_name",
+                                                "type": "text",
+                                                "pk": true,
+                                                "mandatory": false
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "dialect",
+                                        "const": "postgres"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "FileRead1",
+                            "actorType": {
+                                "parentType": "FileRead",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 4",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "DbCreateTable1",
+                            "actorType": {
+                                "parentType": "DbCreateTable",
+                                "inputs": [
+                                    {
+                                        "name": "fields",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "DB Interface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Create d2d_entity_summary",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "DB Interface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Create d2d_field_summary",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "DB Interface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Create d2d_record_summary",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "DB Interface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Create d2d_table_summary",
+                "name": "interface"
+            }
+        }
+    ]
+}
