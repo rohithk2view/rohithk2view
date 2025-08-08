@@ -1,0 +1,23 @@
+{
+    "type": "PopulationUtil",
+    "badge": "Po",
+    "inputs": [
+        {
+            "name": "flowName",
+            "schema": {},
+            "doc": "The Broadway flow name provided in the format ${table_name}.${population}",
+            "mandatory": false
+        }
+    ],
+    "outputs": [
+        {
+            "name": "result",
+            "schema": {},
+            "doc": "The interface name used by the sourcedbquery actor in the input 'flowName' argument"
+        }
+    ],
+    "actorClass": "com.k2view.cdbms.usercode.common.D2D.PopulationUtil",
+    "tags": [
+        "d2d"
+    ]
+}

@@ -1,0 +1,1951 @@
+{
+    "tags": [
+        "d2d",
+        "d2d\flows",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [],
+                    "actors": [
+                        {
+                            "name": "Type",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "LU NAME",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Table",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Excluded Columns",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Exclude Condition",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Keys",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Delimiter",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Interface",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "ColumnMapping",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "DB Type",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [],
+                    "actors": [
+                        {
+                            "name": "UppercaseExcluded",
+                            "actorType": {
+                                "parentType": "Uppercase",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Exclude Clause",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": " and ${where} "
+                                    },
+                                    {
+                                        "name": "where",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Split1",
+                            "actorType": {
+                                "parentType": "Split",
+                                "inputs": [
+                                    {
+                                        "name": "delimiter",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Replace1",
+                            "actorType": {
+                                "parentType": "Replace",
+                                "inputs": [
+                                    {
+                                        "name": "search",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "replace",
+                                        "const": ","
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 13",
+                    "dependsOnList": [],
+                    "actors": [
+                        {
+                            "name": "Split Excluded",
+                            "actorType": {
+                                "parentType": "Split",
+                                "inputs": [
+                                    {
+                                        "name": "delimiter",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "DB Type To Query",
+                            "actorType": {
+                                "parentType": "Mapper",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "var sql;\nif (value.toLowerCase() == \"PostgreSQL (Db)\".toLowerCase()) sql = \"SELECT column_name as column FROM information_schema.columns where table_name = '${@table}'\";\nelse if (value.toLowerCase() == \"fabric (Db)\".toLowerCase()) sql = \"describe table ${@luType}.${@table}\";\nelse if (value.toLowerCase() == \"Cassandra (Db)\".toLowerCase()) sql = \"select column_name as column from system_schema.columns  where keyspace_name = '${@luType}' and table_name = '${@table}'\";\nsql;"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "values",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "IfElse1",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "IfElse",
+                                "inputs": [],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 6",
+                    "dependsOnList": [],
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Get Columns from SRC",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "table",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "schema": {
+                                                        "type": "string"
+                                                    },
+                                                    "table": {
+                                                        "type": "string"
+                                                    },
+                                                    "column": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "nullable": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "default": {
+                                                        "type": "string"
+                                                    },
+                                                    "pk": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 4",
+                    "dependsOnList": [],
+                    "actors": [
+                        {
+                            "name": "Mapper1",
+                            "actorType": {
+                                "parentType": "Mapper",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "value.toUpperCase()"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "values",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Check EmptyArray",
+                            "actorType": {
+                                "parentType": "ConstStrings",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 5",
+                    "dependsOnList": [],
+                    "actors": [
+                        {
+                            "name": "Filter Columns",
+                            "actorType": {
+                                "parentType": "Filter",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "excludeList.indexOf(value) === -1"
+                                    },
+                                    {
+                                        "name": "excludeList",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "values",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Equals2",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "Equals",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Equals3",
+                            "actorType": {
+                                "parentType": "Equals",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "TAR"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "NotEquals1",
+                            "actorType": {
+                                "parentType": "NotEquals",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 17",
+                    "dependsOnList": [],
+                    "actors": [
+                        {
+                            "name": "DeepCopy1",
+                            "actorType": {
+                                "parentType": "DeepCopy",
+                                "inputs": [],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [
+                        "Stage 17"
+                    ],
+                    "actors": [
+                        {
+                            "name": "And1",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "And",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 14",
+                    "dependsOnList": [
+                        "Stage 17"
+                    ],
+                    "hasElse": true,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "ColumnMapping handling",
+                    "dependsOnList": [
+                        "Stage 3"
+                    ],
+                    "actors": [
+                        {
+                            "name": "Const3",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Column names without ColumnMapping",
+                    "dependsOnList": [
+                        "Stage 14"
+                    ],
+                    "actors": [
+                        {
+                            "name": "Passthrough default values without columnMapping column",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 10",
+                    "dependsOnList": [
+                        "ColumnMapping handling"
+                    ],
+                    "actors": [
+                        {
+                            "name": "Split3",
+                            "actorType": {
+                                "parentType": "Split",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 16",
+                    "dependsOnList": [
+                        "Column names without ColumnMapping"
+                    ],
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 20",
+                    "dependsOnList": [
+                        "Stage 10"
+                    ],
+                    "actors": [
+                        {
+                            "name": "Split4",
+                            "actorType": {
+                                "parentType": "Split",
+                                "inputs": [
+                                    {
+                                        "name": "delimiter",
+                                        "const": ":"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "JavaScript1",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "arr[0]"
+                                    },
+                                    {
+                                        "name": "arr",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "JavaScript2",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "arr[1]"
+                                    },
+                                    {
+                                        "name": "arr",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 23",
+                    "dependsOnList": [
+                        "Stage 16"
+                    ],
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 21",
+                    "dependsOnList": [
+                        "Stage 20"
+                    ],
+                    "actors": [
+                        {
+                            "name": "SRC Col",
+                            "actorType": {
+                                "parentType": "Uppercase",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "TAR Col Map",
+                            "actorType": {
+                                "parentType": "Uppercase",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 24",
+                    "dependsOnList": [
+                        "Stage 23"
+                    ],
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 19",
+                    "dependsOnList": [
+                        "Stage 21"
+                    ],
+                    "isLast": 1,
+                    "actors": [
+                        {
+                            "name": "EqualsIgnoreCase1",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Build Columns",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": " ${column}  as \"${env}_${map_column}\""
+                                    },
+                                    {
+                                        "name": "column",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "env",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "map_column",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "LoopStop1",
+                            "actorType": {
+                                "parentType": "LoopStop",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 22",
+                    "dependsOnList": [
+                        "Stage 21"
+                    ],
+                    "isLast": 1,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "Build Columns1",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": " ${column}  as \"${env}_${map_column}\""
+                                    },
+                                    {
+                                        "name": "column",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "env",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "map_column",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 25",
+                    "dependsOnList": [
+                        "Stage 24"
+                    ],
+                    "isLast": 1,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 18",
+                    "dependsOnList": [
+                        "Stage 19"
+                    ],
+                    "actors": []
+                },
+                {
+                    "name": "Stage 26",
+                    "dependsOnList": [
+                        "Stage 22"
+                    ],
+                    "actors": []
+                },
+                {
+                    "name": "Stage 27",
+                    "dependsOnList": [
+                        "Stage 25"
+                    ],
+                    "actors": [
+                        {
+                            "name": "Build Columns11",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": " ${column}  as \"${env}_${map_column}\""
+                                    },
+                                    {
+                                        "name": "column",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "env",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "map_column",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 7",
+                    "dependsOnList": [],
+                    "isLast": 1,
+                    "actors": [
+                        {
+                            "name": "Append Columns",
+                            "actorType": {
+                                "parentType": "StringBuild",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 8",
+                    "dependsOnList": [
+                        "Stage 7"
+                    ],
+                    "actors": [
+                        {
+                            "name": "Equals1",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "Equals",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "SRC"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Split Customized Keys",
+                            "actorType": {
+                                "parentType": "Split",
+                                "inputs": [
+                                    {
+                                        "name": "delimiter",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 15",
+                    "dependsOnList": [
+                        "Stage 7"
+                    ],
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "bwGetColMapCustomKey1",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwGetColMapCustomKey"
+                                    },
+                                    {
+                                        "name": "ColumnMapping",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "CustomizedKey",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "string",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Split2",
+                            "actorType": {
+                                "parentType": "Split",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 9",
+                    "dependsOnList": [],
+                    "actors": [
+                        {
+                            "name": "Build Keys",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": " ${key} = ? "
+                                    },
+                                    {
+                                        "name": "key",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 11",
+                    "dependsOnList": [],
+                    "isLast": 1,
+                    "actors": [
+                        {
+                            "name": "Append Keys",
+                            "actorType": {
+                                "parentType": "StringBuild",
+                                "inputs": [
+                                    {
+                                        "name": "delimiter",
+                                        "const": "and"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 12",
+                    "dependsOnList": [],
+                    "actors": [
+                        {
+                            "name": "Query",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "select ${columns} from ${schema}.${table} where ${keys} ${and}"
+                                    },
+                                    {
+                                        "name": "columns",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "keys",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "and",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "table",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Type",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Build Columns",
+                "name": "env"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Type",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Equals1",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Type",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Build Columns1",
+                "name": "env"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Type",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Build Columns11",
+                "name": "env"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "LU NAME",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Get Columns from SRC",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "LU NAME",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Query",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Table",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Get Columns from SRC",
+                "name": "table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Table",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Query",
+                "name": "table"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Excluded Columns",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "UppercaseExcluded",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Exclude Condition",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Exclude Clause",
+                "name": "where"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Exclude Condition",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "IfElse1",
+                "name": "test"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Keys",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Split Customized Keys",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Keys",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Replace1",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Delimiter",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Split Excluded",
+                "name": "delimiter"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Delimiter",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Split Customized Keys",
+                "name": "delimiter"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Delimiter",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Split1",
+                "name": "delimiter"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Delimiter",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Replace1",
+                "name": "search"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Interface",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Get Columns from SRC",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ColumnMapping",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Split1",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ColumnMapping",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "NotEquals1",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ColumnMapping",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "bwGetColMapCustomKey1",
+                "name": "ColumnMapping"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ColumnMapping",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Split3",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "DB Type",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "DB Type To Query",
+                "name": "values"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "UppercaseExcluded",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Split Excluded",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Exclude Clause",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "IfElse1",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Replace1",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "bwGetColMapCustomKey1",
+                "name": "CustomizedKey"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Split Excluded",
+                "name": "strings"
+            },
+            "rightPort": {
+                "actor": "Filter Columns",
+                "name": "excludeList"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "DB Type To Query",
+                "name": "values"
+            },
+            "rightPort": {
+                "actor": "Get Columns from SRC",
+                "name": "sql"
+            },
+            "iterate": "First"
+        },
+        {
+            "leftPort": {
+                "actor": "IfElse1",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Query",
+                "name": "and"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Columns from SRC",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Mapper1",
+                "name": "values"
+            },
+            "path": [
+                "column"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Mapper1",
+                "name": "values"
+            },
+            "rightPort": {
+                "actor": "Filter Columns",
+                "name": "values"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Filter Columns",
+                "name": "values"
+            },
+            "rightPort": {
+                "actor": "DeepCopy1",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Equals2",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "And1",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Equals3",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "And1",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "NotEquals1",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "And1",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "DeepCopy1",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Const3",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "DeepCopy1",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Passthrough default values without columnMapping column",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Const3",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Build Columns1",
+                "name": "column"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Const3",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "EqualsIgnoreCase1",
+                "name": "a"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Const3",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Build Columns",
+                "name": "column"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Const3",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Build Columns1",
+                "name": "map_column"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Passthrough default values without columnMapping column",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Build Columns11",
+                "name": "column"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Passthrough default values without columnMapping column",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Build Columns11",
+                "name": "map_column"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Split3",
+                "name": "strings"
+            },
+            "rightPort": {
+                "actor": "Split4",
+                "name": "string"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Split4",
+                "name": "strings"
+            },
+            "rightPort": {
+                "actor": "JavaScript1",
+                "name": "arr"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Split4",
+                "name": "strings"
+            },
+            "rightPort": {
+                "actor": "JavaScript2",
+                "name": "arr"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "JavaScript1",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "SRC Col",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "JavaScript2",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "TAR Col Map",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "SRC Col",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Build Columns",
+                "name": "map_column"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "TAR Col Map",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "EqualsIgnoreCase1",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Build Columns",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Append Columns",
+                "name": "input"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "Build Columns1",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Append Columns",
+                "name": "input"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "Build Columns11",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Append Columns",
+                "name": "input"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "Append Columns",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Query",
+                "name": "columns"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Split Customized Keys",
+                "name": "strings"
+            },
+            "rightPort": {
+                "actor": "Build Keys",
+                "name": "key"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "bwGetColMapCustomKey1",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Split2",
+                "name": "string"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Split2",
+                "name": "strings"
+            },
+            "rightPort": {
+                "actor": "Build Keys",
+                "name": "key"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Build Keys",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Append Keys",
+                "name": "input"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Append Keys",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Query",
+                "name": "keys"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "env_prefix"
+            },
+            "rightPort": {
+                "actor": "Type",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "LU NAME",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "sourceTableName"
+            },
+            "rightPort": {
+                "actor": "Table",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "excludedColumnsNames"
+            },
+            "rightPort": {
+                "actor": "Excluded Columns",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "excludeCondition"
+            },
+            "rightPort": {
+                "actor": "Exclude Condition",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "customizedKeyComparison"
+            },
+            "rightPort": {
+                "actor": "Keys",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "delimiter"
+            },
+            "rightPort": {
+                "actor": "Delimiter",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "interface"
+            },
+            "rightPort": {
+                "actor": "Interface",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "ColumnMapping"
+            },
+            "rightPort": {
+                "actor": "ColumnMapping",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "dbType"
+            },
+            "rightPort": {
+                "actor": "DB Type",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "env_prefix"
+            },
+            "rightPort": {
+                "actor": "Equals3",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Query",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "sql"
+            }
+        }
+    ]
+}

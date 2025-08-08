@@ -1,0 +1,492 @@
+{
+    "tags": [
+        "d2dv2",
+        "d2d",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Init",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Execution Mode",
+                            "remark": "Read input parameter - Extract or Direct.\n* Extract - execute GET for IID in both data sources and compare LU tables\n* Direct - execute get for IID to populate TAR_ tables only for PKs and compare tables in DB directly",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "IID",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "EXECUTION_ID",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "EXECUTION_ID"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Get LU Name",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "fnGetLuType"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Execute",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "ErrorHandler",
+                            "onError": "result",
+                            "actorType": {
+                                "parentType": "ErrorHandler",
+                                "inputs": [
+                                    {
+                                        "name": "config",
+                                        "const": [
+                                            {
+                                                "exceptionKey": "java.lang.Exception",
+                                                "conditions": {
+                                                    "message": ".*"
+                                                },
+                                                "actions": {
+                                                    "suppress": false,
+                                                    "log": true,
+                                                    "flowName": "bwD2DLogError"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "execution_id",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "##### Error: ",
+                                        "name": "message",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "FieldsSummary",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwD2DFieldsSummary"
+                                    },
+                                    {
+                                        "name": "innerFlowClose",
+                                        "const": false
+                                    },
+                                    {
+                                        "name": "lu_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "execution_mode",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "RecordsSummary",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwD2DRecordSummary"
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "TablesSummary",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwD2DTableSummary"
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "EntitiesSummary",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwD2DEntitySummary"
+                                    },
+                                    {
+                                        "name": "lu_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Report",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Excel - PrintD2Dv2Result",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwPrintD2Dv2Result"
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "xlsx",
+                                        "name": "file_type",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "xlsx",
+                                                "xls"
+                                            ]
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": false,
+                                        "name": "strict",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "",
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "filename",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Execution Mode",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "FieldsSummary",
+                "name": "execution_mode"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IID",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "FieldsSummary",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IID",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "RecordsSummary",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IID",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "TablesSummary",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IID",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "EntitiesSummary",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EXECUTION_ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "ErrorHandler",
+                "name": "execution_id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EXECUTION_ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Excel - PrintD2Dv2Result",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get LU Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "FieldsSummary",
+                "name": "lu_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get LU Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "RecordsSummary",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get LU Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "TablesSummary",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get LU Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "EntitiesSummary",
+                "name": "lu_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get LU Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Excel - PrintD2Dv2Result",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "execution_mode"
+            },
+            "rightPort": {
+                "actor": "Execution Mode",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "iid"
+            },
+            "rightPort": {
+                "actor": "IID",
+                "name": "value"
+            }
+        }
+    ]
+}

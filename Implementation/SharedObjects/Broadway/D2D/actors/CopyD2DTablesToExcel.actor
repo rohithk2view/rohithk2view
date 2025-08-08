@@ -1,0 +1,63 @@
+{
+    "type": "CopyD2DTablesToExcel",
+    "badge": "bw",
+    "inputs": [
+        {
+            "name": "execution_id",
+            "schema": {},
+            "mandatory": false,
+            "doc": "key column to filter the summary record"
+        },
+        {
+            "name": "queries",
+            "schema": {},
+            "mandatory": false,
+            "doc": "List Of Table select queries to execute"
+        },
+        {
+            "name": "file_type",
+            "schema": {},
+            "editor": {
+                "id": "com.k2view.dropdown",
+                "options": [
+                    "xlsx",
+                    "xls"
+                ]
+            },
+            "mandatory": false,
+            "doc": "xlsx/xls Excel output format"
+        },
+        {
+            "name": "luName",
+            "schema": {},
+            "editor": {
+                "id": "com.k2view.logicalUnit"
+            },
+            "mandatory": false,
+            "doc": "d2d lu name"
+        },
+        {
+            "name": "strict",
+            "schema": {},
+            "mandatory": false,
+            "doc": "iid - for iid based filtering"
+        },
+        {
+            "name": "iid",
+            "schema": {},
+            "mandatory": false,
+            "doc": "d2d instance id"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "result",
+            "schema": {}
+        }
+    ],
+    "tags": [
+        "d2d"
+    ],
+    "actorClass": "com.k2view.cdbms.usercode.common.D2D.CopyD2DTablesToExcel",
+    "doc": "Export Table data to an Excel File"
+}

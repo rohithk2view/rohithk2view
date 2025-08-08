@@ -1,0 +1,48 @@
+{
+    "type": "CheckIsRefSynced",
+    "parentType": "InnerFlow",
+    "actorClass": null,
+    "inputs": [
+        {
+            "name": "countOfEntities",
+            "schema": {
+                "type": "number"
+            },
+            "doc": "expected number of rows per execution_ID"
+        },
+        {
+            "name": "luName",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "d2d lu name"
+        },
+        {
+            "name": "taskExecutionID",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "execution_id from summary tables"
+        },
+        {
+            "name": "flowName",
+            "const": "bwCheckIsRefSynced",
+            "schema": {
+                "type": "string"
+            }
+        }
+    ],
+    "outputs": [
+        {
+            "name": "result",
+            "schema": {
+                "type": "boolean"
+            },
+            "doc": "true: Ref Sync completed\nfalse: Ref Sync not completed"
+        }
+    ],
+    "tags": [
+        "d2d"
+    ],
+    "doc": "Validates Ref Sync on D2D Tables Completed"
+}

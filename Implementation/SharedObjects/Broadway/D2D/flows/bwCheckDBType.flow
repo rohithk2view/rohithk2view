@@ -1,0 +1,1297 @@
+{
+    "tags": [
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Input",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "F2F SCHEMA",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Remote Fabric Interface",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Check Globals For Schema",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Interface",
+                            "remark": "If global set to Interface - get schema from Interface config",
+                            "actorType": {
+                                "parentType": "Equals",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "Interface"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Empty",
+                            "remark": "If Global is not set - get data from Interface config",
+                            "actorType": {
+                                "parentType": "Equals",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "const": ""
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Use Interface Config",
+                    "dependsOnList": [
+                        "Check Globals For Schema"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Or",
+                            "remark": "Global is not set or 'Interface'",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "Or",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Get LUT Schema",
+                            "remark": "Assumption that LU name is defined as DB NAME under Remote Fabric Interface",
+                            "actorType": {
+                                "parentType": "GetSchemaFromInterface",
+                                "inputs": [],
+                                "outputs": [
+                                    {
+                                        "name": "schema",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Use Global",
+                    "dependsOnList": [
+                        "Check Globals For Schema"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "Schema from Global",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "If Else Close",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "ResultSchema",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Test Interface",
+                    "dependsOnList": [
+                        "If Else Close"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "NotFabric",
+                            "remark": "If interface is defined in project and not local 'fabric'",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "NotEquals",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "fabric"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Test Connection",
+                            "actorType": {
+                                "parentType": "DbFetchFirstRow",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "test_connection Interface=${testInterface}"
+                                    },
+                                    {
+                                        "name": "testInterface",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "interface": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                },
+                                                "environment": {
+                                                    "type": "string"
+                                                },
+                                                "active": {
+                                                    "type": "boolean"
+                                                },
+                                                "passed": {
+                                                    "type": "boolean"
+                                                },
+                                                "error_message": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Local Fabric",
+                    "dependsOnList": [
+                        "If Else Close"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "remark": "In case interface set as 'fabric' - means we connect locally",
+                    "actors": [
+                        {
+                            "name": "Local DB",
+                            "remark": "In case interface set as 'fabric' - means we connect locally",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "fabric (Db)"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Local Fabric DB",
+                            "remark": "In case interface set as 'fabric' - means we connect locally",
+                            "actorType": {
+                                "parentType": "ToBool",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Get Interface Type",
+                    "dependsOnList": [
+                        "Test Interface"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "RemoteFabricD2D (Db)",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "RemoteFabricD2D (Db)"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "fabric (Db)",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "fabric (Db)"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 5",
+                    "dependsOnList": [
+                        "Local Fabric"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [
+                        "Get Interface Type"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Custom Or Remote Fabric",
+                            "actorType": {
+                                "parentType": "Or",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 6",
+                    "dependsOnList": [
+                        "Stage 5"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 4",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Is Tar DB",
+                    "dependsOnList": [
+                        "Stage 4"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "IsTAR",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "D2D_FABRIC_INTERFACE_TAR"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Tar IID",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwMapSrcToTarIID"
+                                    },
+                                    {
+                                        "name": "srcIID",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "tarIID",
+                                        "schema": {}
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Else",
+                    "dependsOnList": [
+                        "Stage 4"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "Src IID",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 7",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "List LUT",
+                    "dependsOnList": [
+                        "Stage 7"
+                    ],
+                    "isLast": 0,
+                    "remark": "List all LUT in case of fabric interface (local or remote) and check if schema name is one of LUT or treat is as common otherwise",
+                    "actors": [
+                        {
+                            "name": "Remote Or Local Fabric",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "Or",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Get LuTypes",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "list lut"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "LU_NAME": {
+                                                        "type": "string"
+                                                    },
+                                                    "Project Version": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "FabricType",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "fabric (Db)"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Not Fabric Interface Type",
+                    "dependsOnList": [
+                        "Stage 7"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "Continue",
+                            "remark": "If we have any other interface type - we do not need get and continue to select / compare logic",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "NotFabricType",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Check If LUT",
+                    "dependsOnList": [
+                        "List LUT"
+                    ],
+                    "isLast": 1,
+                    "actors": [
+                        {
+                            "name": "LU Exist In Fabric",
+                            "remark": "If there is a match - it means we work with LU and therefore we can try to do get and stop loop",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "Equals",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "NotInFabric",
+                            "remark": "Actor will return true in case of error on get",
+                            "onError": "result",
+                            "actorType": {
+                                "parentType": "ErrorHandler",
+                                "inputs": [
+                                    {
+                                        "name": "config",
+                                        "const": [
+                                            {
+                                                "exceptionKey": "java.lang.Exception",
+                                                "conditions": {
+                                                    "message": ".*"
+                                                },
+                                                "actions": {
+                                                    "suppress": true,
+                                                    "log": false,
+                                                    "flowName": ""
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Set Sync Off",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "set sync off;"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Read IID",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "get ${LU_NAME}.${id};"
+                                    },
+                                    {
+                                        "name": "LU_NAME",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "id",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "luName": {
+                                                        "type": "string"
+                                                    },
+                                                    "iid": {
+                                                        "type": "string"
+                                                    },
+                                                    "version": {
+                                                        "type": "integer"
+                                                    },
+                                                    "action": {
+                                                        "type": "string"
+                                                    },
+                                                    "notes": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Continue as LUT",
+                            "remark": "Exit loop and continue if LUT found and IID exist in Fabric",
+                            "actorType": {
+                                "parentType": "LoopStop",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Common",
+                    "dependsOnList": [
+                        "List LUT"
+                    ],
+                    "isLast": 1,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "Proceed as Common",
+                            "actorType": {
+                                "parentType": "ToBool",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Cont...",
+                    "dependsOnList": [
+                        "Not Fabric Interface Type"
+                    ],
+                    "isLast": 1,
+                    "isTransactional": false,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Result",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "CheckError",
+                            "remark": "If no error or schema is not LUT - input will be false and result true",
+                            "actorType": {
+                                "parentType": "Not",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "IID Found",
+                            "remark": "If LUT exist and no errors on GET - this will be true",
+                            "actorType": {
+                                "parentType": "And",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Proceed",
+                            "actorType": {
+                                "parentType": "Or",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "F2F SCHEMA",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Interface",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "F2F SCHEMA",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Empty",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "F2F SCHEMA",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Schema from Global",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Remote Fabric Interface",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "NotFabric",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Remote Fabric Interface",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Get LUT Schema",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Remote Fabric Interface",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Test Connection",
+                "name": "testInterface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Remote Fabric Interface",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Get LuTypes",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Remote Fabric Interface",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Set Sync Off",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Remote Fabric Interface",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Read IID",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Interface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Or",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Empty",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Or",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get LUT Schema",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "ResultSchema",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Schema from Global",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "ResultSchema",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ResultSchema",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "LU Exist In Fabric",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ResultSchema",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Read IID",
+                "name": "LU_NAME"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Test Connection",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "fabric (Db)",
+                "name": "a"
+            },
+            "path": [
+                "type"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Test Connection",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "RemoteFabricD2D (Db)",
+                "name": "a"
+            },
+            "path": [
+                "type"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Test Connection",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "NotFabricType",
+                "name": "value"
+            },
+            "path": [
+                "type"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Local Fabric DB",
+                "name": "bool"
+            },
+            "rightPort": {
+                "actor": "Remote Or Local Fabric",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "RemoteFabricD2D (Db)",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Custom Or Remote Fabric",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "fabric (Db)",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Custom Or Remote Fabric",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Custom Or Remote Fabric",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Remote Or Local Fabric",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Tar IID",
+                "name": "tarIID"
+            },
+            "rightPort": {
+                "actor": "Read IID",
+                "name": "id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Src IID",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Read IID",
+                "name": "id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get LuTypes",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "LU Exist In Fabric",
+                "name": "b"
+            },
+            "iterate": "Iterate",
+            "path": [
+                "LU_NAME"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Continue",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Proceed",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "LU Exist In Fabric",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "IID Found",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "NotInFabric",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "CheckError",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Proceed as Common",
+                "name": "bool"
+            },
+            "rightPort": {
+                "actor": "IID Found",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "CheckError",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "IID Found",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IID Found",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Proceed",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "F2F SCHEMA",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "variableNameSchema"
+            },
+            "rightPort": {
+                "actor": "F2F SCHEMA",
+                "name": "variableName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "Remote Fabric Interface",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "variableNameInterface"
+            },
+            "rightPort": {
+                "actor": "Remote Fabric Interface",
+                "name": "variableName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ResultSchema",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "variableNameInterface"
+            },
+            "rightPort": {
+                "actor": "IsTAR",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "id"
+            },
+            "rightPort": {
+                "actor": "Tar IID",
+                "name": "srcIID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "id"
+            },
+            "rightPort": {
+                "actor": "Src IID",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "FabricType",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "type"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "NotFabricType",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "type"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Proceed",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "result"
+            }
+        }
+    ]
+}

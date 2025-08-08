@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>ref_d2d_entity_summary</Name>
+  <ID>tbl_ref_d2d_entity_summary</ID>
+  <ColumnsCollation>BINARY</ColumnsCollation>
+  <FullTextSearch>false</FullTextSearch>
+  <Columns>
+    <Column name="EXECUTION_ID" id="EXECUTION_ID" index="0" datatype="text" mandatory="true" />
+    <Column name="IID" id="IID" index="1" datatype="text" />
+    <Column name="MATCH_RESULT" id="MATCH_RESULT" index="2" datatype="text" />
+    <Column name="NUMBER_OF_FIELDS_MATCH" id="NUMBER_OF_FIELDS_MATCH" index="3" datatype="integer" />
+    <Column name="NUMBER_OF_FIELDS_MISMATCH" id="NUMBER_OF_FIELDS_MISMATCH" index="4" datatype="integer" />
+    <Column name="NUMBER_OF_FIELDS_ONLY_IN_SOURCE" id="NUMBER_OF_FIELDS_ONLY_IN_SOURCE" index="5" datatype="integer" />
+    <Column name="NUMBER_OF_FIELDS_ONLY_IN_TARGET" id="NUMBER_OF_FIELDS_ONLY_IN_TARGET" index="6" datatype="integer" />
+    <Column name="NUMBER_OF_FIELDS_UNSECURED_IN_TARGET" id="NUMBER_OF_FIELDS_UNSECURED_IN_TARGET" index="7" datatype="integer" />
+    <Column name="NUMBER_OF_RECORDS_MATCH" id="NUMBER_OF_RECORDS_MATCH" index="8" datatype="integer" />
+    <Column name="NUMBER_OF_RECORDS_MISMATCH" id="NUMBER_OF_RECORDS_MISMATCH" index="9" datatype="integer" />
+    <Column name="NUMBER_OF_RECORDS_UNSECURED_IN_TARGET" id="NUMBER_OF_RECORDS_UNSECURED_IN_TARGET" index="10" datatype="integer" />
+    <Column name="UPDATE_TIME" id="UPDATE_TIME" index="11" datatype="datetime" />
+  </Columns>
+  <IndexesList>
+    <Index id="1" pk="true" unique="true" instanceOnly="true" columnsIdsList="EXECUTION_ID,IID" />
+    <Index id="2" pk="false" unique="false" instanceOnly="true" columnsIdsList="IID" />
+  </IndexesList>
+  <EnrichmentList>
+  </EnrichmentList>
+  <LazyDataUpdate syncMethod="None" performEvery="1.00:00:00" syncWaitTimeout="60">
+    <DecisionFunction></DecisionFunction>
+    <TruncateBeforeSync>true</TruncateBeforeSync>
+  </LazyDataUpdate>
+  
+  <Schema>D2DREF</Schema>
+</TableObject>

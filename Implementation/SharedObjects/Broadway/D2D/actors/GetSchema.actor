@@ -1,0 +1,53 @@
+{
+    "type": "GetSchema",
+    "parentType": "InnerFlow",
+    "actorClass": null,
+    "inputs": [
+        {
+            "name": "table_name",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "d2d summary table name"
+        },
+        {
+            "name": "luName",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "d2d lu name"
+        },
+        {
+            "name": "flowName",
+            "schema": {
+                "type": "string"
+            },
+            "const": "bwGetSchema",
+            "mandatory": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "map",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "schema_name": {
+                        "type": "string"
+                    },
+                    "table_name": {
+                        "type": "string"
+                    },
+                    "interface_name": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    ],
+    "tags": [
+        "d2d"
+    ],
+    "doc": "Get D2D summary table details",
+    "badge": "{=}"
+}

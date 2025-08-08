@@ -1,0 +1,314 @@
+{
+    "tags": [
+        "d2d",
+        "pipeline"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Inputs",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "D2D INTERFACE",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [
+                                    {
+                                        "name": "variableName",
+                                        "const": "D2D_RESULT_INTERFACE"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "IF Load Fabric?",
+                    "dependsOnList": [
+                        "Inputs"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "== fabric",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "fabric"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Is Common Updated?",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwIsCommonUpdated"
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "countOfEntities",
+                                        "schema": {
+                                            "type": "number"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Error Message",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "Execution ID - ${taskExecutionID}, Not Synced/Partly synced in Summary Ref tables"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {},
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Else where",
+                    "dependsOnList": [
+                        "Inputs"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "true",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Close IF",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Create",
+                    "dependsOnList": [
+                        "Close IF"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "true?",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "Equals",
+                                "inputs": [
+                                    {
+                                        "name": "a",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "pause",
+                    "dependsOnList": [
+                        "Close IF"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "File Name",
+                            "actorType": {
+                                "parentType": "Label",
+                                "inputs": [
+                                    {
+                                        "name": "message",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Pause Pipeline",
+                            "actorType": {
+                                "parentType": "PausePipeline",
+                                "inputs": [
+                                    {
+                                        "name": "timeout_ms",
+                                        "const": 120000
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "D2D INTERFACE",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "== fabric",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Is Common Updated?",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "true?",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Error Message",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "File Name",
+                "name": "message"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "true",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "true?",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "D2D INTERFACE",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "Is Common Updated?",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "countOfEntities"
+            },
+            "rightPort": {
+                "actor": "Is Common Updated?",
+                "name": "countOfEntities"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "Error Message",
+                "name": "taskExecutionID"
+            }
+        }
+    ]
+}

@@ -1,0 +1,900 @@
+{
+    "tags": [
+        "D2D",
+        "D2D\flows"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Init",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Source Interface",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Target Interface",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Lu_Name",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Discover Tables",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Load D2DConfig Mtable",
+                            "actorType": {
+                                "parentType": "MTableLookup",
+                                "inputs": [
+                                    {
+                                        "name": "mtable",
+                                        "const": "D2DConfig"
+                                    },
+                                    {
+                                        "name": "Lu_Name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Lu_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Transformation_Function_Name": {},
+                                                    "source_columns_to_Ignore_null": {},
+                                                    "Target_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Target_Transformation_Function_Name": {},
+                                                    "target_columns_to_Ignore_null": {},
+                                                    "Customized_Key_Comparison": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mismatch_Columns": {},
+                                                    "Excluded_Columns_Names": {},
+                                                    "Active": {},
+                                                    "Mode": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Rows_Sql": {}
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Read D2D_TABLE_DISCOVERY_STRATEGY s",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "D2D.D2D_TABLE_DISCOVERY_STRATEGY"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [
+                        "Discover Tables"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "check Read D2D_TABLE_DISCOVERY_STRATEGY",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "Full"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Describe Tables",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "describe table ${@luType}"
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "schema": {
+                                                        "type": "string"
+                                                    },
+                                                    "table": {
+                                                        "type": "string"
+                                                    },
+                                                    "column": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "nullable": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "default": {
+                                                        "type": "string"
+                                                    },
+                                                    "pk": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [
+                        "Discover Tables"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Convert & Filter",
+                    "dependsOnList": [
+                        "Stage 1"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "filterTableMetadata",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "filterTableMetadata"
+                                    },
+                                    {
+                                        "name": "tableList",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Lu_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Transformation_Function_Name": {},
+                                                    "source_columns_to_Ignore_null": {},
+                                                    "Target_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Target_Transformation_Function_Name": {},
+                                                    "target_columns_to_Ignore_null": {},
+                                                    "Customized_Key_Comparison": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mismatch_Columns": {},
+                                                    "Excluded_Columns_Names": {},
+                                                    "Active": {},
+                                                    "Mode": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Rows_Sql": {}
+                                                }
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "output",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Lu_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Transformation_Function_Name": {},
+                                                    "source_columns_to_Ignore_null": {},
+                                                    "Target_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Target_Transformation_Function_Name": {},
+                                                    "target_columns_to_Ignore_null": {},
+                                                    "Customized_Key_Comparison": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mismatch_Columns": {},
+                                                    "Excluded_Columns_Names": {
+                                                        "type": "string"
+                                                    },
+                                                    "Active": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mode": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Rows_Sql": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "convertTableMetadata",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "convertTableMetadata"
+                                    },
+                                    {
+                                        "name": "inputData",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "schema": {
+                                                        "type": "string"
+                                                    },
+                                                    "table": {
+                                                        "type": "string"
+                                                    },
+                                                    "column": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "nullable": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "default": {
+                                                        "type": "string"
+                                                    },
+                                                    "pk": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "output",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Customized_Key_Comparison": {
+                                                        "type": "string"
+                                                    },
+                                                    "Lu_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Columns_Names": {},
+                                                    "Mode": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Rows_Sql": {},
+                                                    "Source_Transformation_Function_Name": {},
+                                                    "target_columns_to_Ignore_null": {},
+                                                    "Source_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Active": {
+                                                        "type": "string"
+                                                    },
+                                                    "Target_Transformation_Function_Name": {},
+                                                    "source_columns_to_Ignore_null": {},
+                                                    "Target_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mismatch_Columns": {}
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [
+                        "Stage 2"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "filterTableMetadata1",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "filterTableMetadata"
+                                    },
+                                    {
+                                        "name": "tableList",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Lu_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Transformation_Function_Name": {},
+                                                    "source_columns_to_Ignore_null": {},
+                                                    "Target_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Target_Transformation_Function_Name": {},
+                                                    "target_columns_to_Ignore_null": {},
+                                                    "Customized_Key_Comparison": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mismatch_Columns": {},
+                                                    "Excluded_Columns_Names": {},
+                                                    "Active": {},
+                                                    "Mode": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Rows_Sql": {}
+                                                }
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "output",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Lu_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Transformation_Function_Name": {},
+                                                    "source_columns_to_Ignore_null": {},
+                                                    "Target_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Target_Transformation_Function_Name": {},
+                                                    "target_columns_to_Ignore_null": {},
+                                                    "Customized_Key_Comparison": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mismatch_Columns": {},
+                                                    "Excluded_Columns_Names": {
+                                                        "type": "string"
+                                                    },
+                                                    "Active": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mode": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Rows_Sql": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Merge & Return",
+                    "dependsOnList": [
+                        "Convert & Filter"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "mergeTableMetadata",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "mergeTableMetadata"
+                                    },
+                                    {
+                                        "name": "mtableList",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Lu_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Transformation_Function_Name": {},
+                                                    "source_columns_to_Ignore_null": {},
+                                                    "Target_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Target_Transformation_Function_Name": {},
+                                                    "target_columns_to_Ignore_null": {},
+                                                    "Customized_Key_Comparison": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mismatch_Columns": {},
+                                                    "Excluded_Columns_Names": {
+                                                        "type": "string"
+                                                    },
+                                                    "Active": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mode": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Rows_Sql": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "discoveredList",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Customized_Key_Comparison": {
+                                                        "type": "string"
+                                                    },
+                                                    "Lu_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Columns_Names": {},
+                                                    "Mode": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Rows_Sql": {},
+                                                    "Source_Transformation_Function_Name": {},
+                                                    "target_columns_to_Ignore_null": {},
+                                                    "Source_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Active": {
+                                                        "type": "string"
+                                                    },
+                                                    "Target_Transformation_Function_Name": {},
+                                                    "source_columns_to_Ignore_null": {},
+                                                    "Target_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mismatch_Columns": {}
+                                                }
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Lu_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Transformation_Function_Name": {},
+                                                    "source_columns_to_Ignore_null": {},
+                                                    "Target_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Target_Transformation_Function_Name": {},
+                                                    "target_columns_to_Ignore_null": {},
+                                                    "Customized_Key_Comparison": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mismatch_Columns": {},
+                                                    "Excluded_Columns_Names": {
+                                                        "type": "string"
+                                                    },
+                                                    "Active": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mode": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Rows_Sql": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 4",
+                    "dependsOnList": [
+                        "Stage 3"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Result",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Lu_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Source_Transformation_Function_Name": {},
+                                                    "source_columns_to_Ignore_null": {},
+                                                    "Target_Table_Name": {
+                                                        "type": "string"
+                                                    },
+                                                    "Target_Transformation_Function_Name": {},
+                                                    "target_columns_to_Ignore_null": {},
+                                                    "Customized_Key_Comparison": {
+                                                        "type": "string"
+                                                    },
+                                                    "Mismatch_Columns": {},
+                                                    "Excluded_Columns_Names": {},
+                                                    "Active": {},
+                                                    "Mode": {
+                                                        "type": "string"
+                                                    },
+                                                    "Excluded_Rows_Sql": {}
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Source Interface",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Describe Tables",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Lu_Name",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Load D2DConfig Mtable",
+                "name": "Lu_Name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Lu_Name",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Describe Tables",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Load D2DConfig Mtable",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "filterTableMetadata",
+                "name": "tableList"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Load D2DConfig Mtable",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "filterTableMetadata1",
+                "name": "tableList"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Read D2D_TABLE_DISCOVERY_STRATEGY s",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "check Read D2D_TABLE_DISCOVERY_STRATEGY",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Describe Tables",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "convertTableMetadata",
+                "name": "inputData"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "filterTableMetadata",
+                "name": "output"
+            },
+            "rightPort": {
+                "actor": "mergeTableMetadata",
+                "name": "mtableList"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "convertTableMetadata",
+                "name": "output"
+            },
+            "rightPort": {
+                "actor": "mergeTableMetadata",
+                "name": "discoveredList"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "filterTableMetadata1",
+                "name": "output"
+            },
+            "rightPort": {
+                "actor": "Result",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "SourceInterface"
+            },
+            "rightPort": {
+                "actor": "Source Interface",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "TargetInterface"
+            },
+            "rightPort": {
+                "actor": "Target Interface",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "Lu_Name"
+            },
+            "rightPort": {
+                "actor": "Lu_Name",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "mergeTableMetadata",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "result"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Result",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "result"
+            }
+        }
+    ]
+}

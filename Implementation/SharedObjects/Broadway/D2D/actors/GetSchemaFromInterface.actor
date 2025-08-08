@@ -1,0 +1,54 @@
+{
+    "type": "GetSchemaFromInterface",
+    "parentType": "InnerFlow",
+    "actorClass": null,
+    "inputs": [
+        {
+            "name": "interface",
+            "schema": {},
+            "editor": {
+                "id": "com.k2view.interface",
+                "interfaceType": [
+                    "database",
+                    "CassandraLoader"
+                ],
+                "interfaces": [
+                    "fabric"
+                ]
+            }
+        },
+        {
+            "name": "env",
+            "schema": {}
+        },
+        {
+            "name": "flowName",
+            "schema": {
+                "type": "string"
+            },
+            "const": "bwGetSchemaFromInterface",
+            "mandatory": true,
+            "hidden": true
+        },
+        {
+            "name": "innerFlowConst",
+            "schema": {
+                "type": "string"
+            },
+            "const": "bwGetSchemaFromInterface",
+            "mandatory": true,
+            "hidden": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "schema",
+            "schema": {}
+        }
+    ],
+    "tags": [
+        "d2d"
+    ],
+    "doc": "",
+    "badge": "d2d"
+}

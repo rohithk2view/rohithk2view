@@ -1,0 +1,1706 @@
+tags: D2D
+stages:
+  Keys table details:
+    actors:
+      KEYS_TABLE_INTERFACE:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_KEYS_TABLE_INTERFACE
+          luName:
+            external: schema
+      KEYS_TABLE_SCHEMA:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_KEYS_TABLE_SCHEMA
+          luName:
+            external: schema
+      KEYS_TABLE_NAME:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_KEYS_TABLE_NAME
+          luName:
+            external: schema
+      KEYS_TABLE_GROUPS:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_GROUPS_COUNT
+          luName:
+            external: schema
+      SEPERATOR:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_CONF_SEPERATOR
+          luName:
+            external: schema
+  Cassandra details:
+    actors:
+      SRC Interface:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_INTERFACE_SRC
+          luName:
+            external: schema
+      TAR Interface:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_INTERFACE_TAR
+          luName:
+            external: schema
+      SRC KP:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_SCHEMA_SRC
+          luName:
+            external: schema
+      TAR KP:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_SCHEMA_TAR
+          luName:
+            external: schema
+      CassRole:
+        parent: Const
+        in:
+          value:
+            const: Source
+            external: cassandra_role
+            editor:
+              id: com.k2view.dropdown
+              options:
+              - Source
+              - Target
+              - Both
+              - None
+              syncOutput: true
+            default: true
+        out:
+          value:
+            schema: string
+      SRC TABLE:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_TABLE_SRC
+          luName:
+            external: schema
+      TAR TABLE:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_TABLE_TAR
+          luName:
+            external: schema
+  Token step size:
+    actors:
+      Token Step Size:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LKP_TOKENS_STEP_SIZE
+          luName:
+            external: schema
+      Split1:
+        parent: Split
+        in:
+          delimiter:
+            const: ^
+          string:
+            link: Token Step Size/variableValue
+      JavaScript2:
+        parent: JavaScript
+        in:
+          script:
+            const: arr[0];
+          arr:
+            link: Split1/strings
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: string
+      JavaScript3:
+        parent: JavaScript
+        in:
+          script:
+            const: arr[1];
+          arr:
+            link: Split1/strings
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: string
+  Stage 51:
+    actors:
+      bwD2DConfig:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwD2DConfig
+          SourceInterface:
+            link: SRC Interface/variableValue
+            schema: string
+            mandatory: false
+          TargetInterface:
+            link: TAR Interface/variableValue
+            schema: string
+            mandatory: false
+          Lu_Name:
+            const: T2T
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: '#ref'
+  Stage 52:
+    actors:
+      Filter1:
+        parent: Filter
+        in:
+          script:
+            const: value.Source_Table_Name.toLowerCase()==srcTableName.toLowerCase()
+              && value.Target_Table_Name.toLowerCase()==targetTableName.toLowerCase()
+          srcTableName:
+            link: SRC TABLE/variableValue
+            schema: string
+            mandatory: false
+          targetTableName:
+            link: TAR TABLE/variableValue
+            schema: string
+            mandatory: false
+          values:
+            link: bwD2DConfig/result
+        out:
+          values:
+            schema: '#ref'
+  Stage 53:
+    actors:
+      MTable row:
+        parent: Const
+        in:
+          value:
+            const: null
+            link:
+              path: Filter1/values
+              iterate: First
+        out:
+          value:
+            schema: '#ref'
+  Tables Details:
+    actors:
+      ReplaceDelimeter:
+        parent: Replace
+        in:
+          search:
+            const: null
+            link: SEPERATOR/variableValue
+          replace:
+            const: ','
+          string:
+            link: MTable row/value/Customized_Key_Comparison
+      bwGetColMapCustomKey11:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwGetColMapCustomKey
+          ColumnMapping:
+            link: MTable row/value/Column_Mapping
+            schema: string
+            mandatory: false
+          CustomizedKey:
+            link: ReplaceDelimeter/string
+            schema: string
+            mandatory: false
+        out:
+          string:
+            schema: string
+  Check Cass Role:
+    dependsOn: Tables Details
+    actors:
+      JavaScript8:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: role=='Source' || role=='Both'
+          role:
+            link: CassRole/value
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      DbCommand1:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: SRC Interface/variableValue
+          sql:
+            const: select column_name, kind from system_schema.columns  where keyspace_name
+              = '${@kp}' and table_name = '${@table}'
+          table:
+            link: MTable row/value/Source_Table_Name
+            schema: string
+            mandatory: false
+          kp:
+            link: SRC KP/variableValue
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: '#ref'
+    split: '--------------------'
+  Stage 18:
+    else: true
+    dependsOn: Tables Details
+    actors:
+      JavaScript15:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: role=='Target'
+          role:
+            link: CassRole/value
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      DbCommand2:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: TAR Interface/variableValue
+          sql:
+            const: select column_name, kind from system_schema.columns  where keyspace_name
+              = '${@kp}' and table_name = '${@table}'
+          table:
+            link: MTable row/value/Target_Table_Name
+            schema: string
+            mandatory: false
+          kp:
+            link: TAR KP/variableValue
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: '#ref'
+    split: '--------------------'
+  Stage 35:
+    else: true
+    dependsOn: Tables Details
+  Stage 57:
+    dependsOn: Check Cass Role
+    actors:
+      Filter2:
+        parent: Filter
+        in:
+          script:
+            const: value.kind=='partition_key'
+          values:
+            link: DbCommand1/result
+        out:
+          values:
+            schema: '#ref'
+    split: '--------------------'
+  Stage 58:
+    dependsOn: Stage 18
+    actors:
+      Filter3:
+        parent: Filter
+        in:
+          script:
+            const: value.kind=='partition_key'
+          values:
+            link: DbCommand2/result
+        out:
+          values:
+            schema: '#ref'
+    split: '--------------------'
+  Stage 59:
+    dependsOn: Stage 35
+  Stage 60:
+    dependsOn: Stage 57
+    actors:
+      KeyFromSrc:
+        parent: Concat
+        in:
+          elements:
+            link: Filter2/values/column_name
+    split: '--------------------'
+  Stage 61:
+    dependsOn: Stage 58
+    actors:
+      KeyFromTar:
+        parent: Concat
+        in:
+          elements:
+            link: Filter3/values/column_name
+    split: '--------------------'
+  Stage 62:
+    dependsOn: Stage 59
+  Stage 54:
+    dependsOn: Stage 60
+    actors:
+      TokenQueryFormat:
+        parent: StringFormat
+        in:
+          format:
+            const: SELECT min(TOKEN(${key})), max(TOKEN(${key})) FROM  ${srcCassKP}.${srcCassTbl}
+          srcCassKP:
+            link: SRC KP/variableValue
+            schema: string
+            mandatory: false
+          srcCassTbl:
+            link: MTable row/value/Source_Table_Name
+            schema: string
+            mandatory: false
+          key:
+            link: KeyFromSrc/string
+            schema: string
+            mandatory: false
+      Src interface:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: SRC Interface/variableValue
+        out:
+          value:
+            schema: string
+    split: '--------------------'
+  Stage 55:
+    dependsOn: Stage 61
+    actors:
+      TokenQueryFormat1:
+        parent: StringFormat
+        in:
+          format:
+            const: SELECT min(TOKEN(${key})), max(TOKEN(${key})) FROM  ${srcCassKP}.${srcCassTbl}
+          srcCassKP:
+            link: TAR KP/variableValue
+            schema: string
+            mandatory: false
+          srcCassTbl:
+            link: MTable row/value/Target_Table_Name
+            schema: string
+            mandatory: false
+          key:
+            link: KeyFromTar/string
+            schema: string
+            mandatory: false
+      Tar interface:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: TAR Interface/variableValue
+        out:
+          value:
+            schema: string
+    split: '--------------------'
+  Stage 56:
+    dependsOn: Stage 62
+  Stage 36: {
+    }
+  Stage 12:
+    dependsOn: Stage 36
+    actors:
+      Or1:
+        parent: Or
+        condition: result
+        in:
+          a:
+            link: JavaScript8/result
+          b:
+            link: JavaScript15/result
+      TokenQueryExec:
+        parent: DbFetchFirstRow
+        in:
+          interface:
+            const: null
+            link:
+            - Src interface/value
+            - Tar interface/value
+          sql:
+            const: null
+            link:
+            - TokenQueryFormat/string
+            - TokenQueryFormat1/string
+        out:
+          result:
+            schema: '#ref'
+    split: '--------------------'
+  Stage 37:
+    else: true
+    dependsOn: Stage 36
+  Stage 2:
+    dependsOn: Stage 12
+    actors:
+      JavaScript5:
+        parent: JavaScript
+        in:
+          script:
+            const: value.values();
+          value:
+            link: TokenQueryExec/result
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: '#ref'
+      MathPower1:
+        parent: MathPower
+        in:
+          a:
+            link: JavaScript2/result
+            schema: integer
+          b:
+            link: JavaScript3/result
+            schema: integer
+    split: '--------------------'
+  Stage 38:
+    dependsOn: Stage 37
+  Stage 16:
+    dependsOn: Stage 2
+    actors:
+      DeepCopy1:
+        parent: DeepCopy
+        in:
+          value:
+            link: JavaScript5/result
+        out:
+          value:
+            schema: '#ref'
+    split: '--------------------'
+  Stage 39:
+    dependsOn: Stage 38
+  Stage 15:
+    dependsOn: Stage 16
+    actors:
+      JavaScript6:
+        parent: JavaScript
+        in:
+          script:
+            const: tokens[0];
+          tokens:
+            link: DeepCopy1/value
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: integer
+      JavaScript7:
+        parent: JavaScript
+        in:
+          script:
+            const: tokens[1];
+          tokens:
+            link: DeepCopy1/value
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: integer
+    split: '--------------------'
+  Stage 40:
+    dependsOn: Stage 39
+  Stage 3:
+    dependsOn: Stage 15
+    actors:
+      ForLoop1:
+        parent: ForLoop
+        in:
+          step:
+            const: null
+            link: MathPower1/result
+          from:
+            link: JavaScript6/result
+          to:
+            link: JavaScript7/result
+    split: '--------------------'
+  Stage 41:
+    dependsOn: Stage 40
+  Stage 7:
+    transactional: true
+    actors:
+      Const1:
+        parent: Const
+        in:
+          value:
+            const: null
+            link:
+              path: ForLoop1/i
+              iterate: Iterate
+        out:
+          value:
+            schema: integer
+  Stage 5:
+    transactional: true
+    actors:
+      MathAdd1:
+        parent: MathAdd
+        in:
+          b:
+            link: MathPower1/result
+          a:
+            link: Const1/value
+  Stage 14:
+    transactional: true
+    dependsOn: Stage 5
+    actors:
+      JavaScript9:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: role=='Both'
+          role:
+            link: CassRole/value
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      SrcQueryFormat1:
+        parent: StringFormat
+        in:
+          format:
+            const: SELECT ${key} FROM ${srcCassKP}.${srcCassTbl} WHERE TOKEN(${pkey})
+              >= ${currToken} AND TOKEN(${pkey}) < ${nextToken} allow filtering
+          key:
+            link: ReplaceDelimeter/string
+            schema: string
+            mandatory: false
+          srcCassKP:
+            link: SRC KP/variableValue
+            schema: string
+            mandatory: false
+          srcCassTbl:
+            link: MTable row/value/Source_Table_Name
+            schema: string
+            mandatory: false
+          currToken:
+            link: Const1/value
+            schema: integer
+            mandatory: false
+          nextToken:
+            link: MathAdd1/result
+            schema: number
+            mandatory: false
+          pkey:
+            link:
+            - KeyFromSrc/string
+            - KeyFromTar/string
+            schema: string
+            mandatory: false
+      TarQueryFormat1:
+        parent: StringFormat
+        in:
+          format:
+            const: SELECT ${key} FROM ${tarCassKP}.${tarCassTbl} WHERE TOKEN(${pkey})
+              >= ${currToken} AND TOKEN(${pkey}) < ${nextToken} allow filtering
+          key:
+            link: bwGetColMapCustomKey11/string
+            schema: string
+            mandatory: false
+          currToken:
+            link: Const1/value
+            schema: integer
+            mandatory: false
+          nextToken:
+            link: MathAdd1/result
+            schema: number
+            mandatory: false
+          tarCassKP:
+            link: TAR KP/variableValue
+            schema: string
+            mandatory: false
+          tarCassTbl:
+            link: MTable row/value/Target_Table_Name
+            schema: string
+            mandatory: false
+          pkey:
+            link:
+            - KeyFromSrc/string
+            - KeyFromTar/string
+            schema: string
+            mandatory: false
+    split: '--------------------'
+  Stage 19:
+    else: true
+    transactional: true
+    dependsOn: Stage 5
+    actors:
+      JavaScript10:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: role=='Source'
+          role:
+            link: CassRole/value
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      SrcQueryFormat2:
+        parent: StringFormat
+        in:
+          format:
+            const: SELECT ${key} FROM ${srcCassKP}.${srcCassTbl} WHERE TOKEN(${pkey})
+              >= ${currToken} AND TOKEN(${pkey}) < ${nextToken} allow filtering
+          key:
+            link: ReplaceDelimeter/string
+            schema: string
+            mandatory: false
+          srcCassKP:
+            link: SRC KP/variableValue
+            schema: string
+            mandatory: false
+          srcCassTbl:
+            link: MTable row/value/Source_Table_Name
+            schema: string
+            mandatory: false
+          currToken:
+            link: Const1/value
+            schema: integer
+            mandatory: false
+          nextToken:
+            link: MathAdd1/result
+            schema: number
+            mandatory: false
+          pkey:
+            link:
+            - KeyFromSrc/string
+            - KeyFromTar/string
+            schema: string
+            mandatory: false
+    split: '--------------------'
+  Stage 8:
+    else: true
+    transactional: true
+    dependsOn: Stage 5
+    actors:
+      TarQueryFormat3:
+        parent: StringFormat
+        in:
+          format:
+            const: SELECT ${key} FROM ${tarCassKP}.${tarCassTbl} WHERE TOKEN(${pkey})
+              >= ${currToken} AND TOKEN(${pkey}) < ${nextToken} allow filtering
+          key:
+            link: bwGetColMapCustomKey11/string
+            schema: string
+            mandatory: false
+          currToken:
+            link: Const1/value
+            schema: integer
+            mandatory: false
+          nextToken:
+            link: MathAdd1/result
+            schema: number
+            mandatory: false
+          tarCassKP:
+            link: TAR KP/variableValue
+            schema: string
+            mandatory: false
+          tarCassTbl:
+            link: MTable row/value/Target_Table_Name
+            schema: string
+            mandatory: false
+          pkey:
+            link:
+            - KeyFromSrc/string
+            - KeyFromTar/string
+            schema: string
+            mandatory: false
+  Stage 63:
+    transactional: true
+    dependsOn: Stage 14
+    actors:
+      SrcQueryExec1:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: SRC Interface/variableValue
+          sql:
+            const: null
+            link: SrcQueryFormat1/string
+        out:
+          result:
+            schema: '#ref'
+      TarQueryExec1:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: TAR Interface/variableValue
+          sql:
+            const: null
+            link: TarQueryFormat1/string
+        out:
+          result:
+            schema: '#ref'
+    split: '--------------------'
+  Stage 64:
+    transactional: true
+    dependsOn: Stage 19
+    actors:
+      SrcQueryExec2:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: SRC Interface/variableValue
+          sql:
+            const: null
+            link: SrcQueryFormat2/string
+        out:
+          result:
+            schema: '#ref'
+    split: '--------------------'
+  Stage 65:
+    transactional: true
+    dependsOn: Stage 8
+    actors:
+      TarQueryExec3:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: TAR Interface/variableValue
+          sql:
+            const: null
+            link: TarQueryFormat3/string
+        out:
+          result:
+            schema: '#ref'
+  Stage 6:
+    transactional: true
+    actors:
+      ArrayConcat1:
+        parent: ArrayConcat
+        in:
+          input:
+            link:
+            - path: SrcQueryExec1/result
+              pos: 0
+            - path: TarQueryExec1/result
+              pos: 1
+            - path: SrcQueryExec2/result
+              pos: 2
+            - path: TarQueryExec3/result
+              pos: 3
+        out:
+          array:
+            schema: '#ref'
+  Stage 11:
+    transactional: true
+    actors:
+      JavaScript1:
+        parent: JavaScript
+        in:
+          script:
+            const: value.get(0);
+          value:
+            link:
+              path: ArrayConcat1/array
+              iterate: Iterate
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: string
+      JavaScript4:
+        parent: JavaScript
+        in:
+          script:
+            const: value.values();
+          value:
+            link:
+              path: ArrayConcat1/array
+              iterate: Iterate
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: string
+  Stage 9:
+    transactional: true
+    actors:
+      JavaScript17:
+        parent: JavaScript
+        in:
+          script:
+            const:
+              userCode: |-
+                function hashString(str) {
+                  let hash = 5381;
+                  for (let i = 0; i < str.length; i++) {
+                    hash = ((hash << 5) + hash) + str.charCodeAt(i); // hash * 33 + c
+                  }
+                  return hash >>> 0;
+                }
+
+                if (!isNaN(value)) {
+                    value; // Return if it's a valid number
+                  } else {
+                     hashString(String(value));
+                }
+              script: |-
+                function hashString(str) {
+                  var hash = 5381;
+
+                  for (var i = 0; i < str.length; i++) {
+                    hash = (hash << 5) + hash + str.charCodeAt(i); // hash * 33 + c
+                  }
+
+                  return hash >>> 0;
+                }
+
+                if (!isNaN(value)) {
+                  value; // Return if it's a valid number
+                } else {
+                  hashString(String(value));
+                }
+          value:
+            link: JavaScript1/result
+            schema: integer
+            mandatory: false
+        out:
+          result:
+            schema: integer
+  Stage 49:
+    transactional: true
+    actors:
+      MathDivMod1:
+        parent: MathDivMod
+        in:
+          b:
+            link: KEYS_TABLE_GROUPS/variableValue
+            schema: integer
+          a:
+            link: JavaScript17/result
+      Concat1:
+        parent: Concat
+        in:
+          delimiter:
+            const: null
+            link: SEPERATOR/variableValue
+          elements:
+            link: JavaScript4/result
+  Stage 10:
+    last: 1
+    transactional: true
+    actors:
+      ErrorHandler1:
+        parent: ErrorHandler
+        error: result
+        in:
+          config:
+            const:
+            - exceptionKey: com.k2view.fabric.common.io.basic.exception.StandardSqlException
+              conditions:
+                standardType: UNIQUE_CONSTRAINT
+              actions:
+                suppress: true
+                log: false
+                flowName: ''
+      DbLoad1:
+        parent: DbLoad
+        in:
+          interface:
+            const: null
+            link: KEYS_TABLE_INTERFACE/variableValue
+          schema:
+            const: null
+            link: KEYS_TABLE_SCHEMA/variableValue
+          table:
+            const: null
+            link: KEYS_TABLE_NAME/variableValue
+          fields:
+            const:
+            - group_id
+            - org_key
+          keys:
+            const:
+            - org_key
+          batch:
+            const: true
+          group_id:
+            link: MathDivMod1/mod
+            schema: integer
+            mandatory: false
+          org_key:
+            link: Concat1/string
+            schema: string
+            mandatory: false
+  Stage 4:
+    last: 1
+    transactional: true
+  Stage 1:
+    dependsOn: Stage 4
+    actors:
+      JavaScript11:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: role=='Source'
+          role:
+            link: CassRole/value
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      Exclude Condition:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: MTable row/value/Excluded_Rows_Sql
+        out:
+          value:
+            schema: string
+    split: '--------------------'
+  Stage 26:
+    else: true
+    dependsOn: Stage 4
+    actors:
+      JavaScript12:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: role=='Target'
+          role:
+            link: CassRole/value
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      Exclude Condition1:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: MTable row/value/Excluded_Rows_Sql
+        out:
+          value:
+            schema: string
+    split: '--------------------'
+  Stage 42:
+    else: true
+    dependsOn: Stage 4
+    actors:
+      JavaScript16:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: role=='None'
+          role:
+            link: CassRole/value
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      Exclude Condition11:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: MTable row/value/Excluded_Rows_Sql
+        out:
+          value:
+            schema: string
+  Stage 31:
+    dependsOn: Stage 1
+    actors:
+      Exclude Clause:
+        parent: StringFormat
+        in:
+          format:
+            const: ' where ${where} '
+          where:
+            link: Exclude Condition/value
+            schema: string
+            mandatory: false
+    split: '--------------------'
+  Stage 32:
+    dependsOn: Stage 26
+    actors:
+      Exclude Clause1:
+        parent: StringFormat
+        in:
+          format:
+            const: ' where ${where} '
+          where:
+            link: Exclude Condition1/value
+            schema: string
+            mandatory: false
+    split: '--------------------'
+  Stage 43:
+    dependsOn: Stage 42
+    actors:
+      Exclude Clause11:
+        parent: StringFormat
+        in:
+          format:
+            const: ' where ${where} '
+          where:
+            link: Exclude Condition11/value
+            schema: string
+            mandatory: false
+  Stage 33:
+    dependsOn: Stage 31
+    actors:
+      IfElse1:
+        parent: IfElse
+        in:
+          test:
+            link: Exclude Condition/value
+          a:
+            link: Exclude Clause/string
+        out:
+          result:
+            schema: string
+      TarQueryFormat2:
+        parent: StringFormat
+        in:
+          format:
+            const: select ${str} from ${schema}.${prefix}${sourceTableName}  ${where}
+          str:
+            link: bwGetColMapCustomKey11/string
+            schema: string
+            mandatory: false
+          sourceTableName:
+            link: MTable row/value/Target_Table_Name
+            schema: string
+            mandatory: false
+          prefix:
+            schema: string
+            mandatory: false
+          schema:
+            link: TAR KP/variableValue
+            schema: string
+            mandatory: false
+          where:
+            link: IfElse1/result
+            schema: string
+            mandatory: false
+    split: '--------------------'
+  Stage 34:
+    dependsOn: Stage 32
+    actors:
+      IfElse2:
+        parent: IfElse
+        in:
+          test:
+            link: Exclude Condition1/value
+          a:
+            link: Exclude Clause1/string
+        out:
+          result:
+            schema: string
+      SrcQueryFormat3:
+        parent: StringFormat
+        in:
+          format:
+            const: select ${str} from ${schema}.${prefix}${sourceTableName}  ${where}
+          str:
+            link: ReplaceDelimeter/string
+            schema: string
+            mandatory: false
+          sourceTableName:
+            link: MTable row/value/Source_Table_Name
+            schema: string
+            mandatory: false
+          prefix:
+            schema: string
+            mandatory: false
+          schema:
+            link: SRC KP/variableValue
+            schema: string
+            mandatory: false
+          where:
+            link: IfElse2/result
+            schema: string
+            mandatory: false
+    split: '--------------------'
+  Stage 44:
+    dependsOn: Stage 43
+    actors:
+      IfElse3:
+        parent: IfElse
+        in:
+          test:
+            link: Exclude Condition11/value
+          a:
+            link: Exclude Clause11/string
+        out:
+          result:
+            schema: string
+      SrcQueryFormat31:
+        parent: StringFormat
+        height: 287
+        in:
+          format:
+            const: select ${str} from ${schema}.${prefix}${sourceTableName}  ${where}
+          str:
+            link: ReplaceDelimeter/string
+            schema: string
+            mandatory: false
+          sourceTableName:
+            link: MTable row/value/Source_Table_Name
+            schema: string
+            mandatory: false
+          prefix:
+            schema: string
+            mandatory: false
+          schema:
+            link: SRC KP/variableValue
+            schema: string
+            mandatory: false
+          where:
+            link: IfElse3/result
+            schema: string
+            mandatory: false
+      TarQueryFormat21:
+        parent: StringFormat
+        height: 326
+        in:
+          format:
+            const: select ${str} from ${schema}.${prefix}${sourceTableName}  ${where}
+          str:
+            link: bwGetColMapCustomKey11/string
+            schema: string
+            mandatory: false
+          sourceTableName:
+            link: MTable row/value/Target_Table_Name
+            schema: string
+            mandatory: false
+          prefix:
+            schema: string
+            mandatory: false
+          schema:
+            link: TAR KP/variableValue
+            schema: string
+            mandatory: false
+          where:
+            link: IfElse3/result
+            schema: string
+            mandatory: false
+  Stage 46:
+    dependsOn: Stage 33
+    split: '--------------------'
+  Stage 47:
+    dependsOn: Stage 34
+    split: '--------------------'
+  Stage 48:
+    dependsOn: Stage 44
+    actors:
+      SrcQueryExec31:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: SRC Interface/variableValue
+          sql:
+            const: null
+            link: SrcQueryFormat31/string
+        out:
+          result:
+            schema: '#ref'
+      SrcQueryExec311:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: TAR Interface/variableValue
+          sql:
+            const: null
+            link: TarQueryFormat21/string
+        out:
+          result:
+            schema: '#ref'
+  Stage 29:
+    dependsOn: Stage 46
+    actors:
+      TarQueryExec2:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: TAR Interface/variableValue
+          sql:
+            const: null
+            link: TarQueryFormat2/string
+        out:
+          result:
+            schema: '#ref'
+    split: '--------------------'
+  Stage 30:
+    dependsOn: Stage 47
+    actors:
+      SrcQueryExec3:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: SRC Interface/variableValue
+          sql:
+            const: null
+            link: SrcQueryFormat3/string
+        out:
+          result:
+            schema: '#ref'
+    split: '--------------------'
+  Stage 45:
+    dependsOn: Stage 48
+    actors:
+      ArrayConcat2:
+        parent: ArrayConcat
+        in:
+          input:
+            link:
+            - path: SrcQueryExec31/result
+              pos: 0
+            - path: SrcQueryExec311/result
+              pos: 1
+  Stage 13:
+    transactional: false
+    actors:
+      JavaScript13:
+        parent: JavaScript
+        in:
+          script:
+            const: value.get(0);
+          value:
+            link:
+            - path: TarQueryExec2/result
+              iterate: Iterate
+            - path: SrcQueryExec3/result
+              iterate: Iterate
+            - path: ArrayConcat2/array
+              iterate: Iterate
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: string
+      JavaScript14:
+        parent: JavaScript
+        height: 323
+        in:
+          script:
+            const: value.values();
+          value:
+            link:
+            - path: TarQueryExec2/result
+              iterate: Iterate
+            - path: SrcQueryExec3/result
+              iterate: Iterate
+            - path: ArrayConcat2/array
+              iterate: Iterate
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: string
+  Stage 50:
+    transactional: false
+    actors:
+      JavaScript18:
+        parent: JavaScript
+        in:
+          script:
+            const:
+              userCode: |-
+                function hashString(str) {
+                  let hash = 5381;
+                  for (let i = 0; i < str.length; i++) {
+                    hash = ((hash << 5) + hash) + str.charCodeAt(i); // hash * 33 + c
+                  }
+                  return hash >>> 0;
+                }
+
+                if (!isNaN(value)) {
+                    value; // Return if it's a valid number
+                  } else {
+                     hashString(String(value));
+                }
+              script: |-
+                function hashString(str) {
+                  var hash = 5381;
+
+                  for (var i = 0; i < str.length; i++) {
+                    hash = (hash << 5) + hash + str.charCodeAt(i); // hash * 33 + c
+                  }
+
+                  return hash >>> 0;
+                }
+
+                if (!isNaN(value)) {
+                  value; // Return if it's a valid number
+                } else {
+                  hashString(String(value));
+                }
+          value:
+            link: JavaScript13/result
+            schema: integer
+            mandatory: false
+        out:
+          result:
+            schema: integer
+  Stage 27:
+    transactional: false
+    actors:
+      MathDivMod2:
+        parent: MathDivMod
+        in:
+          b:
+            link: KEYS_TABLE_GROUPS/variableValue
+            schema: integer
+          a:
+            link: JavaScript18/result
+      Concat2:
+        parent: Concat
+        in:
+          delimiter:
+            const: null
+            link: SEPERATOR/variableValue
+          elements:
+            link: JavaScript14/result
+  Stage 20:
+    last: 1
+    transactional: false
+    actors:
+      ErrorHandler2:
+        parent: ErrorHandler
+        error: result
+        in:
+          config:
+            const:
+            - exceptionKey: com.k2view.fabric.common.io.basic.exception.StandardSqlException
+              conditions:
+                standardType: UNIQUE_CONSTRAINT
+              actions:
+                suppress: true
+                log: false
+                flowName: ''
+      DbLoad2:
+        parent: DbLoad
+        in:
+          interface:
+            const: null
+            link: KEYS_TABLE_INTERFACE/variableValue
+          schema:
+            const: null
+            link: KEYS_TABLE_SCHEMA/variableValue
+          table:
+            const: null
+            link: KEYS_TABLE_NAME/variableValue
+          fields:
+            const:
+            - group_id
+            - org_key
+          keys:
+            const:
+            - org_key
+          group_id:
+            link: MathDivMod2/mod
+            schema: integer
+            mandatory: false
+          org_key:
+            link: Concat2/string
+            schema: string
+            mandatory: false
+  Stage 28:
+    transactional: false
+schemas:
+  JavaScript2.in.arr:
+    type: array
+    items:
+      type: string
+  JavaScript3.in.arr:
+    type: array
+    items:
+      type: string
+  bwD2DConfig.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        Lu_Name:
+          type: string
+        Source_Table_Name:
+          type: string
+        Source_Transformation_Function_Name: {
+          }
+        source_columns_to_Ignore_null: {
+          }
+        Target_Table_Name:
+          type: string
+        Target_Transformation_Function_Name: {
+          }
+        target_columns_to_Ignore_null: {
+          }
+        Customized_Key_Comparison:
+          type: string
+        Mismatch_Columns: {
+          }
+        Excluded_Columns_Names:
+          type: string
+        Active:
+          type: string
+        Mode:
+          type: string
+        Excluded_Rows_Sql:
+          type: string
+  Filter1.out.values:
+    type: array
+    items:
+      type: object
+      properties:
+        Lu_Name:
+          type: string
+        Source_Table_Name:
+          type: string
+        Source_Transformation_Function_Name: {
+          }
+        source_columns_to_Ignore_null: {
+          }
+        Target_Table_Name:
+          type: string
+        Target_Transformation_Function_Name: {
+          }
+        target_columns_to_Ignore_null: {
+          }
+        Customized_Key_Comparison:
+          type: string
+        Mismatch_Columns: {
+          }
+        Excluded_Columns_Names: {
+          }
+        Active:
+          type: string
+        Mode: {
+          }
+        Excluded_Rows_Sql: {
+          }
+        Column_Mapping: {
+          }
+  MTable row.out.value:
+    type: object
+    properties:
+      Lu_Name:
+        type: string
+      Source_Table_Name:
+        type: string
+      Source_Transformation_Function_Name: {
+        }
+      source_columns_to_Ignore_null: {
+        }
+      Target_Table_Name:
+        type: string
+      Target_Transformation_Function_Name: {
+        }
+      target_columns_to_Ignore_null: {
+        }
+      Customized_Key_Comparison:
+        type: string
+      Mismatch_Columns: {
+        }
+      Excluded_Columns_Names: {
+        }
+      Active:
+        type: string
+      Mode: {
+        }
+      Excluded_Rows_Sql: {
+        }
+      Column_Mapping: {
+        }
+  DbCommand1.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        column_name: {
+          }
+        kind: {
+          }
+  DbCommand2.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        column_name: {
+          }
+        kind: {
+          }
+  Filter2.out.values:
+    type: array
+    items:
+      type: object
+      properties:
+        column_name:
+          type: string
+        kind:
+          type: string
+  Filter3.out.values:
+    type: array
+    items:
+      type: object
+      properties:
+        column_name:
+          type: string
+        kind:
+          type: string
+  TokenQueryExec.out.result:
+    type: object
+    properties:
+      system.min(system.token(cust_id)):
+        type: integer
+      system.max(system.token(cust_id)):
+        type: integer
+  JavaScript5.in.value:
+    type: object
+    properties:
+      system.min(system.token(cust_id, ssn)):
+        type: integer
+      system.max(system.token(cust_id, ssn)):
+        type: integer
+  JavaScript5.out.result:
+    type: array
+    items:
+      type: integer
+  DeepCopy1.out.value:
+    type: array
+    items:
+      type: integer
+  JavaScript6.in.tokens:
+    type: array
+    items:
+      type: integer
+  JavaScript7.in.tokens:
+    type: array
+    items:
+      type: integer
+  SrcQueryExec1.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        cust_id: {
+          }
+        ssn: {
+          }
+  TarQueryExec1.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        cust_id: {
+          }
+        ssn: {
+          }
+  SrcQueryExec2.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        cust_id: {
+          }
+        ssn: {
+          }
+  TarQueryExec3.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        CASE_ID:
+          type: integer
+        NOTE_ID:
+          type: integer
+  ArrayConcat1.out.array:
+    type: array
+    items:
+      type: object
+      properties:
+        customer_id:
+          type: string
+  JavaScript1.in.value:
+    type: object
+    properties:
+      cust_id:
+        type: string
+  JavaScript4.in.value:
+    type: object
+    properties:
+      cust_id:
+        type: string
+  SrcQueryExec31.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        cust_id: {
+          }
+        ssn: {
+          }
+  SrcQueryExec311.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        cust_id: {
+          }
+        ssn: {
+          }
+  TarQueryExec2.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        CASE_ID:
+          type: integer
+        NOTE_ID:
+          type: integer
+  SrcQueryExec3.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        cust_id: {
+          }
+        ssn: {
+          }
+  JavaScript13.in.value:
+    type: object
+    properties:
+      cust_id:
+        type: string
+  JavaScript14.in.value:
+    type: object
+    properties:
+      cust_id:
+        type: string

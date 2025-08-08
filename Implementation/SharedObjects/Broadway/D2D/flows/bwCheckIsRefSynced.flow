@@ -1,0 +1,285 @@
+{
+    "description": "Check if Ref Updated before Read.\n\nInputs:\ncountOfEntities: expected number of rows per execution_ID\nluName:  d2d lu name\ntaskExecutionID: execution_id from summary tables",
+    "tags": [
+        "d2d"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Inputs",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "D2D INTERFACE",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [
+                                    {
+                                        "name": "luName",
+                                        "remark": "d2d lu name"
+                                    },
+                                    {
+                                        "name": "variableName",
+                                        "const": "D2D_RESULT_INTERFACE"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "IF Load Fabric?",
+                    "dependsOnList": [
+                        "Inputs"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "== fabric",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "fabric"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Is Common Updated?",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwIsCommonUpdated"
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "remark": "execution_id from summary tables",
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "countOfEntities",
+                                        "schema": {
+                                            "type": "number"
+                                        },
+                                        "remark": "expected number of rows per execution_ID",
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Else where",
+                    "dependsOnList": [
+                        "Inputs"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "true",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Close IF",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Create",
+                    "dependsOnList": [
+                        "Close IF"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "true?",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "Equals",
+                                "inputs": [
+                                    {
+                                        "name": "a",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "remark": "true(synced)/false(not synced)"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "No Report",
+                    "dependsOnList": [
+                        "Close IF"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "No Report Created",
+                            "actorType": {
+                                "parentType": "Logger",
+                                "inputs": [
+                                    {
+                                        "name": "message",
+                                        "const": "No report Created for taskId - ${taskExecutionID}"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": []
+                                    },
+                                    {
+                                        "name": "level",
+                                        "const": "warning"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "D2D INTERFACE",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "== fabric",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Is Common Updated?",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "true?",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "true",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "true?",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "D2D INTERFACE",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "Is Common Updated?",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "countOfEntities"
+            },
+            "rightPort": {
+                "actor": "Is Common Updated?",
+                "name": "countOfEntities"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "true?",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "result"
+            }
+        }
+    ]
+}

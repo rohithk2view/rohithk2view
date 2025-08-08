@@ -1,0 +1,180 @@
+{
+    "tags": [
+        "D2D",
+        "D2D\flows"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "IfMatch",
+                            "remark": "Compare Result",
+                            "actorType": {
+                                "parentType": "Equals",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "Match"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "IGNOREMATCH",
+                            "remark": "Global Value",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [
+                                    {
+                                        "name": "variableName",
+                                        "const": "IGNOREMATCH"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 19",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "ToBool",
+                            "actorType": {
+                                "parentType": "ToBool",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "IgnoreMatch and Match",
+                            "remark": "If any of these two parameters is 'false' - we will insert record into report table, but if and only if both are true - we will not insert (skip matching entities if IGNOREMATCH flag set to true in Global)",
+                            "actorType": {
+                                "parentType": "And",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Insert Condition",
+                            "actorType": {
+                                "parentType": "Not",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "IfMatch",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "IgnoreMatch and Match",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IGNOREMATCH",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "ToBool",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ToBool",
+                "name": "bool"
+            },
+            "rightPort": {
+                "actor": "IgnoreMatch and Match",
+                "name": "b"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IgnoreMatch and Match",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Insert Condition",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "IfMatch",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "schema"
+            },
+            "rightPort": {
+                "actor": "IGNOREMATCH",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Insert Condition",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "insert"
+            }
+        }
+    ]
+}

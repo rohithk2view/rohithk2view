@@ -1,0 +1,1291 @@
+tags: d2d,d2dv2,D2D
+stages:
+  Stage 3:
+    actors:
+      EXEC_MODE:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_EXEC_MODE
+          luName:
+            external: schema
+      IID:
+        parent: Const
+        in:
+          value:
+            const: null
+            external: IID
+        out:
+          value:
+            schema: string
+      SRC Remote Fabric Interface:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_FABRIC_INTERFACE_SRC
+          luName:
+            external: schema
+      TAR Remote Fabric Interface:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_FABRIC_INTERFACE_TAR
+          luName:
+            external: schema
+      SRC DB Type:
+        parent: Const
+        in:
+          value:
+            const: null
+            external: srcDbType
+        out:
+          value:
+            schema: string
+      TAR DB Type:
+        parent: Const
+        in:
+          value:
+            const: null
+            external: tarDbType
+        out:
+          value:
+            schema: string
+      Exclude Condition:
+        parent: Const
+        in:
+          value:
+            const: null
+            external: excludeCondition
+        out:
+          value:
+            schema: string
+      EXECUTION ID:
+        parent: GetD2DExecutionID
+        in:
+          luName:
+            external: schema
+      ColumnMapping:
+        parent: Const
+        in:
+          value:
+            const: null
+            external: ColumnMapping
+            schema: string
+        out:
+          value:
+            schema: string
+  Prep F2F:
+    actors:
+      F2F ?:
+        parent: EqualsIgnoreCase
+        condition: result
+        in:
+          b:
+            const: F2F
+            schema: string
+          a:
+            link: EXEC_MODE/variableValue
+      SEPERATOR:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_CONF_SEPERATOR
+          luName:
+            external: schema
+      RESULT_INTERFACE:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_RESULT_INTERFACE
+          luName:
+            external: schema
+      LOAD_SCHEMA:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LOAD_SCHEMA
+          luName:
+            external: schema
+      Mismatch_Columns:
+        parent: Const
+        in:
+          value:
+            const: null
+            external: Mismatch_Columns
+            schema: string
+        out:
+          value:
+            schema: string
+      Exclude Clause:
+        parent: StringFormat
+        in:
+          format:
+            const: ' where ${where} '
+          where:
+            link: Exclude Condition/value
+            schema: string
+            mandatory: false
+  Prep Data Queries:
+    actors:
+      ReplaceDelimeter:
+        parent: Replace
+        in:
+          search:
+            const: null
+            link: SEPERATOR/variableValue
+          replace:
+            const: ', '
+          string:
+            external: customizedKeyComparison
+      Source Env Query:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwF2FQuery
+          luType:
+            external: luTypeSrc
+            schema: string
+            mandatory: false
+          sourceTableName:
+            external: sourceTableName
+            schema: string
+            mandatory: false
+          excludedColumnsNames:
+            external: excludedColumnsNames
+            schema: string
+            mandatory: false
+          customizedKeyComparison:
+            external: customizedKeyComparison
+            schema: string
+            mandatory: false
+          delimiter:
+            link: SEPERATOR/variableValue
+            schema: string
+            mandatory: false
+          interface:
+            link: SRC Remote Fabric Interface/variableValue
+            schema: string
+            mandatory: false
+          env_prefix:
+            const: SRC
+            schema: string
+            mandatory: false
+          dbType:
+            link: SRC DB Type/value
+            schema: string
+            mandatory: false
+          ColumnMapping:
+            link: ColumnMapping/value
+            schema: string
+            mandatory: false
+        out:
+          sql:
+            schema: string
+      Target Env Query:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwF2FQuery
+          luType:
+            external: luTypeTar
+            schema: string
+            mandatory: false
+          sourceTableName:
+            external: targetTableName
+            schema: string
+            mandatory: false
+          excludedColumnsNames:
+            external: excludedColumnsNames
+            schema: string
+            mandatory: false
+          customizedKeyComparison:
+            external: customizedKeyComparison
+            schema: string
+            mandatory: false
+          delimiter:
+            link: SEPERATOR/variableValue
+            schema: string
+            mandatory: false
+          interface:
+            link: TAR Remote Fabric Interface/variableValue
+            schema: string
+            mandatory: false
+          env_prefix:
+            const: TAR
+            schema: string
+            mandatory: false
+          dbType:
+            link: TAR DB Type/value
+            schema: string
+            mandatory: false
+          ColumnMapping:
+            link: ColumnMapping/value
+            schema: string
+            mandatory: false
+        out:
+          sql:
+            schema: string
+      IfElse1:
+        parent: IfElse
+        in:
+          test:
+            link: Exclude Condition/value
+          a:
+            link: Exclude Clause/string
+        out:
+          result:
+            schema: string
+      GetSummaryTables:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwGetSummaryTableNames
+          interface:
+            link: RESULT_INTERFACE/variableValue
+            schema: string
+            mandatory: false
+        out:
+          field_summary:
+            schema: string
+          record_summary:
+            schema: string
+          table_summary:
+            schema: string
+          entity_summary:
+            schema: string
+          schema:
+            schema: string
+  Prepare Keys Query:
+    transactional: false
+    actors:
+      Query4Keys:
+        parent: StringFormat
+        in:
+          format:
+            const: select ${str} from ${schema}.${prefix}${sourceTableName}  ${where}
+          str:
+            link: ReplaceDelimeter/string
+            schema: string
+            mandatory: false
+          sourceTableName:
+            external: sourceTableName
+            schema: string
+            mandatory: false
+          prefix:
+            schema: string
+            mandatory: false
+          schema:
+            external: luTypeSrc
+            schema: string
+            mandatory: false
+          where:
+            link: IfElse1/result
+            schema: string
+            mandatory: false
+  'Get Key Values and Split Keys ':
+    transactional: false
+    actors:
+      Table not Found ErrorHandler:
+        parent: ErrorHandler
+        error: result
+        in:
+          config:
+            const:
+            - exceptionKey: java.lang.Exception
+              conditions:
+                message: ''
+              actions:
+                suppress: true
+                log: false
+                flowName: bwD2DTableNotFound
+          luTypeSrc:
+            external: luTypeSrc
+            schema: string
+            mandatory: false
+          sourceTableName:
+            external: sourceTableName
+            schema: string
+            mandatory: false
+          tableSummaryName:
+            link: GetSummaryTables/table_summary
+            schema: string
+            mandatory: false
+          execution_id:
+            link: EXECUTION ID/result
+            schema: string
+            mandatory: false
+          iid:
+            link: IID/value
+            schema: string
+            mandatory: false
+          targetTableName:
+            external: targetTableName
+            schema: string
+            mandatory: false
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+          origin:
+            const: Source
+            schema: string
+            editor:
+              id: com.k2view.dropdown
+              options:
+              - Source
+              - Target
+            mandatory: false
+      GetKeyValues:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: SRC Remote Fabric Interface/variableValue
+          sql:
+            const: null
+            link: Query4Keys/string
+        out:
+          result:
+            schema: '#ref'
+      SplitKeys:
+        parent: Split
+        in:
+          delimiter:
+            const: null
+            link: SEPERATOR/variableValue
+          string:
+            external: customizedKeyComparison
+  Deep Copy Keys:
+    actors:
+      DeepCopyKeysRS:
+        parent: DeepCopy
+        in:
+          value:
+            link: GetKeyValues/result
+        out:
+          value:
+            schema: '#ref'
+  Loop For Each Key:
+    actors:
+      FlattenValues:
+        parent: ArrayConcat
+        in:
+          input:
+            link:
+              path: DeepCopyKeysRS/value
+              iterate: Iterate
+        out:
+          array:
+            schema: '#ref'
+  Deep Copy One:
+    actors:
+      DeepCopy:
+        parent: DeepCopy
+        in:
+          value:
+            link: FlattenValues/array
+        out:
+          value:
+            schema: '#ref'
+  Execute Query - Source:
+    transactional: false
+    actors:
+      ErrorHandler Source:
+        parent: ErrorHandler
+        error: result
+        in:
+          config:
+            const:
+            - exceptionKey: java.lang.Exception
+              conditions:
+                message: ''
+              actions:
+                suppress: true
+                log: false
+                flowName: bwD2DTableNotFound
+          luTypeSrc:
+            external: luTypeSrc
+            schema: string
+            mandatory: false
+          sourceTableName:
+            external: sourceTableName
+            schema: string
+            mandatory: false
+          tableSummaryName:
+            link: GetSummaryTables/table_summary
+            schema: string
+            mandatory: false
+          execution_id:
+            link: EXECUTION ID/result
+            schema: string
+            mandatory: false
+          iid:
+            link: IID/value
+            schema: string
+            mandatory: false
+          targetTableName:
+            external: targetTableName
+            schema: string
+            mandatory: false
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+          origin:
+            const: Source
+            schema: string
+            editor:
+              id: com.k2view.dropdown
+              options:
+              - Source
+              - Target
+            mandatory: false
+      SourceData:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: SRC Remote Fabric Interface/variableValue
+          sql:
+            const: null
+            link: Source Env Query/sql
+          params:
+            link: DeepCopy/value
+        out:
+          result:
+            schema: '#ref'
+  Execute Query - Target:
+    transactional: false
+    actors:
+      ErrorHandler Target:
+        parent: ErrorHandler
+        error: result
+        in:
+          config:
+            const:
+            - exceptionKey: java.lang.Exception
+              conditions:
+                message: ''
+              actions:
+                suppress: true
+                log: false
+                flowName: bwD2DTableNotFound
+          luTypeSrc:
+            external: luTypeSrc
+            schema: string
+            mandatory: false
+          sourceTableName:
+            external: sourceTableName
+            schema: string
+            mandatory: false
+          tableSummaryName:
+            link: GetSummaryTables/table_summary
+            schema: string
+            mandatory: false
+          execution_id:
+            link: EXECUTION ID/result
+            schema: string
+            mandatory: false
+          iid:
+            link: IID/value
+            schema: string
+            mandatory: false
+          targetTableName:
+            external: targetTableName
+            schema: string
+            mandatory: false
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+          origin:
+            const: Target
+            schema: string
+            editor:
+              id: com.k2view.dropdown
+              options:
+              - Source
+              - Target
+            mandatory: false
+      TargetData:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: TAR Remote Fabric Interface/variableValue
+          sql:
+            const: null
+            link: Target Env Query/sql
+          params:
+            link: DeepCopy/value
+        out:
+          result:
+            schema: '#ref'
+  Stage 1:
+    transactional: false
+    actors:
+      DeepCopy Source RS:
+        parent: DeepCopy
+        in:
+          value:
+            link: SourceData/result
+        out:
+          value:
+            schema: '#ref'
+  Stage 4:
+    transactional: false
+    actors:
+      Source RS Passthrough:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: DeepCopy Source RS/value
+            schema: object
+        out:
+          value:
+            schema: object
+      DeepCopy Target RS:
+        parent: DeepCopy
+        in:
+          value:
+            link: TargetData/result
+        out:
+          value:
+            schema: '#ref'
+  Compare Src And Tar Keys and Merge:
+    transactional: false
+    actors:
+      JavaScript1:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: "var result =true;\r\n\r\nfor each (var i in keys)\r\n{\r\n   \
+              \ if (tar_arr == null || (src_arr.get(i) != tar_arr.get(i))) result\
+              \ = false;\r\n}\r\nresult;"
+          src_arr:
+            link:
+              path: Source RS Passthrough/value
+              iterate: Iterate
+            schema: '#ref'
+            mandatory: false
+          tar_arr:
+            link:
+              path: DeepCopy Target RS/value
+              iterate: Iterate
+            schema: '#ref'
+            mandatory: false
+          keys:
+            link: SplitKeys/strings
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      SrcAndTarMapMerge:
+        parent: MapMerge
+        in:
+          maps:
+            link:
+            - path: Source RS Passthrough/value
+              iterate: Iterate
+              pos: 0
+            - path: DeepCopy Target RS/value
+              iterate: Iterate
+              pos: 1
+        out:
+          map:
+            schema: '#ref'
+  Array Creation:
+    last: 1
+    transactional: false
+    actors:
+      CreateArray:
+        parent: ArrayBuilder
+        in:
+          input:
+            link: SrcAndTarMapMerge/map
+        out:
+          array:
+            schema: '#ref'
+  Outer Loop Close:
+    last: 1
+    transactional: false
+  Get Array and Execution Id:
+    transactional: false
+    actors:
+      Array Pass Through:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: CreateArray/array
+        out:
+          value:
+            schema: '#ref'
+  Compare Each Row in Table:
+    transactional: true
+    actors:
+      Compare:
+        parent: LuFunction
+        in:
+          functionName:
+            const: fnF2Fv2Compare
+          row:
+            link:
+              path: Array Pass Through/value
+              iterate: Iterate
+            schema: '#ref'
+            mandatory: false
+          customizedKeyComparison:
+            external: customizedKeyComparison
+            schema: string
+            mandatory: false
+          source_columns_to_Ignore_null:
+            external: source_columns_to_Ignore_null
+            schema: string
+            mandatory: false
+          target_columns_to_Ignore_null:
+            external: target_columns_to_Ignore_null
+            schema: any
+            mandatory: false
+          sourceEnv:
+            const: SRC
+            schema: string
+            mandatory: false
+          targetEnv:
+            const: TAR
+            schema: string
+            mandatory: false
+          Source_Transformation_Function_Name:
+            external: sourceTransformationFunctionName
+            schema: string
+            mandatory: false
+          Target_Transformation_Function_Name:
+            external: targetTransformationFunctionName
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: '#ref'
+          customizedKeyComparison:
+            schema: string
+  Loop Through Each Column:
+    transactional: true
+    actors:
+      ToUpperCase:
+        parent: JavaScript
+        in:
+          script:
+            const:
+              userCode: "var out = new Map();\r\nfor (var m in input) {\r\n  //print(m.toUpperCase());\r\
+                \n  //print(input[m]);\r\n  out[m.toUpperCase()] = input[m]\r\n}\r\
+                \nout;"
+              script: |-
+                var out = new Map();
+
+                for (var m in input) {
+                  //print(m.toUpperCase());
+                  //print(input[m]);
+                  out[m.toUpperCase()] = input[m];
+                }
+
+                out;
+          input:
+            link:
+              path: Compare/result
+              iterate: Iterate
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: '#ref'
+      IGNOREMATCH:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: IGNOREMATCH
+          luName:
+            external: schema
+  Transform:
+    transactional: true
+    actors:
+      Target Secured?:
+        parent: JavaScript
+        in:
+          script:
+            const:
+              userCode: "var res = false;\r\ncolumns.split(delimitter).forEach(function\
+                \ (column) {\r\n    res = res || (column.trim().toUpperCase() == column_name.toUpperCase());\r\
+                \n});\r\n\r\nif(res && result == 'Match' && value != null && value.trim()\
+                \ != ''){\r\n    \"false\";\r\n} else {\r\n    \"true\";\r\n}"
+              script: |-
+                var res = false;
+                columns.split(delimitter).forEach(function (column) {
+                  res = res || column.trim().toUpperCase() == column_name.toUpperCase();
+                });
+
+                if (res && result == 'Match' && value != null && value.trim() != '') {
+                  "false";
+                } else {
+                  "true";
+                }
+          columns:
+            const: ''
+            link: Mismatch_Columns/value
+            schema: string
+            default: true
+            mandatory: false
+          column_name:
+            link: ToUpperCase/result/COLUMN_NAME
+            schema: string
+            mandatory: false
+          result:
+            link: ToUpperCase/result/RESULT
+            schema: string
+            mandatory: false
+          value:
+            link: ToUpperCase/result/SOURCE_VALUE
+            schema: string
+            mandatory: false
+          delimitter:
+            external: delimitter
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: string
+      Mismatched_Columns_Handler:
+        parent: JavaScript
+        in:
+          script:
+            const:
+              userCode: "var res = false;\r\ncolumns.split(delimitter).forEach(function\
+                \ (column) {\r\n    res = res || (column.trim().toUpperCase() == column_name.toUpperCase());\r\
+                \n});\r\n\r\nif(res && result == 'Mismatch' && value != null && value.trim()\
+                \ != ''){\r\n    \"Match\";\r\n} else if (res && result == 'Match'\
+                \ && value != null && value.trim() != ''){\r\n    \"Mismatch\"\r\n\
+                }else {\r\n    result\r\n}"
+              script: |-
+                var res = false;
+                columns.split(delimitter).forEach(function (column) {
+                  res = res || column.trim().toUpperCase() == column_name.toUpperCase();
+                });
+
+                if (res && result == 'Mismatch' && value != null && value.trim() != '') {
+                  "Match";
+                } else if (res && result == 'Match' && value != null && value.trim() != '') {
+                  "Mismatch";
+                } else {
+                  result;
+                }
+          columns:
+            const: ''
+            link: Mismatch_Columns/value
+            schema: string
+            default: true
+            mandatory: false
+          column_name:
+            link: ToUpperCase/result/COLUMN_NAME
+            schema: string
+            mandatory: false
+          result:
+            link: ToUpperCase/result/RESULT
+            schema: string
+            mandatory: false
+          value:
+            link: ToUpperCase/result/SOURCE_VALUE
+            schema: string
+            mandatory: false
+          delimitter:
+            external: delimitter
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: string
+  Load Results:
+    last: 1
+    transactional: true
+    actors:
+      Check Report Condition:
+        parent: InnerFlow
+        condition: insert
+        in:
+          flowName:
+            const: bwCheckReportCondition
+          result:
+            link: ToUpperCase/result/RESULT
+            schema: string
+            mandatory: false
+          schema:
+            external: schema
+            schema: string
+            mandatory: false
+        out:
+          insert:
+            schema: boolean
+      D2D Validation Results:
+        parent: DbLoad
+        in:
+          interface:
+            const: fabric
+          schema:
+            const: null
+            external: schema
+          table:
+            const: null
+            external: table
+          fields:
+            const:
+            - EXECUTION_ID
+            - IID
+            - SOURCE_TABLE_NAME
+            - TARGET_TABLE_NAME
+            - CUSTOMIZED_KEY
+            - COLUMN_NAME
+            - MATCH_RESULT
+            - TARGET_VALUE_SECURED
+            - SOURCE_COLUMN_VALUE
+            - TARGET_COLUMN_VALUE
+            - SOURCE_COLUMN_VALUE_TRANS
+            - TARGET_COLUMN_VALUE_TRANS
+          keys:
+            const:
+            - EXECUTION_ID
+            - IID
+            - SOURCE_TABLE_NAME
+            - TARGET_TABLE_NAME
+            - CUSTOMIZED_KEY
+            - COLUMN_NAME
+          batch:
+            const: true
+          EXECUTION_ID:
+            link: EXECUTION ID/result
+            schema: string
+          IID:
+            external: IID
+            schema: string
+          SOURCE_TABLE_NAME:
+            external: sourceTableName
+            schema: string
+          TARGET_TABLE_NAME:
+            external: targetTableName
+            schema: string
+          CUSTOMIZED_KEY:
+            link: Compare/customizedKeyComparison
+            schema: string
+          COLUMN_NAME:
+            link: ToUpperCase/result/COLUMN_NAME
+            schema: string
+          MATCH_RESULT:
+            link: Mismatched_Columns_Handler/result
+            schema: string
+          SOURCE_COLUMN_VALUE:
+            link: ToUpperCase/result/SOURCE_COLUMN_ORIG_VALUE
+            schema: string
+          TARGET_COLUMN_VALUE:
+            link: ToUpperCase/result/TARGET_COLUMN_ORIG_VALUE
+            schema: string
+          SOURCE_COLUMN_VALUE_TRANS:
+            link: ToUpperCase/result/SOURCE_VALUE
+            schema: string
+          TARGET_COLUMN_VALUE_TRANS:
+            link: ToUpperCase/result/TARGET_VALUE
+            schema: string
+          TARGET_VALUE_SECURED:
+            link: Target Secured?/result
+            schema: string
+            mandatory: false
+      D2D Validation In DB:
+        parent: DbLoad
+        in:
+          interface:
+            const: null
+            link: RESULT_INTERFACE/variableValue
+          schema:
+            const: null
+            link: LOAD_SCHEMA/variableValue
+          table:
+            const: null
+            link: GetSummaryTables/field_summary
+          fields:
+            const:
+            - EXECUTION_ID
+            - IID
+            - SOURCE_TABLE_NAME
+            - TARGET_TABLE_NAME
+            - CUSTOMIZED_KEY
+            - COLUMN_NAME
+            - MATCH_RESULT
+            - TARGET_VALUE_SECURED
+            - SOURCE_COLUMN_VALUE
+            - TARGET_COLUMN_VALUE
+            - SOURCE_COLUMN_VALUE_TRANS
+            - TARGET_COLUMN_VALUE_TRANS
+          keys:
+            const:
+            - EXECUTION_ID
+            - IID
+            - SOURCE_TABLE_NAME
+            - TARGET_TABLE_NAME
+            - CUSTOMIZED_KEY
+            - COLUMN_NAME
+          batch:
+            const: true
+          EXECUTION_ID:
+            link: EXECUTION ID/result
+            schema: string
+          IID:
+            external: IID
+            schema: string
+          SOURCE_TABLE_NAME:
+            external: sourceTableName
+            schema: string
+          TARGET_TABLE_NAME:
+            external: targetTableName
+            schema: string
+          CUSTOMIZED_KEY:
+            link: Compare/customizedKeyComparison
+            schema: string
+          COLUMN_NAME:
+            link: ToUpperCase/result/COLUMN_NAME
+            schema: string
+          MATCH_RESULT:
+            link: Mismatched_Columns_Handler/result
+            schema: string
+          SOURCE_COLUMN_VALUE:
+            link: ToUpperCase/result/SOURCE_COLUMN_ORIG_VALUE
+            schema: string
+          TARGET_COLUMN_VALUE:
+            link: ToUpperCase/result/TARGET_COLUMN_ORIG_VALUE
+            schema: string
+          SOURCE_COLUMN_VALUE_TRANS:
+            link: ToUpperCase/result/SOURCE_VALUE
+            schema: string
+          TARGET_COLUMN_VALUE_TRANS:
+            link: ToUpperCase/result/TARGET_VALUE
+            schema: string
+          TARGET_VALUE_SECURED:
+            link: Target Secured?/result
+            schema: string
+            mandatory: false
+  Stage 2:
+    last: 1
+    transactional: true
+  Stage 6:
+    transactional: false
+schemas:
+  GetKeyValues.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        CASE_ID:
+          type: integer
+        NOTE_ID:
+          type: integer
+  DeepCopyKeysRS.out.value:
+    type: array
+    items:
+      type: object
+      properties:
+        ACTIVITY_ID:
+          type: integer
+        CUSTOMER_ID:
+          type: integer
+  FlattenValues.out.array:
+    type: array
+    items:
+      type: integer
+  DeepCopy.out.value:
+    type: array
+    items:
+      type: object
+      properties:
+        NOTE_ID:
+          type: integer
+  SourceData.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        source_CUSTOMER_ID:
+          type: string
+        source_FIRST_NAME:
+          type: string
+        source_LAST_NAME:
+          type: string
+        source_SSN:
+          type: string
+  TargetData.out.result:
+    type: array
+    items:
+      type: object
+      properties:
+        target_CUSTOMER_ID:
+          type: string
+        target_FIRST_NAME:
+          type: string
+        target_LAST_NAME:
+          type: string
+        target_SSN:
+          type: string
+  DeepCopy Source RS.out.value:
+    type: array
+    items:
+      type: object
+      properties:
+        source_additional_phone:
+          type: string
+        source_birthday:
+          type: date
+        source_customer_id:
+          type: integer
+        source_email:
+          type: string
+        source_first_name:
+          type: string
+        source_id_number:
+          type: string
+        source_last_name:
+          type: string
+        source_occupation:
+          type: string
+        source_primary_phone:
+          type: string
+        source_social_net_fb:
+          type: string
+        source_social_net_lnk:
+          type: string
+        source_social_net_tw:
+          type: string
+  DeepCopy Target RS.out.value:
+    type: array
+    items:
+      type: object
+      properties:
+        target_additional_phone:
+          type: string
+        target_birthday:
+          type: date
+        target_customer_id:
+          type: integer
+        target_email:
+          type: string
+        target_first_name:
+          type: string
+        target_id_number:
+          type: string
+        target_last_name:
+          type: string
+        target_occupation:
+          type: string
+        target_primary_phone:
+          type: string
+        target_social_net_fb:
+          type: string
+        target_social_net_lnk:
+          type: string
+        target_social_net_tw:
+          type: string
+  JavaScript1.in.src_arr:
+    type: object
+    properties:
+      source_ACTIVITY_DATE:
+        type: date
+      source_ACTIVITY_ID:
+        type: integer
+      source_ACTIVITY_NOTE:
+        type: string
+      source_CUSTOMER_ID:
+        type: integer
+  JavaScript1.in.tar_arr:
+    type: object
+    properties:
+      target_CUSTOMER_ID:
+        type: string
+      target_FIRST_NAME:
+        type: string
+      target_LAST_NAME:
+        type: string
+      target_SSN:
+        type: string
+  JavaScript1.in.keys:
+    type: array
+    items:
+      type: string
+  SrcAndTarMapMerge.out.map:
+    type: object
+    properties:
+      source_CUSTOMER_ID:
+        type: string
+      source_FIRST_NAME:
+        type: string
+      source_LAST_NAME:
+        type: string
+      source_SSN:
+        type: string
+      target_CUSTOMER_ID:
+        type: string
+      target_FIRST_NAME:
+        type: string
+      target_LAST_NAME:
+        type: string
+      target_SSN:
+        type: string
+  CreateArray.out.array:
+    type: array
+    items:
+      type: object
+      properties:
+        source_CUSTOMER_ID:
+          type: string
+        source_FIRST_NAME:
+          type: string
+        source_LAST_NAME:
+          type: string
+        source_SSN:
+          type: string
+        target_CUSTOMER_ID:
+          type: string
+        target_FIRST_NAME:
+          type: string
+        target_LAST_NAME:
+          type: string
+        target_SSN:
+          type: string
+  Array Pass Through.out.value:
+    type: array
+    items:
+      type: object
+      properties:
+        source_CUSTOMER_ID:
+          type: string
+        source_FIRST_NAME:
+          type: string
+        source_LAST_NAME:
+          type: string
+        source_SSN:
+          type: string
+        target_CUSTOMER_ID:
+          type: string
+        target_FIRST_NAME:
+          type: string
+        target_LAST_NAME:
+          type: string
+        target_SSN:
+          type: string
+  Compare.in.row:
+    type: object
+    properties:
+      ENV1_CUSTOMER_ID:
+        type: integer
+      ENV1_FIRST_NAME:
+        type: string
+      ENV1_LAST_NAME:
+        type: string
+      ENV1_SSN:
+        type: string
+      ENV2_CUSTOMER_ID:
+        type: integer
+      ENV2_FIRST_NAME:
+        type: string
+      ENV2_LAST_NAME:
+        type: string
+      ENV2_SSN:
+        type: string
+  Compare.out.result:
+    type: object
+    properties:
+      CUSTOMER_ID:
+        type: object
+        properties:
+          result:
+            type: string
+          target_value:
+            type: string
+          target_column_orig_value:
+            type: string
+          column_name:
+            type: string
+          source_column_orig_value:
+            type: string
+          source_value:
+            type: string
+      LAST_NAME:
+        type: object
+        properties:
+          result:
+            type: string
+          target_value:
+            type: string
+          target_column_orig_value:
+            type: string
+          column_name:
+            type: string
+          source_column_orig_value:
+            type: string
+          source_value:
+            type: string
+      FIRST_NAME:
+        type: object
+        properties:
+          result:
+            type: string
+          target_value:
+            type: string
+          target_column_orig_value:
+            type: string
+          column_name:
+            type: string
+          source_column_orig_value:
+            type: string
+          source_value:
+            type: string
+      SSN:
+        type: object
+        properties:
+          result:
+            type: string
+          target_value:
+            type: string
+          target_column_orig_value:
+            type: string
+          column_name:
+            type: string
+          source_column_orig_value:
+            type: string
+          source_value:
+            type: string
+  ToUpperCase.in.input:
+    type: object
+    properties:
+      result:
+        type: string
+      target_value:
+        type: string
+      target_column_orig_value:
+        type: string
+      column_name:
+        type: string
+      source_column_orig_value:
+        type: string
+      source_value:
+        type: string
+  ToUpperCase.out.result:
+    type: object
+    properties:
+      RESULT:
+        type: string
+      TARGET_VALUE: {
+        }
+      TARGET_COLUMN_ORIG_VALUE: {
+        }
+      COLUMN_NAME:
+        type: string
+      SOURCE_COLUMN_ORIG_VALUE: {
+        }
+      SOURCE_VALUE: {
+        }

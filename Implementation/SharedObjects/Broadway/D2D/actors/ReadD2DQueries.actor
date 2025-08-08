@@ -1,0 +1,101 @@
+{
+    "type": "ReadD2DQueries",
+    "parentType": "InnerFlow",
+    "actorClass": null,
+    "inputs": [
+        {
+            "name": "strict",
+            "schema": {
+                "type": "boolean"
+            },
+            "doc": "True on Single Instance\nFalse on Batch"
+        },
+        {
+            "const": [
+                {
+                    "sheet_name": "entity_summary",
+                    "sql": "",
+                    "active": true
+                },
+                {
+                    "sheet_name": "table_summary",
+                    "sql": "",
+                    "active": true
+                },
+                {
+                    "sheet_name": "record_summary",
+                    "sql": "",
+                    "active": true
+                },
+                {
+                    "sheet_name": "field_summary",
+                    "sql": "",
+                    "active": true
+                }
+            ],
+            "name": "table",
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "sheet_name": {
+                            "type": "string"
+                        },
+                        "sql": {
+                            "type": "string"
+                        },
+                        "active": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            },
+            "editor": {
+                "id": "com.k2view.table"
+            },
+            "doc": "select queries per table.\ndefault: select all columns"
+        },
+        {
+            "name": "luName",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "d2d lu name"
+        },
+        {
+            "name": "flowName",
+            "const": "bwReadD2DQueries",
+            "schema": {
+                "type": "string"
+            }
+        }
+    ],
+    "outputs": [
+        {
+            "name": "map",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "entity_summary": {
+                        "type": "string"
+                    },
+                    "table_summary": {
+                        "type": "string"
+                    },
+                    "record_summary": {
+                        "type": "string"
+                    },
+                    "field_summary": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    ],
+    "tags": [
+        "d2d"
+    ],
+    "doc": "Select Queries on D2D Summary Tables",
+    "badge": "Rd"
+}

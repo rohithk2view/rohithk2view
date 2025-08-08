@@ -1,0 +1,613 @@
+{
+    "tags": [
+        "d2d",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Input",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "interface",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Get LU Name",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "fnGetLuType"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Check interface type",
+                    "dependsOnList": [
+                        "Input"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Check if commondb is in use",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "fabric"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "prefix",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "ref_"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [
+                        "Input"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": [
+                        {
+                            "name": "prefix1",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "ref_"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "base table names",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "field_summary",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "D2D_FIELD_SUMMARY"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "record_summary",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "D2D_RECORD_SUMMARY"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "table_summary",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "D2D_TABLE_SUMMARY"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "entity_summary",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "D2D_ENTITY_SUMMARY"
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Schema",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${luType}.D2D_LOAD_SCHEMA"
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "format output",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "field_summary_result",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${prefix}${tablename}"
+                                    },
+                                    {
+                                        "name": "prefix",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "tablename",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "record_summary_result ",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${prefix}${tablename}"
+                                    },
+                                    {
+                                        "name": "prefix",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "tablename",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "table_summary_result ",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${prefix}${tablename}"
+                                    },
+                                    {
+                                        "name": "prefix",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "tablename",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "entity_summary_result ",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${prefix}${tablename}"
+                                    },
+                                    {
+                                        "name": "prefix",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "tablename",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Read Schema",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "interface",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "Check if commondb is in use",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get LU Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Schema",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "prefix",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "field_summary_result",
+                "name": "prefix"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "prefix",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "record_summary_result ",
+                "name": "prefix"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "prefix",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "table_summary_result ",
+                "name": "prefix"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "prefix",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "entity_summary_result ",
+                "name": "prefix"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "prefix1",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "field_summary_result",
+                "name": "prefix"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "prefix1",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "record_summary_result ",
+                "name": "prefix"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "prefix1",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "table_summary_result ",
+                "name": "prefix"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "prefix1",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "entity_summary_result ",
+                "name": "prefix"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "field_summary",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "field_summary_result",
+                "name": "tablename"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "record_summary",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "record_summary_result ",
+                "name": "tablename"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "table_summary",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "table_summary_result ",
+                "name": "tablename"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "entity_summary",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "entity_summary_result ",
+                "name": "tablename"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Schema",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Read Schema",
+                "name": "key"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "interface"
+            },
+            "rightPort": {
+                "actor": "interface",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "field_summary_result",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "field_summary"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "record_summary_result ",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "record_summary"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "table_summary_result ",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "table_summary"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "entity_summary_result ",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "entity_summary"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Read Schema",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "schema"
+            }
+        }
+    ]
+}

@@ -1,0 +1,775 @@
+{
+    "description": "Migrates List of Instances on D2D LU.\n\nInputs \nsql: Select Query to fetch the list of Instances\nschema_name: Active Database name to run the select query\nprint_report: if true Copy summary tables data to an Excel, default false",
+    "tags": [
+        "d2d",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Prepare",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Get Instances",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "remark": "Active Database Name to run the Sql Select Query",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "remark": "Sql Query to fetch the list of Instances",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "params",
+                                        "schema": {
+                                            "type": "object"
+                                        }
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "customer_id": {
+                                                        "type": "integer"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Read EXECUTION_ID",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "EXECUTION_ID",
+                                        "isDefault": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Get Lu Name",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "fnGetLuType"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Extract iid",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "iid",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": {
+                                            "userCode": "if(instance[0] != '')\r\n    instance[0]",
+                                            "script": "if (instance[0] != '') instance[0];"
+                                        }
+                                    },
+                                    {
+                                        "name": "instance",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                }
+                                            }
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Format string",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "CountOfEntities",
+                            "actorType": {
+                                "parentType": "Count",
+                                "inputs": [],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "StringFormat1",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "'${iid}'"
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "integer"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "ArrayBuilder1",
+                            "actorType": {
+                                "parentType": "ArrayBuilder",
+                                "inputs": [],
+                                "outputs": [
+                                    {
+                                        "name": "array",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "customer_id": {
+                                                        "type": "integer"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "FabricGet1",
+                            "actorType": {
+                                "parentType": "FabricGet",
+                                "inputs": [
+                                    {
+                                        "name": "luType",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "const": null,
+                                        "isDefault": false
+                                    },
+                                    {
+                                        "name": "syncMode",
+                                        "const": "FORCE"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Build IID part",
+                    "dependsOnList": [],
+                    "isLast": 1,
+                    "actors": [
+                        {
+                            "name": "StringBuild2",
+                            "actorType": {
+                                "parentType": "StringBuild",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Execute Batch Command",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Run Batch",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "BATCH ${@luType}.(${@iids}) FABRIC_COMMAND='get ${@luType}.?' WITH ASYNC=TRUE;"
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iids",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Batch id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Execution id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Notes": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Passthrough stage for first line",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "first line passthrough",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Wait for batch to complete",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "BatchWait1",
+                            "actorType": {
+                                "parentType": "BatchWait",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "IID Array",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "customer_id": {
+                                                        "type": "integer"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Copy Comparison Details",
+                    "dependsOnList": [],
+                    "isLast": 1,
+                    "actors": [
+                        {
+                            "name": "CopyComparisonDetails",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwD2DCopyComparisonDetails"
+                                    },
+                                    {
+                                        "name": "execution_id",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit",
+                                            "addEmptyEntry": true
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Validate",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Print Activated?",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "a",
+                                        "remark": "true to print the summary table report to an excel. default(false) is no report.",
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "false",
+                                                "true"
+                                            ]
+                                        },
+                                        "const": "false",
+                                        "isDefault": true
+                                    },
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "true"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Print Report",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwPrintD2Dv2Result"
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "xlsx",
+                                        "name": "file_type",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "xlsx",
+                                                "xls"
+                                            ]
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": false,
+                                        "name": "strict",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "",
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "filename",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Get Instances",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "iid",
+                "name": "instance"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Read EXECUTION_ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Print Report",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Read EXECUTION_ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "CopyComparisonDetails",
+                "name": "execution_id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Print Report",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Run Batch",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "CopyComparisonDetails",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "FabricGet1",
+                "name": "luType"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "iid",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "StringFormat1",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "iid",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "ArrayBuilder1",
+                "name": "input"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "iid",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "FabricGet1",
+                "name": "iid"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "StringFormat1",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "StringBuild2",
+                "name": "input"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "ArrayBuilder1",
+                "name": "array"
+            },
+            "rightPort": {
+                "actor": "IID Array",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "StringBuild2",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Run Batch",
+                "name": "iids"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Run Batch",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "first line passthrough",
+                "name": "value"
+            },
+            "iterate": "First",
+            "path": [
+                "Batch id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "first line passthrough",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "BatchWait1",
+                "name": "batchId"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "IID Array",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "CopyComparisonDetails",
+                "name": "iid"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "system"
+            },
+            "rightPort": {
+                "actor": "Get Instances",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "sqlToRun"
+            },
+            "rightPort": {
+                "actor": "Get Instances",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "printSummaryReport"
+            },
+            "rightPort": {
+                "actor": "Print Activated?",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Print Report",
+                "name": "filename"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "result"
+            }
+        }
+    ]
+}

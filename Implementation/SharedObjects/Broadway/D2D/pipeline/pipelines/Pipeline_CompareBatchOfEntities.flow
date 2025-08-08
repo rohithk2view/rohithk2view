@@ -1,0 +1,277 @@
+{
+    "tags": [
+        "d2d",
+        "pipeline"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Inputs",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "EXECUTION ID",
+                            "actorType": {
+                                "parentType": "GetD2DExecutionID",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Prepare Batch",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Batch Executor",
+                            "remark": "Execute LUI Batch",
+                            "actorType": {
+                                "parentType": "Suite",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "suite_MigrateInstanceGroup"
+                                    },
+                                    {
+                                        "name": "schema_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit",
+                                            "addEmptyEntry": true
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "print_report",
+                                        "const": "false",
+                                        "schema": {},
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "false",
+                                                "true"
+                                            ]
+                                        },
+                                        "mandatory": false,
+                                        "isDefault": true
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Write Report",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Print Activated?",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "a",
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "false",
+                                                "true"
+                                            ]
+                                        },
+                                        "const": "false",
+                                        "isDefault": true
+                                    },
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "true"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Report Create",
+                            "remark": "Export Summary data to an Excel ",
+                            "actorType": {
+                                "parentType": "Suite",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "suite_CreateReport"
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "",
+                                        "name": "strict",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "",
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "EXECUTION ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Report Create",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EXECUTION ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Batch Executor",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "EXECUTION ID",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "uidListInterface"
+            },
+            "rightPort": {
+                "actor": "Batch Executor",
+                "name": "schema_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Batch Executor",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "uidList"
+            },
+            "rightPort": {
+                "actor": "Batch Executor",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "printSummaryReport"
+            },
+            "rightPort": {
+                "actor": "Batch Executor",
+                "name": "print_report"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "printSummaryReport"
+            },
+            "rightPort": {
+                "actor": "Print Activated?",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Report Create",
+                "name": "luName"
+            }
+        }
+    ]
+}

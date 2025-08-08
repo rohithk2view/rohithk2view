@@ -1,0 +1,26 @@
+{
+    "type": "MapDiffD2D",
+    "badge": "Ma",
+    "inputs": [
+        {
+            "name": "a",
+            "schema": {},
+            "mandatory": false
+        },
+        {
+            "name": "b",
+            "schema": {},
+            "mandatory": false
+        }
+    ],
+    "outputs": [
+        {
+            "name": "map",
+            "schema": {}
+        }
+    ],
+    "tags": [
+        "d2d"
+    ],
+    "actorClass": "com.k2view.cdbms.usercode.common.D2D.MapDiffD2D"
+}

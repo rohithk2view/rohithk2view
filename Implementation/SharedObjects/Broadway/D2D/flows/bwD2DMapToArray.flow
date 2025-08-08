@@ -1,0 +1,120 @@
+stages:
+  Stage 1:
+    actors:
+      Const1:
+        parent: Const
+        in:
+          value:
+            const: null
+            external: diffMap
+        out:
+          value:
+            schema: '#ref'
+  Stage 2:
+    actors:
+      JavaScript1:
+        parent: JavaScript
+        in:
+          script:
+            const: |-
+              var keys = [];
+
+              for (var m in diffMap) {
+               // print("##### element: " + m);
+               // print("##### value  : " + diffMap[m]);
+                keys[m] = m;
+              }
+              keys;
+          diffMap:
+            link: Const1/value
+            schema: '#ref'
+            mandatory: false
+        out:
+          result:
+            schema: '#ref'
+  Stage 3:
+    actors:
+      JsonParser1:
+        parent: JsonParser
+        in:
+          stream:
+            link:
+              path: JavaScript1/result
+              iterate: Iterate
+        out:
+          object:
+            schema: '#ref'
+  Stage 4:
+    last: 1
+    actors:
+      ArrayBuilder1:
+        parent: ArrayBuilder
+        in:
+          input:
+            link: JsonParser1/object
+        out:
+          array:
+            schema: '#ref'
+  Stage 5:
+    actors:
+      Const3:
+        parent: Const
+        in:
+          value:
+            const: null
+            link: ArrayBuilder1/array
+        out:
+          value:
+            external: array
+            schema: '#ref'
+schemas:
+  Const1.out.value:
+    type: object
+    properties:
+      ? |-
+        {
+          "ADDRESS_ID": 11
+        }
+      : type: boolean
+      ? |-
+        {
+          "ADDRESS_ID": 15
+        }
+      : type: boolean
+  JavaScript1.in.diffMap:
+    type: object
+    properties:
+      ? |-
+        {
+          "ADDRESS_ID": 11
+        }
+      : type: boolean
+  JavaScript1.out.result:
+    type: array
+    items:
+      type: string
+  JsonParser1.out.object:
+    type: object
+    properties:
+      ADDRESS_ID:
+        type: integer
+      STATE:
+        type: string
+  ArrayBuilder1.out.array:
+    type: array
+    items:
+      type: object
+      properties:
+        ADDRESS_ID:
+          type: integer
+        STATE:
+          type: string
+  Const3.out.value:
+    type: array
+    items:
+      type: object
+      properties:
+        ADDRESS_ID:
+          type: integer
+        STATE:
+          type: string

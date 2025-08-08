@@ -1,0 +1,78 @@
+{
+    "description": "Writes the table records to an Excel file.\n\nInputs\ntaskExecutionID - execution_id to filter the d2d summary records\nfile_type - output file format (xlsx/xls)\nluName - d2d lu name\nstrict - true: include iid filtering (Get), false: no iid filtering (Batch)\niid - d2d instance id\n\nOutputs\npath - Excel file name",
+    "tags": [
+        "d2d",
+        "d2dv2"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Inputs",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "queries",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "object"
+                                        },
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "object"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "timestamp",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "queries"
+            },
+            "rightPort": {
+                "actor": "queries",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "timestamp"
+            },
+            "rightPort": {
+                "actor": "timestamp",
+                "name": "value"
+            }
+        }
+    ]
+}

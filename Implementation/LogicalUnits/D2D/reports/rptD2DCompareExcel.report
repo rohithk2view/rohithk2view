@@ -1,0 +1,285 @@
+{
+    "Name": "Report",
+    "Width": "8.5in",
+    "ReportParameters": [
+        {
+            "DataType": "String",
+            "Name": "exec_id",
+            "Prompt": "exec_id"
+        },
+        {
+            "DataType": "String",
+            "Name": "luType",
+            "Prompt": "LU Type"
+        }
+    ],
+    "Layers": [
+        {
+            "Name": "default"
+        }
+    ],
+    "CustomProperties": [
+        {
+            "Name": "DisplayType",
+            "Value": "Page"
+        },
+        {
+            "Name": "SizeType",
+            "Value": "Default"
+        },
+        {
+            "Name": "PaperOrientation",
+            "Value": "Portrait"
+        }
+    ],
+    "Page": {
+        "PageWidth": "8.5in",
+        "PageHeight": "11in",
+        "RightMargin": "0in",
+        "LeftMargin": "0in",
+        "TopMargin": "0in",
+        "BottomMargin": "0in",
+        "Columns": 1,
+        "ColumnSpacing": "0.5in"
+    },
+    "DataSources": [
+        {
+            "Name": "fabricApi",
+            "ConnectionProperties": {
+                "DataProvider": "JSON",
+                "ConnectString": "endpoint=/api/"
+            }
+        }
+    ],
+    "PageHeader": {
+        "Name": "PageHeader",
+        "Height": "1.1319in",
+        "ReportItems": [
+            {
+                "Type": "textbox",
+                "Name": "TextBox1",
+                "CanGrow": true,
+                "KeepTogether": true,
+                "Value": "D2D Compare Report",
+                "Style": {
+                    "FontFamily": "Helvetica",
+                    "FontSize": "36pt",
+                    "PaddingLeft": "2pt",
+                    "PaddingRight": "2pt",
+                    "PaddingTop": "2pt",
+                    "PaddingBottom": "2pt",
+                    "Color": "#0d0e13"
+                },
+                "Left": "0.2917in",
+                "Top": "0.25in",
+                "Width": "5.3958in",
+                "Height": "0.6771in"
+            },
+            {
+                "Type": "textbox",
+                "Name": "TextBox2",
+                "ZIndex": 1,
+                "CanGrow": true,
+                "KeepTogether": true,
+                "Value": "=Now()",
+                "Style": {
+                    "FontFamily": "Helvetica",
+                    "FontSize": "18pt",
+                    "PaddingLeft": "2pt",
+                    "PaddingRight": "2pt",
+                    "PaddingTop": "2pt",
+                    "PaddingBottom": "2pt",
+                    "Color": "#0d0e13",
+                    "TextAlign": "Center"
+                },
+                "Left": "6.6148in",
+                "Top": "0.25in",
+                "Width": "1.5625in",
+                "Height": "0.7812in"
+            },
+            {
+                "Type": "line",
+                "Name": "Line1",
+                "ZIndex": 2,
+                "StartPoint": {
+                    "X": "0in",
+                    "Y": "0in"
+                },
+                "EndPoint": {
+                    "X": "1in",
+                    "Y": "0in"
+                }
+            },
+            {
+                "Type": "line",
+                "Name": "Line2",
+                "ZIndex": 3,
+                "StartPoint": {
+                    "X": "0in",
+                    "Y": "0in"
+                },
+                "EndPoint": {
+                    "X": "1in",
+                    "Y": "0in"
+                }
+            },
+            {
+                "Type": "line",
+                "Name": "Line3",
+                "ZIndex": 4,
+                "StartPoint": {
+                    "X": "6in",
+                    "Y": "0.05in"
+                },
+                "EndPoint": {
+                    "X": "6in",
+                    "Y": "0.95in"
+                },
+                "LineColor": "#afb5b7"
+            },
+            {
+                "Type": "shape",
+                "Name": "Shape1",
+                "ZIndex": 5,
+                "Style": {
+                    "Border": {
+                        "Color": "#a3b7bb",
+                        "Style": "Solid"
+                    },
+                    "BackgroundColor": "#a3b7bb"
+                },
+                "Top": "1in",
+                "Width": "6in",
+                "Height": "0.1319in"
+            },
+            {
+                "Type": "shape",
+                "Name": "Shape2",
+                "ZIndex": 6,
+                "Style": {
+                    "Border": {
+                        "Color": "#afb5b7",
+                        "Style": "Solid"
+                    },
+                    "BackgroundColor": "#566d78"
+                },
+                "Left": "6in",
+                "Top": "1in",
+                "Width": "2.5in",
+                "Height": "0.1319in"
+            }
+        ],
+        "Style": {
+            "Border": {
+                "Color": "#2196f3"
+            },
+            "TopBorder": {
+                "Color": "#2196f3"
+            },
+            "BottomBorder": {
+                "Color": "#2196f3"
+            },
+            "LeftBorder": {
+                "Color": "#2196f3"
+            },
+            "RightBorder": {
+                "Color": "#2196f3"
+            },
+            "BackgroundColor": "White"
+        }
+    },
+    "Body": {
+        "Height": "0.5in",
+        "ReportItems": [
+            {
+                "Type": "table",
+                "Name": "Table1",
+                "ZIndex": 1,
+                "DataSetName": "customDataSet",
+                "TableColumns": [
+                    {
+                        "Width": "8.5in"
+                    }
+                ],
+                "Header": {
+                    "TableRows": [
+                        {
+                            "Height": "0.25in",
+                            "TableCells": [
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox4",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "Excel generated",
+                                        "Style": {
+                                            "FontFamily": "Helvetica",
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt",
+                                            "Color": "#0d0e13",
+                                            "BackgroundColor": "#c8c5bb"
+                                        },
+                                        "Width": "8.5in",
+                                        "Height": "0.25in"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "RepeatOnNewPage": true
+                },
+                "Details": {
+                    "TableRows": [
+                        {
+                            "Height": "0.25in",
+                            "TableCells": [
+                                {
+                                    "Item": {
+                                        "Type": "textbox",
+                                        "Name": "TextBox5",
+                                        "DataElementName": "Field1",
+                                        "CanGrow": true,
+                                        "KeepTogether": true,
+                                        "Value": "=Fields!Field1.Value",
+                                        "Style": {
+                                            "PaddingLeft": "2pt",
+                                            "PaddingRight": "2pt",
+                                            "PaddingTop": "2pt",
+                                            "PaddingBottom": "2pt"
+                                        },
+                                        "Width": "8.5in",
+                                        "Height": "0.25in"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "Width": "8.5in",
+                "Height": "0.5in"
+            }
+        ]
+    },
+    "DataSets": [
+        {
+            "Name": "customDataSet",
+            "Fields": [
+                {
+                    "Name": "Field1",
+                    "DataField": "Field1"
+                }
+            ],
+            "Query": {
+                "DataSourceName": "fabricApi",
+                "CommandText": "=\"uri=d2d/excel-summary?exec_id=\" & Parameters!exec_id.Value & \"&luType=\" & Parameters!luType.Value & \";jpath=$.*\""
+            },
+            "CaseSensitivity": "Auto",
+            "KanatypeSensitivity": "Auto",
+            "AccentSensitivity": "Auto",
+            "WidthSensitivity": "Auto"
+        }
+    ]
+}

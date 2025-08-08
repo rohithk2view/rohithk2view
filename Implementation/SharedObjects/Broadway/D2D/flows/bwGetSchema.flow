@@ -1,0 +1,95 @@
+description: |-
+  Fetch D2D interface and summary details
+
+  Inputs
+  luName: d2d lu name
+  table_name: d2d lui summary table name
+tags: d2d,D2D
+stages:
+  Read Globals:
+    actors:
+      REF Table:
+        parent: StringFormat
+        in:
+          format:
+            const: ${table_name}
+          params:
+            const: ''
+          table_name:
+            external: table_name
+            schema: string
+            remark: d2d summary table name
+            mandatory: false
+      D2D INTERFACE:
+        parent: GetLUVariable
+        in:
+          luName:
+            external: luName
+            remark: d2d lu name
+          variableName:
+            const: D2D_RESULT_INTERFACE
+      D2D REPORT SCHEMA:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LOAD_SCHEMA
+          luName:
+            external: luName
+  Checks:
+    actors:
+      StringFormat1:
+        parent: StringFormat
+        in:
+          format:
+            const: ref_${0}
+          params:
+            link:
+              path: REF Table/string
+              pos: 0
+      empty string:
+        parent: Const
+        disabled: true
+        in:
+          value:
+            schema: string
+        out:
+          value:
+            schema: string
+  Output:
+    actors:
+      Table Details External:
+        parent: MapCreate
+        in:
+          schema_name:
+            const: d2dref
+            link:
+            - D2D REPORT SCHEMA/variableValue
+            - empty string/value
+            schema: string
+            default: true
+            mandatory: false
+          table_name:
+            link:
+            - REF Table/string
+            - StringFormat1/string
+            schema: string
+            mandatory: false
+          interface_name:
+            link: D2D INTERFACE/variableValue
+            schema: string
+            mandatory: false
+        out:
+          map:
+            external: map
+            schema: '#ref'
+            remark: summary table details map
+schemas:
+  Table Details External.out.map:
+    type: object
+    properties:
+      schema_name:
+        type: string
+      table_name:
+        type: string
+      interface_name:
+        type: string

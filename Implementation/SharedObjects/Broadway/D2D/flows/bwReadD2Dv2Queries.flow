@@ -1,0 +1,452 @@
+{
+    "description": "Sql Statements to run on the summary interface",
+    "tags": [
+        "d2d",
+        "d2dv2",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Format Global Request",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Report Interface Ke",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${luName}.${key}"
+                                    },
+                                    {
+                                        "const": "D2D_RESULT_INTERFACE",
+                                        "name": "key",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Get Reporting interface ",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "ReportInterface",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": null,
+                                        "isDefault": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "get Table names",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Get Summary Tables",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwGetSummaryTableNames"
+                                    },
+                                    {
+                                        "name": "interface",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "field_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "record_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "table_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "entity_summary",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Input",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "D2D SCHEMA",
+                            "actorType": {
+                                "parentType": "GetLUVariable",
+                                "inputs": [
+                                    {
+                                        "name": "variableName",
+                                        "const": "D2D_LOAD_SCHEMA"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Create Table Name Array",
+                            "actorType": {
+                                "parentType": "ArrayBuilder",
+                                "inputs": [],
+                                "outputs": [
+                                    {
+                                        "name": "array",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Keys Array",
+                            "actorType": {
+                                "parentType": "ArrayBuilder",
+                                "inputs": [
+                                    {
+                                        "name": "input",
+                                        "const": [
+                                            "FIELD_SUMMARY",
+                                            "RECORD_SUMMARY",
+                                            "TABLE_SUMMARY",
+                                            "ENTITY_SUMMARY"
+                                        ]
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "array",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Prepare Select Query",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Custom/Default Query",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": {
+                                            "userCode": "var out = sql\r\nif(out == null|| out.trim().length == 0){\r\n    out = \"select * from \" + schema.concat(\".\", table)  + \" where execution_id = ?\"\r\n    if(strict){\r\n        out = out +  \" and iid = ?\"\r\n    }\r\n}\r\n\r\nout",
+                                            "script": "var out = sql;\n\nif (out == null || out.trim().length == 0) {\n  out = \"select * from \" + schema.concat(\".\", table) + \" where execution_id = ?\";\n\n  if (strict) {\n    out = out + \" and iid = ?\";\n  }\n}\n\nout;"
+                                        }
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "table",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "strict",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "schema",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Output",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Queries Map",
+                            "actorType": {
+                                "parentType": "MapBuild",
+                                "inputs": [],
+                                "outputs": [
+                                    {
+                                        "name": "map",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "entity_summary": {
+                                                    "type": "string"
+                                                },
+                                                "table_summary": {
+                                                    "type": "string"
+                                                },
+                                                "record_summary": {
+                                                    "type": "string"
+                                                },
+                                                "field_summary": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Report Interface Ke",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "ReportInterface",
+                "name": "key"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "ReportInterface",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Get Summary Tables",
+                "name": "interface"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Summary Tables",
+                "name": "field_summary"
+            },
+            "rightPort": {
+                "actor": "Create Table Name Array",
+                "name": "input"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "Get Summary Tables",
+                "name": "record_summary"
+            },
+            "rightPort": {
+                "actor": "Create Table Name Array",
+                "name": "input"
+            },
+            "arrayPosition": 1
+        },
+        {
+            "leftPort": {
+                "actor": "Get Summary Tables",
+                "name": "table_summary"
+            },
+            "rightPort": {
+                "actor": "Create Table Name Array",
+                "name": "input"
+            },
+            "arrayPosition": 2
+        },
+        {
+            "leftPort": {
+                "actor": "Get Summary Tables",
+                "name": "entity_summary"
+            },
+            "rightPort": {
+                "actor": "Create Table Name Array",
+                "name": "input"
+            },
+            "arrayPosition": 3
+        },
+        {
+            "leftPort": {
+                "actor": "D2D SCHEMA",
+                "name": "variableValue"
+            },
+            "rightPort": {
+                "actor": "Custom/Default Query",
+                "name": "schema"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Create Table Name Array",
+                "name": "array"
+            },
+            "rightPort": {
+                "actor": "Custom/Default Query",
+                "name": "table"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Keys Array",
+                "name": "array"
+            },
+            "rightPort": {
+                "actor": "Queries Map",
+                "name": "key"
+            },
+            "iterate": "Iterate"
+        },
+        {
+            "leftPort": {
+                "actor": "Custom/Default Query",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Queries Map",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Report Interface Ke",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "D2D SCHEMA",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "strict"
+            },
+            "rightPort": {
+                "actor": "Custom/Default Query",
+                "name": "strict"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Queries Map",
+                "name": "map"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "map"
+            }
+        }
+    ]
+}

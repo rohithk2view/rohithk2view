@@ -1,0 +1,287 @@
+{
+    "description": "Fetch D2D Instance\n\nInputs\niid  - d2d instance id\nprint_report - write indicator. default(false), true: write to excel",
+    "tags": [
+        "d2d"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Inputs",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Get Lu Name",
+                            "minHeight": 108,
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "fnGetLuName"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Scope",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "EXECUTION ID",
+                            "actorType": {
+                                "parentType": "GetD2DExecutionID",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Use LUI Force Mode",
+                            "actorType": {
+                                "parentType": "FabricGet",
+                                "inputs": [
+                                    {
+                                        "name": "luType",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "remark": "d2d instance id",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": null,
+                                        "isDefault": false,
+                                        "mandatory": true
+                                    },
+                                    {
+                                        "name": "syncMode",
+                                        "const": "FORCE"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Validate",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Print Activated?",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "a",
+                                        "remark": "write indicator. default(false), true: write to excel",
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "false",
+                                                "true"
+                                            ]
+                                        },
+                                        "const": "false",
+                                        "isDefault": true
+                                    },
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "true"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Validate DB Updates",
+                            "actorType": {
+                                "parentType": "CheckIsRefSynced",
+                                "inputs": [
+                                    {
+                                        "name": "countOfEntities",
+                                        "const": 1
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Create",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "True",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "And",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Excel",
+                            "actorType": {
+                                "parentType": "PrintD2DResult",
+                                "inputs": [
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": ""
+                                    },
+                                    {
+                                        "name": "file_type",
+                                        "const": "xlsx"
+                                    },
+                                    {
+                                        "name": "strict",
+                                        "const": ""
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Use LUI Force Mode",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Excel",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "EXECUTION ID",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Validate DB Updates",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EXECUTION ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Excel",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "EXECUTION ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Validate DB Updates",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Validate DB Updates",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "True",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "entity"
+            },
+            "rightPort": {
+                "actor": "Use LUI Force Mode",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "printSummaryReport"
+            },
+            "rightPort": {
+                "actor": "Print Activated?",
+                "name": "a"
+            }
+        }
+    ]
+}

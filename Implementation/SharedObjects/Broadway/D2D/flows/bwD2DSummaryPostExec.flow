@@ -1,0 +1,930 @@
+{
+    "description": "Fetch D2D instances and write summary to an excel report. instance list is prepared from the task parameters.\n\nInputs\ntaskExecutionID - Unique task execution_id",
+    "tags": [
+        "d2d",
+        "D2D"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "SET Session Globals",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "taskExecutionID",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Get Lu Name",
+                            "actorType": {
+                                "parentType": "LuFunction",
+                                "inputs": [
+                                    {
+                                        "name": "functionName",
+                                        "const": "fnGetLuType"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "TDMDB_SCHEMA",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "TDMDB_SCHEMA"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Set Exec ID",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "FabricSet",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "D2D_EXEC_ID",
+                                        "isDefault": false
+                                    },
+                                    {
+                                        "name": "value",
+                                        "remark": "Unique task execution_id",
+                                        "const": null,
+                                        "isDefault": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Get Source Env",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "TDM_SOURCE_ENVIRONMENT_NAME"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Get Target Env",
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "TDM_TAR_ENV_NAME"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "SQL for D2D",
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "SELECT DISTINCT iid FROM ${TDMDB_SCHEMA}.task_execution_entities WHERE  task_execution_id = '${taskExecutionID}' and lu_name = '${lu_name}' and execution_status= 'completed' "
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "lu_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "TDMDB_SCHEMA",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Format Exec Mode",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${luType}.D2D_EXEC_MODE"
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "FabricSet SOURCE Env",
+                            "actorType": {
+                                "parentType": "FabricSet",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "D2D_SOURCE_ENV"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "FabricSet TARGET Env",
+                            "actorType": {
+                                "parentType": "FabricSet",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "D2D_TARGET_ENV"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Read Params",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "D2D Batch",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "d2dBatchExecute"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "entity_list",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "interface",
+                                        "const": "TDM",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.interface",
+                                            "interfaceType": [
+                                                "database",
+                                                "CassandraLoader"
+                                            ],
+                                            "interfaces": [
+                                                "fabric"
+                                            ]
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "execution_mode",
+                                        "const": "Extract",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false,
+                                        "isDefault": true
+                                    },
+                                    {
+                                        "name": "printSummaryReport",
+                                        "const": true,
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false,
+                                        "isDefault": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 4",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Read Exec Mode",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "FabricSetRead",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Get  Instances",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "TDM"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "SELECT DISTINCT lu_name, entity_id, source_env\r\nFROM   @TDMDB_SCHEMA@.task_execution_entities\r\nWHERE  task_execution_id = ${taskExecutionID} and lu_name = ${lu_name}"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "schema": {
+                                            "type": "object"
+                                        },
+                                        "const": ""
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "lu_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "lu_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "entity_id": {
+                                                        "type": "string"
+                                                    },
+                                                    "source_env": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Prepare",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Underscore",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "${env}_"
+                                    },
+                                    {
+                                        "name": "params",
+                                        "const": ""
+                                    },
+                                    {
+                                        "name": "env",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Transform iid",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Remove Env",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "Replace",
+                                "inputs": [
+                                    {
+                                        "name": "search",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Fetch",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "StringFormat1",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "StringFormat",
+                                "inputs": [
+                                    {
+                                        "name": "format",
+                                        "const": "'${input1}'"
+                                    },
+                                    {
+                                        "name": "input1",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [],
+                    "isLast": 1,
+                    "actors": [
+                        {
+                            "name": "StringBuild1",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "StringBuild",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Validate",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "run bwD2DExecute",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "batch CRM.(${@iids}) fabric_command=\"broadway ${@luType}.bwD2DExecute iid=?, execution_mode='${@exec_mode}'\" WITH ASYNC=TRUE;"
+                                    },
+                                    {
+                                        "name": "iids",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "exec_mode",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luType",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "Batch id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Execution id": {
+                                                        "type": "string"
+                                                    },
+                                                    "Execution succeeded": {
+                                                        "type": "integer"
+                                                    },
+                                                    "Execution failed": {
+                                                        "type": "integer"
+                                                    },
+                                                    "Total": {
+                                                        "type": "integer"
+                                                    },
+                                                    "Duration": {
+                                                        "type": "integer"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "BatchWait1",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "BatchWait",
+                                "inputs": [],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Create",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "True",
+                            "condition": "result",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "And",
+                                "inputs": [
+                                    {
+                                        "name": "b",
+                                        "const": true
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Excel - PrintD2Dv2Result",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwPrintD2Dv2Result"
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "xlsx",
+                                        "name": "file_type",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "xlsx",
+                                                "xls"
+                                            ]
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": false,
+                                        "name": "strict",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "const": "",
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "filename",
+                                        "schema": {}
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "taskExecutionID",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "SQL for D2D",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Get  Instances",
+                "name": "lu_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Excel - PrintD2Dv2Result",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "Format Exec Mode",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "run bwD2DExecute",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Lu Name",
+                "name": "luType"
+            },
+            "rightPort": {
+                "actor": "SQL for D2D",
+                "name": "lu_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "TDMDB_SCHEMA",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "SQL for D2D",
+                "name": "TDMDB_SCHEMA"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Source Env",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "FabricSet SOURCE Env",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get Target Env",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "FabricSet TARGET Env",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "SQL for D2D",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "D2D Batch",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Format Exec Mode",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Read Exec Mode",
+                "name": "key"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Read Exec Mode",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "run bwD2DExecute",
+                "name": "exec_mode"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Get  Instances",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Remove Env",
+                "name": "string"
+            },
+            "iterate": "Iterate",
+            "path": [
+                "entity_id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Get  Instances",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Underscore",
+                "name": "env"
+            },
+            "path": [
+                "source_env"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "Underscore",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "Remove Env",
+                "name": "search"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Remove Env",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "StringFormat1",
+                "name": "input1"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "StringFormat1",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "StringBuild1",
+                "name": "input"
+            },
+            "arrayPosition": 0
+        },
+        {
+            "leftPort": {
+                "actor": "StringBuild1",
+                "name": "string"
+            },
+            "rightPort": {
+                "actor": "run bwD2DExecute",
+                "name": "iids"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "run bwD2DExecute",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "BatchWait1",
+                "name": "batchId"
+            },
+            "iterate": "First",
+            "path": [
+                "Batch id"
+            ]
+        },
+        {
+            "leftPort": {
+                "actor": "BatchWait1",
+                "name": "succeeded"
+            },
+            "rightPort": {
+                "actor": "True",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "taskExecutionID",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "Set Exec ID",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "Get  Instances",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "Excel - PrintD2Dv2Result",
+                "name": "taskExecutionID"
+            }
+        }
+    ]
+}

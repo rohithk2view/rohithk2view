@@ -1,0 +1,139 @@
+description: Create/Clean the D2D summary tables
+tags: d2d,precreate,D2D
+stages:
+  Start:
+    actors:
+      D2D INTERFACE:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_RESULT_INTERFACE
+          luName:
+            external: lu_name
+      D2D SCHEMA:
+        parent: GetLUVariable
+        in:
+          variableName:
+            const: D2D_LOAD_SCHEMA
+          luName:
+            external: lu_name
+      CreateTables:
+        parent: ToBool
+        in:
+          value:
+            external: createTables
+      CleanTables:
+        parent: ToBool
+        in:
+          value:
+            external: cleanTables
+  No Op: {
+    }
+  Create Statements:
+    dependsOn: No Op
+    actors:
+      Not fabric And Create:
+        parent: JavaScript
+        condition: result
+        in:
+          script:
+            const: system != 'fabric' && create == true
+          system:
+            link: D2D INTERFACE/variableValue
+            schema: string
+            mandatory: false
+          create:
+            link: CreateTables/bool
+            schema: boolean
+            mandatory: false
+        out:
+          result:
+            schema: boolean
+      Get Sql Resource File To Create D2D Tables:
+        parent: LuFunction
+        in:
+          functionName:
+            const: fnLoadFromResource
+          path:
+            const: d2d/d2dCreate.sql
+            schema: string
+            mandatory: false
+        out:
+          result:
+            schema: blob
+      Sql:
+        parent: Const
+        in:
+          value:
+            const: TRUNCATE TABLE ${@schema}.${@table}
+            schema: string
+        out:
+          value:
+            schema: string
+    split: '--------------------'
+  Clean Active:
+    transactional: false
+    dependsOn: No Op
+    actors:
+      Clean DB?:
+        parent: Equals
+        condition: result
+        in:
+          b:
+            const: true
+            schema: boolean
+          a:
+            link: CleanTables/bool
+  Create On First Deploy:
+    dependsOn: Create Statements
+    actors:
+      Create D2D Tables and views:
+        parent: DbCommand
+        in:
+          interface:
+            const: null
+            link: D2D INTERFACE/variableValue
+          sql:
+            const: null
+            link: Get Sql Resource File To Create D2D Tables/result
+          schema:
+            link: D2D SCHEMA/variableValue
+            schema: string
+            mandatory: false
+    split: '--------------------'
+  Clean On First Deploy:
+    transactional: false
+    dependsOn: Clean Active
+    actors:
+      Clean D2D Tables:
+        parent: InnerFlow
+        in:
+          flowName:
+            const: bwCleanD2DTables
+          interface:
+            link: D2D INTERFACE/variableValue
+            schema: string
+            editor:
+              id: com.k2view.interface
+              interfaceType:
+              - database
+              - CassandraLoader
+              interfaces:
+              - fabric
+            mandatory: false
+          schema:
+            const: d2dref
+            link: D2D SCHEMA/variableValue
+            schema: string
+            default: true
+            mandatory: false
+          sql:
+            const: DELETE FROM ${@schema}.${@table}
+            link: Sql/value
+            schema: string
+            editor:
+              id: com.k2view.code
+              language: sql
+              template: true
+            default: true
+            mandatory: false

@@ -1,0 +1,42 @@
+{
+    "type": "GetLUVariable",
+    "parentType": "InnerFlow",
+    "actorClass": null,
+    "inputs": [
+        {
+            "name": "luName",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "lu name"
+        },
+        {
+            "name": "variableName",
+            "schema": {
+                "type": "string"
+            },
+            "doc": "global key"
+        },
+        {
+            "name": "flowName",
+            "schema": {
+                "type": "string"
+            },
+            "const": "bwGetLUVariable",
+            "mandatory": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "variableValue",
+            "schema": {
+                "type": "string"
+            }
+        }
+    ],
+    "tags": [
+        "d2d"
+    ],
+    "doc": "Fetch LU global value",
+    "badge": "Rd"
+}

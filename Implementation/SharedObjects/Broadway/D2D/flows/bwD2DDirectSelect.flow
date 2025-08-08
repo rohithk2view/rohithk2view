@@ -1,0 +1,370 @@
+{
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Stage 1",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Interface",
+                            "isDisabled": true,
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "SQL",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Params",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Env",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 2",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "FabricSet1",
+                            "actorType": {
+                                "parentType": "FabricSet",
+                                "inputs": [
+                                    {
+                                        "name": "key",
+                                        "const": "environment"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 3",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "SourceDataByTar",
+                            "actorType": {
+                                "parentType": "DbCommand",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "CRM_DB"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "source_CUSTOMER_ID": {
+                                                        "type": "string"
+                                                    },
+                                                    "source_FIRST_NAME": {
+                                                        "type": "string"
+                                                    },
+                                                    "source_LAST_NAME": {
+                                                        "type": "string"
+                                                    },
+                                                    "source_SSN": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 4",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Const1",
+                            "actorType": {
+                                "parentType": "Const",
+                                "inputs": [
+                                    {
+                                        "name": "value",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "value",
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "source_customer_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "source_first_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "source_last_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "source_ssn": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "ResetActors1",
+                            "actorType": {
+                                "parentType": "ResetActors",
+                                "inputs": [
+                                    {
+                                        "name": "actorId",
+                                        "const": [
+                                            "SourceDataByTar"
+                                        ]
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 5",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 6",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 7",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Stage 8",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": []
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "SQL",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "SourceDataByTar",
+                "name": "sql"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Params",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "SourceDataByTar",
+                "name": "params"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Env",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "FabricSet1",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "SourceDataByTar",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "Const1",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "interface"
+            },
+            "rightPort": {
+                "actor": "Interface",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "sql"
+            },
+            "rightPort": {
+                "actor": "SQL",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "params"
+            },
+            "rightPort": {
+                "actor": "Params",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "environment"
+            },
+            "rightPort": {
+                "actor": "Env",
+                "name": "value"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Const1",
+                "name": "value"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "result"
+            }
+        }
+    ]
+}

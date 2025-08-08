@@ -1,0 +1,304 @@
+{
+    "description": "Fetch Summary Record key from the summary table",
+    "tags": [
+        "d2d",
+        "pipeline"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Retrieve",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Use LUI",
+                            "actorType": {
+                                "parentType": "FabricGet",
+                                "inputs": [
+                                    {
+                                        "name": "luType",
+                                        "const": null
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "const": null,
+                                        "isDefault": false
+                                    },
+                                    {
+                                        "name": "syncMode",
+                                        "const": null
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "Ouput",
+                    "dependsOnList": [
+                        "Retrieve"
+                    ],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "SyncMode OFF?",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "JavaScript",
+                                "inputs": [
+                                    {
+                                        "name": "script",
+                                        "const": "syncMode == 'OFF'"
+                                    },
+                                    {
+                                        "name": "syncMode",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "Execution ID",
+                            "actorType": {
+                                "parentType": "DbFetchField",
+                                "inputs": [
+                                    {
+                                        "name": "interface",
+                                        "const": "fabric"
+                                    },
+                                    {
+                                        "name": "sql",
+                                        "const": "select EXECUTION_ID from ${@lu_name}.D2D_ENTITY_SUMMARY limit 1"
+                                    },
+                                    {
+                                        "name": "lu_name",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": [
+                                    {
+                                        "name": "result",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "For Force Sync",
+                    "dependsOnList": [
+                        "Retrieve"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "hasElse": true,
+                    "actors": []
+                }
+            ]
+        },
+        {
+            "stages": [
+                {
+                    "name": "No Op",
+                    "dependsOnList": [
+                        "Ouput"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": []
+                },
+                {
+                    "name": "Check Common",
+                    "dependsOnList": [
+                        "For Force Sync"
+                    ],
+                    "isLast": 0,
+                    "isTransactional": false,
+                    "actors": [
+                        {
+                            "name": "Print Activated?",
+                            "condition": "result",
+                            "actorType": {
+                                "parentType": "EqualsIgnoreCase",
+                                "inputs": [
+                                    {
+                                        "name": "a",
+                                        "editor": {
+                                            "id": "com.k2view.dropdown",
+                                            "options": [
+                                                "false",
+                                                "true"
+                                            ]
+                                        },
+                                        "const": "false",
+                                        "isDefault": true
+                                    },
+                                    {
+                                        "name": "b",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "const": "true"
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        },
+                        {
+                            "name": "Summary DB Updated?",
+                            "remark": "If Common load wait for sync operations",
+                            "actorType": {
+                                "parentType": "InnerFlow",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "bwIsDBUpdated"
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "countOfEntities",
+                                        "const": 1,
+                                        "schema": {
+                                            "type": "number"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Use LUI",
+                "name": "luType"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "iid"
+            },
+            "rightPort": {
+                "actor": "Use LUI",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "syncMode"
+            },
+            "rightPort": {
+                "actor": "Use LUI",
+                "name": "syncMode"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "syncMode"
+            },
+            "rightPort": {
+                "actor": "SyncMode OFF?",
+                "name": "syncMode"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "Execution ID",
+                "name": "result"
+            },
+            "rightPort": {
+                "actor": "flowArgs",
+                "name": "execution_id"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Execution ID",
+                "name": "lu_name"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "print_report"
+            },
+            "rightPort": {
+                "actor": "Print Activated?",
+                "name": "a"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Summary DB Updated?",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "Summary DB Updated?",
+                "name": "taskExecutionID"
+            }
+        }
+    ]
+}

@@ -1,0 +1,106 @@
+{
+    "tags": [
+        "d2d",
+        "pipeline"
+    ],
+    "levels": [
+        {
+            "stages": [
+                {
+                    "name": "Create",
+                    "dependsOnList": [],
+                    "isLast": 0,
+                    "actors": [
+                        {
+                            "name": "Report Create",
+                            "remark": "Create Summary Report ",
+                            "actorType": {
+                                "parentType": "Case",
+                                "inputs": [
+                                    {
+                                        "name": "flowName",
+                                        "const": "case_CreateReport"
+                                    },
+                                    {
+                                        "name": "luName",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "editor": {
+                                            "id": "com.k2view.logicalUnit"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "iid",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "taskExecutionID",
+                                        "schema": {
+                                            "type": "string"
+                                        },
+                                        "mandatory": false
+                                    },
+                                    {
+                                        "name": "strict",
+                                        "schema": {
+                                            "type": "boolean"
+                                        },
+                                        "mandatory": false
+                                    }
+                                ],
+                                "outputs": []
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "luName"
+            },
+            "rightPort": {
+                "actor": "Report Create",
+                "name": "luName"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "iid"
+            },
+            "rightPort": {
+                "actor": "Report Create",
+                "name": "iid"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "taskExecutionID"
+            },
+            "rightPort": {
+                "actor": "Report Create",
+                "name": "taskExecutionID"
+            }
+        },
+        {
+            "leftPort": {
+                "actor": "flowArgs",
+                "name": "strict"
+            },
+            "rightPort": {
+                "actor": "Report Create",
+                "name": "strict"
+            }
+        }
+    ]
+}
